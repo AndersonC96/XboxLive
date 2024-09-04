@@ -1,0 +1,15 @@
+{
+    "name": "anderson/xbox-live",
+    "autoload": {
+        "psr-4": {
+            "Anderson\\XboxLive\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Anderson Cavalcante Barbosa",
+            "email": "8729281+AndersonC96@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
