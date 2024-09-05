@@ -33,7 +33,7 @@
     <div class="flex justify-between items-center">
         <div class="flex items-center space-x-4">
             <a href="dashboard.php">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Xbox_logo_2012.svg/1200px-Xbox_logo_2012.svg.png" alt="Xbox Logo" class="w-10 h-10">
+                <img src="../img/logo2.png" alt="Xbox Logo" class="w-10 h-10">
             </a>
             <a href="dashboard.php" class="text-white">Home</a>
             <a href="#" class="text-white">Conquistas</a>
