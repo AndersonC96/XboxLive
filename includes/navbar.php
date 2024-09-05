@@ -21,12 +21,23 @@
                 }
             }
         } else {
-            $gamerpic = 'default_avatar.jpg';
+            $gamerpic = '../img/default_avatar.jpg';
             $gamertag = 'Usuário';
         }
     } else {
-        $gamerpic = 'default_avatar.jpg';
+        $gamerpic = '../img/default_avatar.jpg';
         $gamertag = 'Usuário';
+    }
+    $searchResult = null;
+    if (isset($_GET['gamertag_search'])) {
+        $searchGamertag = trim($_GET['gamertag_search']);
+        if (!empty($searchGamertag)) {
+            $searchEndpoint = "search/{$searchGamertag}";
+            $searchResponse = openXBLRequest($searchEndpoint);
+            if (isset($searchResponse['results'][0])) {
+                $searchResult = $searchResponse['results'][0];
+            }
+        }
     }
 ?>
 <nav class="bg-gray-800 p-4">
@@ -49,9 +60,22 @@
             <a href="#" class="text-white">Grupo</a>
         </div>
         <div class="flex items-center space-x-4">
-            <input type="text" placeholder="Buscar" class="px-4 py-2 rounded-lg">
+            <form action="../pages/search.php" method="GET" class="flex">
+                <input type="text" name="gamertag_search" placeholder="Buscar Gamertag" class="px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-400" required>
+                <button type="submit" class="ml-2 bg-green-500 text-white px-4 py-2 rounded-lg">Buscar</button>
+            </form>
+            <span class="text-white"><?php echo $gamertag; ?></span>
             <img src="<?php echo $gamerpic; ?>" alt="Profile" class="w-10 h-10 rounded-full">
             <a href="logout.php" class="text-white">Sair</a>
         </div>
     </div>
 </nav>
+<?php if ($searchResult): ?>
+<div class="container mx-auto mt-6 bg-gray-800 text-white p-4 rounded-md shadow-md">
+    <h2 class="text-2xl font-bold">Resultado da Busca</h2>
+    <p><strong>Gamertag:</strong> <?php echo $searchResult['gamertag']; ?></p>
+    <p><strong>Gamerscore:</strong> <?php echo $searchResult['gamerscore']; ?></p>
+    <p><strong>Tier:</strong> <?php echo $searchResult['tier']; ?></p>
+    <img src="<?php echo $searchResult['displayPicRaw']; ?>" alt="Imagem do Gamertag" class="w-24 h-24 rounded-full">
+</div>
+<?php endif; ?>
