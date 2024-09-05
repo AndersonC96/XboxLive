@@ -1,6 +1,9 @@
 <nav class="bg-gray-800 p-4">
     <div class="flex justify-between items-center">
-        <div class="flex space-x-4">
+        <div class="flex items-center space-x-4">
+            <a href="dashboard.php">
+                <img src="../img/logo2.png" alt="Xbox Logo" class="w-10 h-10">
+            </a>
             <a href="dashboard.php" class="text-white">Conta</a>
             <a href="#" class="text-white">Conquistas</a>
             <a href="#" class="text-white">Atividade</a>
