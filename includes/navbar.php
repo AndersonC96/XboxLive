@@ -56,8 +56,8 @@
                 <img src="<?php echo $gamerpic; ?>" alt="Profile" class="w-10 h-10 rounded-full border-2 border-green-500" id="user-menu-button">
             </button>
             <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg py-2 z-50">
-                <a href="../pages/alerts.php" class="block px-4 py-2 text-sm hover:bg-gray-200">Alertas</a>
                 <a href="../pages/gerar_gamertag.php" class="block px-4 py-2 text-sm hover:bg-gray-200">Gerar Gamertag</a>
+                <a href="../pages/alerts.php" class="block px-4 py-2 text-sm hover:bg-gray-200">Notificações</a>
                 <a href="../pages/presence.php" class="block px-4 py-2 text-sm hover:bg-gray-200">Status</a>
                 <a href="logout.php" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-200">Sair</a>
             </div>
