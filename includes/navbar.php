@@ -47,8 +47,20 @@
                     <a href="../pages/historico.php" class="block px-4 py-2 hover:bg-gray-600">Histórico</a>
                 </div>
             </div>
-            <a href="#" class="text-white">Conquistas</a>
+            <div class="relative">
+                <button class="text-whiet hover:text-gray-400 focus:outline-none">
+                    Clubes
+                    <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="absolute mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg hidden group-hover:block">
+                    <a href="../pages/procurar_clube.php" class="block px-4 py-2 hover:bg-gray-600">Procurar clube</a>
+                    <a href="../pages/recomendacoes.php" class="block px-4 py-2 hover:bg-gray-600">Recomendações</a>
+                </div>
+            </div>
             <a href="#" class="text-white">Clubes</a>
+            <a href="#" class="text-white">Conquistas</a>
             <a href="#" class="text-white">Conversas</a>
             <a href="#" class="text-white">DVR</a>
             <a href="#" class="text-white">Amigos</a>
