@@ -35,8 +35,8 @@
         return json_decode($response, true);
     }
     $response = generateGamertag();
-    if (isset($response['gamertags'])) {
-        $generatedGamertags = $response['gamertags'];
+    if (isset($response['Gamertags'])) {
+        $generatedGamertags = $response['Gamertags'];
     } else {
         $errorMessage = $response['error'] ?? 'Erro ao gerar Gamertag';
     }
@@ -56,3 +56,4 @@
         <p><?php echo $errorMessage; ?></p>
     <?php endif; ?>
 </div>
+<?php include('../includes/footer.php'); ?>
