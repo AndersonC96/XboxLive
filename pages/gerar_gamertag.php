@@ -42,10 +42,9 @@
     }
 ?>
 <div class="container mx-auto mt-10">
-    <h1 class="text-3xl font-bold mb-6">Gerar Gamertag</h1>
+    <h1 class="text-3xl font-bold mb-6">GGamertags Geradas</h1>
     <?php if (isset($generatedGamertags)): ?>
         <div class="bg-gray-800 p-4 rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold">Gamertags Geradas</h2>
             <ul>
                 <?php foreach ($generatedGamertags as $gamertag): ?>
                     <li><?php echo $gamertag; ?></li>
