@@ -28,7 +28,7 @@
             case 'Scarlett':
                 return '<img src="../img/xboxseries.png" alt="Xbox Series" class="inline-block w-6 h-6">';
             case 'Android':
-                return '<img src="../assets/android.svg" alt="Android" class="inline-block w-6 h-6">';
+                return '<img src="../img/android.svg" alt="Android" class="inline-block w-6 h-6">';
             default:
                 return $deviceType;
         }
