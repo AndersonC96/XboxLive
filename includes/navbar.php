@@ -1,32 +1,32 @@
 <?php
-    require '../config/db.php';
-    require_once '../config/api.php';
-    $user_id = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT xuid FROM users WHERE id = :user_id");
-    $stmt->execute(['user_id' => $user_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($user && $user['xuid']) {
-        $xuid = $user['xuid'];
-        $endpoint = "account";
-        $response = openXBLRequest($endpoint);
-        if (isset($response['profileUsers'][0]['settings'])) {
-            $settings = $response['profileUsers'][0]['settings'];
-            foreach ($settings as $setting) {
-                if ($setting['id'] === 'GameDisplayPicRaw') {
-                    $gamerpic = $setting['value'];
-                }
-                if ($setting['id'] === 'Gamertag') {
-                    $gamertag = $setting['value'];
-                }
+require '../config/db.php';
+require_once '../config/api.php';
+$user_id = $_SESSION['user_id'];
+$stmt = $pdo->prepare("SELECT xuid FROM users WHERE id = :user_id");
+$stmt->execute(['user_id' => $user_id]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+if ($user && $user['xuid']) {
+    $xuid = $user['xuid'];
+    $endpoint = "account";
+    $response = openXBLRequest($endpoint);
+    if (isset($response['profileUsers'][0]['settings'])) {
+        $settings = $response['profileUsers'][0]['settings'];
+        foreach ($settings as $setting) {
+            if ($setting['id'] === 'GameDisplayPicRaw') {
+                $gamerpic = $setting['value'];
             }
-        } else {
-            $gamerpic = '../img/default_avatar.jpg';
-            $gamertag = 'Usuário';
+            if ($setting['id'] === 'Gamertag') {
+                $gamertag = $setting['value'];
+            }
         }
     } else {
         $gamerpic = '../img/default_avatar.jpg';
         $gamertag = 'Usuário';
     }
+} else {
+    $gamerpic = '../img/default_avatar.jpg';
+    $gamertag = 'Usuário';
+}
 ?>
 <nav class="bg-gray-800 p-4">
     <div class="flex justify-between items-center">
@@ -35,8 +35,23 @@
                 <img src="../img/logo2.png" alt="Xbox Logo" class="w-10 h-10">
             </a>
             <a href="dashboard.php" class="text-white">Home</a>
+
+            <!-- Atividade Dropdown -->
+            <div class="relative">
+                <button class="text-white hover:text-gray-400 focus:outline-none">
+                    Atividade
+                    <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <!-- Dropdown menu -->
+                <div class="absolute mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg hidden group-hover:block">
+                    <a href="../pages/feed.php" class="block px-4 py-2 hover:bg-gray-600">Feed</a>
+                    <a href="../pages/historico.php" class="block px-4 py-2 hover:bg-gray-600">Histórico</a>
+                </div>
+            </div>
+
             <a href="#" class="text-white">Conquistas</a>
-            <a href="#" class="text-white">Atividade</a>
             <a href="#" class="text-white">Clubes</a>
             <a href="#" class="text-white">Conversas</a>
             <a href="#" class="text-white">DVR</a>
@@ -64,9 +79,20 @@
         </div>
     </div>
 </nav>
+
+<!-- Script para exibir os dropdowns -->
 <script>
+    // Exibe o dropdown de usuário
     document.getElementById('user-menu-button').addEventListener('click', function() {
         var menu = document.getElementById('user-menu');
         menu.classList.toggle('hidden');
+    });
+
+    // Exibe o dropdown de atividade
+    const atividadeDropdown = document.querySelector('.relative button');
+    const dropdownMenu = document.querySelector('.relative .absolute');
+
+    atividadeDropdown.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('hidden');
     });
 </script>
