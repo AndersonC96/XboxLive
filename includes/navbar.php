@@ -36,30 +36,29 @@
             </a>
             <a href="dashboard.php" class="text-white">Home</a>
             <div class="relative">
-                <button class="text-white hover:text-gray-400 focus:outline-none">
+                <button id="atividadeDropdownBtn" class="text-white hover:text-gray-400 focus:outline-none">
                     Atividade
                     <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div class="absolute mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg hidden group-hover:block">
+                <div id="atividadeDropdown" class="hidden absolute mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg">
                     <a href="../pages/feed.php" class="block px-4 py-2 hover:bg-gray-600">Feed</a>
                     <a href="../pages/historico.php" class="block px-4 py-2 hover:bg-gray-600">Histórico</a>
                 </div>
             </div>
             <div class="relative">
-                <button class="text-whiet hover:text-gray-400 focus:outline-none">
+                <button id="clubesDropdownBtn" class="text-white hover:text-gray-400 focus:outline-none">
                     Clubes
                     <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div class="absolute mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg hidden group-hover:block">
+                <div id="clubesDropdown" class="hidden absolute mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg">
                     <a href="../pages/procurar_clube.php" class="block px-4 py-2 hover:bg-gray-600">Procurar clube</a>
                     <a href="../pages/recomendacoes.php" class="block px-4 py-2 hover:bg-gray-600">Recomendações</a>
                 </div>
             </div>
-            <a href="#" class="text-white">Clubes</a>
             <a href="#" class="text-white">Conquistas</a>
             <a href="#" class="text-white">Conversas</a>
             <a href="#" class="text-white">DVR</a>
@@ -92,9 +91,20 @@
         var menu = document.getElementById('user-menu');
         menu.classList.toggle('hidden');
     });
-    const atividadeDropdown = document.querySelector('.relative button');
-    const dropdownMenu = document.querySelector('.relative .absolute');
-    atividadeDropdown.addEventListener('click', () => {
-        dropdownMenu.classList.toggle('hidden');
+    document.getElementById('atividadeDropdownBtn').addEventListener('click', function() {
+        var dropdown = document.getElementById('atividadeDropdown');
+        dropdown.classList.toggle('hidden');
+    });
+    document.getElementById('clubesDropdownBtn').addEventListener('click', function() {
+        var dropdown = document.getElementById('clubesDropdown');
+        dropdown.classList.toggle('hidden');
+    });
+    window.addEventListener('click', function(e) {
+        if (!document.getElementById('atividadeDropdownBtn').contains(e.target) && !document.getElementById('atividadeDropdown').contains(e.target)) {
+            document.getElementById('atividadeDropdown').classList.add('hidden');
+        }
+        if (!document.getElementById('clubesDropdownBtn').contains(e.target) && !document.getElementById('clubesDropdown').contains(e.target)) {
+            document.getElementById('clubesDropdown').classList.add('hidden');
+        }
     });
 </script>
