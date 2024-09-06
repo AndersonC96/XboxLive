@@ -8,7 +8,6 @@
     $alerts = $response['alerts'] ?? [];
 ?>
 <div class="container mx-auto mt-10">
-    <h1 class="text-3xl font-bold mb-6">Alertas</h1>
     <?php if (!empty($alerts)): ?>
         <ul class="bg-gray-800 p-4 rounded-lg shadow-md">
             <?php foreach ($alerts as $alert): ?>
