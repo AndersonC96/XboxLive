@@ -33,7 +33,9 @@
                 return '<img src="../img/windows.png" alt="Windows" class="inline-block w-6 h-6">';
             case 'XboxOne':
                 return '<img src="../img/xboxone.png" alt="Xbox One" class="inline-block w-6 h-6">';
-            case 'Windows':
+            case 'iOS':
+                return '<img src="../img/apple.png" alt="iOS" class="inline-block w-6 h-6">';
+            case 'PlayStation':
             default:
                 return $deviceType;
         }
