@@ -30,7 +30,10 @@
             case 'Android':
                 return '<img src="../img/android.svg" alt="Android" class="inline-block w-6 h-6">';
             case 'WindowsOneCore':
-                return '<img src="../img/windows.png" alt="Windows One Core" class="inline-block w-6 h-6">';
+                return '<img src="../img/windows.png" alt="Windows" class="inline-block w-6 h-6">';
+            case 'XboxOne':
+                return '<img src="../img/xboxone.png" alt="Xbox One" class="inline-block w-6 h-6">';
+            case 'Windows':
             default:
                 return $deviceType;
         }
