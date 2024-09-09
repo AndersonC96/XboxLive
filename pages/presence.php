@@ -36,6 +36,8 @@
             case 'iOS':
                 return '<img src="../img/apple.png" alt="iOS" class="inline-block w-6 h-6">';
             case 'PlayStation':
+                return '<img src="../img/playstation.png" alt="PlayStation" class="inline-block w-6 h-6">';
+            case 'NintendoSwitch':
             default:
                 return $deviceType;
         }
