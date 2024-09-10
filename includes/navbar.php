@@ -46,7 +46,6 @@
                     <a href="../pages/amigos.php" class="block px-4 py-2 hover:bg-gray-600">Amigos</a>
                     <a href="../pages/bloqueados.php" class="block px-4 py-2 hover:bg-gray-600">Bloqueados</a>
                     <a href="../pages/recentes.php" class="block px-4 py-2 hover:bg-gray-600">Recentes</a>
-                    <a href="../pages/status.php" class="block px-4 py-2 hover:bg-gray-600">Status</a>
                 </div>
             </div>
             <div class="relative">
