@@ -72,14 +72,12 @@
                     <a href="../pages/recomendacoes.php" class="block px-4 py-2 hover:bg-gray-600">Recomendações</a>
                 </div>
             </div>
-            <a href="#" class="text-white">Conquistas</a>
+            <a href="conquistas.php" class="text-white">Conquistas</a>
             <a href="#" class="text-white">Conversas</a>
             <a href="#" class="text-white">DVR</a>
             <a href="#" class="text-white">Gamepass</a>
             <a href="#" class="text-white">Loja</a>
             <a href="#" class="text-white">Jogador</a>
-            <a href="#" class="text-white">Sessão</a>
-            <a href="#" class="text-white">Grupo</a>
         </div>
         <form action="search.php" method="GET" class="flex">
             <input type="text" name="gamertag_search" placeholder="Buscar Gamertag" class="px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-400" required>
