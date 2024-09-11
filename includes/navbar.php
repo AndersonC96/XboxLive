@@ -99,9 +99,9 @@
                     <a href="../pages/mais_jogados.php" class="block px-4 py-2 hover:bg-gray-600">Mais Jogados</a>
                     <a href="../pages/melhores_avaliados.php" class="block px-4 py-2 hover:bg-gray-600">Melhores Avaliados</a>
                     <a href="../pages/novos_jogos.php" class="block px-4 py-2 hover:bg-gray-600">Novos Jogos</a>
-                    <a href="../pages/promocao.php" class="block px-4 py-2 hover:bg-gray-600">Promoção</a>
                     <a href="../pages/populares_gratis.php" class="block px-4 py-2 hover:bg-gray-600">Populares Grátis</a>
                     <a href="../pages/populares_pagos.php" class="block px-4 py-2 hover:bg-gray-600">Populares Pagos</a>
+                    <a href="../pages/promocao.php" class="block px-4 py-2 hover:bg-gray-600">Promoção</a>
                 </div>
             </div>
             <a href="#" class="text-white">Loja</a>
@@ -139,6 +139,10 @@
     });
     document.getElementById('dropdown-gamepass').addEventListener('click', function() {
         var menu = document.getElementById('gamepass-menu');
+        menu.classList.toggle('hidden');
+    });
+    document.getElementById('dropdown-loja').addEventListener('click', function() {
+        var menu = document.getElementById('loja-menu');
         menu.classList.toggle('hidden');
     });
     document.getElementById('user-menu-button').addEventListener('click', function() {
