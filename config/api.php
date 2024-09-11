@@ -36,13 +36,13 @@
         $curlError = curl_error($ch); // Pegar erros do cURL, se houver
         curl_close($ch);
         // Debugging opcional para verificar a resposta e o código HTTP
-        echo "<pre>";
+        /*echo "<pre>";
         echo "Corpo da requisição:\n" . json_encode($body) . "\n";
         echo "Código HTTP: " . $httpCode . "\n";
         if ($curlError) {
             echo "Erro cURL: " . $curlError . "\n";
         }
         echo "Resposta da API:\n" . $response . "\n";
-        echo "</pre>";
+        echo "</pre>";*/
         return json_decode($response, true);
     }
