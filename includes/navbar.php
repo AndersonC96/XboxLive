@@ -73,7 +73,20 @@
                 </div>
             </div>
             <a href="conquistas.php" class="text-white">Conquistas</a>
-            <a href="#" class="text-white">Gamepass</a>
+            <div class="relative">
+                <button id="dropdown-gamepass" class="text-white hover:text-gray-400 focus:outline-none dropdown-btn">
+                    Gamepass
+                    <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div id="gamepass-menu" class="dropdown-menu hidden absolute mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg">
+                    <a href="../pages/todos_os_jogos.php" class="block px-4 py-2 hover:bg-gray-600">Todos os Jogos</a>
+                    <a href="../pages/gamepass_pc.php" class="block px-4 py-2 hover:bg-gray-600">PC Gamepass</a>
+                    <a href="../pages/ea_play.php" class="block px-4 py-2 hover:bg-gray-600">EA Play</a>
+                    <a href="../pages/jogos_sem_controle.php" class="block px-4 py-2 hover:bg-gray-600">Jogos sem Controle</a>
+                </div>
+            </div>
             <a href="#" class="text-white">Loja</a>
             <a href="#" class="text-white">Jogador</a>
         </div>
@@ -105,6 +118,10 @@
     });
     document.getElementById('dropdown-amigos').addEventListener('click', function() {
         var menu = document.getElementById('amigos-menu');
+        menu.classList.toggle('hidden');
+    });
+    document.getElementById('dropdown-gamepass').addEventListener('click', function() {
+        var menu = document.getElementById('gamepass-menu');
         menu.classList.toggle('hidden');
     });
     document.getElementById('user-menu-button').addEventListener('click', function() {
