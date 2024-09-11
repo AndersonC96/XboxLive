@@ -4,28 +4,65 @@
     include('../includes/navbar.php');
     require '../config/db.php';
     require_once '../config/api.php';
-    $games = [];
-    function getGamepassGames() {
-        $endpoint = "gamepass/all";
-        $response = openXBLRequest($endpoint);
-        return isset($response) && is_array($response) ? $response : [];
+    if (!isset($_SESSION['user_id'])) {
+        echo "Erro: Usuário não está logado.";
+        exit;
     }
-    $games = getGamepassGames();
+    $stmt = $pdo->prepare("SELECT game_id FROM gamepass_games");
+    $stmt->execute();
+    $game_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    if (empty($game_ids)) {
+        echo "Nenhum jogo encontrado no banco de dados.";
+        exit;
+    }
+    $items_per_page = 10;
+    $total_items = count($game_ids);
+    $total_pages = ceil($total_items / $items_per_page);
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $offset = ($page - 1) * $items_per_page;
+    $current_page_ids = array_slice($game_ids, $offset, $items_per_page);
+    $endpoint = "marketplace/details";
+    $body = [
+        "products" => implode(',', $current_page_ids)
+    ];
+    $response = openXBLPostRequest($endpoint, $body);
 ?>
 <div class="container mx-auto p-4">
-    <h1 class="text-3xl mb-4">Todos os Jogos no Game Pass</h1>
-    <?php if (!empty($games)) : ?>
+    <h1 class="text-3xl mb-4">Todos os Jogos do Game Pass</h1>
+    <?php if (!empty($response['Products'])) : ?>
         <ul>
-            <?php foreach ($games as $game) : ?>
+            <?php foreach ($response['Products'] as $product) : ?>
                 <li class="mb-4">
                     <div class="flex items-center space-x-4">
-                        <p class="text-xl">ID do Jogo: <?php echo htmlspecialchars($game['id']); ?></p>
+                        <img src="<?php echo $product['LocalizedProperties'][0]['Images'][0]['Uri']; ?>" alt="Imagem do jogo" class="w-16 h-16 rounded-full">
+                        <div>
+                            <p class="text-xl"><?php echo htmlspecialchars($product['LocalizedProperties'][0]['ProductTitle']); ?></p>
+                            <p class="text-sm text-gray-400">
+                                Preço:
+                                <?php
+                                if (isset($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'])) {
+                                    echo '$' . number_format($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'], 2);
+                                } else {
+                                    echo 'Não disponível';
+                                }
+                                ?>
+                            </p>
+                            <p class="text-sm text-gray-400">Descrição: <?php echo htmlspecialchars($product['LocalizedProperties'][0]['ShortDescription']); ?></p>
+                        </div>
                     </div>
                 </li>
             <?php endforeach; ?>
         </ul>
     <?php else : ?>
-        <p>Nenhum jogo encontrado no Game Pass.</p>
+        <p>Nenhum detalhe de jogo encontrado.</p>
     <?php endif; ?>
+    <div class="mt-4">
+        <?php if ($page > 1) : ?>
+            <a href="?page=<?php echo $page - 1; ?>" class="px-4 py-2 bg-gray-300 rounded">Anterior</a>
+        <?php endif; ?>
+        <?php if ($page < $total_pages) : ?>
+            <a href="?page=<?php echo $page + 1; ?>" class="px-4 py-2 bg-gray-300 rounded">Próxima</a>
+        <?php endif; ?>
+    </div>
 </div>
 <?php include('../includes/footer.php'); ?>
