@@ -104,7 +104,6 @@
                     <a href="../pages/promocao.php" class="block px-4 py-2 hover:bg-gray-600">Promoção</a>
                 </div>
             </div>
-            <a href="#" class="text-white">Loja</a>
             <a href="#" class="text-white">Jogador</a>
         </div>
         <form action="search.php" method="GET" class="flex">
