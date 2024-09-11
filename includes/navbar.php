@@ -87,6 +87,23 @@
                     <a href="../pages/gamepass_pc.php" class="block px-4 py-2 hover:bg-gray-600">PC Gamepass</a>
                 </div>
             </div>
+            <div class="relative">
+                <button id="dropdown-loja" class="text-white hover:text-gray-400 focus:outline-none">
+                    Loja
+                    <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div id="loja-menu" class="absolute hidden group-hover:block mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg">
+                    <a href="../pages/em_breve.php" class="block px-4 py-2 hover:bg-gray-600">Em Breve</a>
+                    <a href="../pages/mais_jogados.php" class="block px-4 py-2 hover:bg-gray-600">Mais Jogados</a>
+                    <a href="../pages/melhores_avaliados.php" class="block px-4 py-2 hover:bg-gray-600">Melhores Avaliados</a>
+                    <a href="../pages/novos_jogos.php" class="block px-4 py-2 hover:bg-gray-600">Novos Jogos</a>
+                    <a href="../pages/promocao.php" class="block px-4 py-2 hover:bg-gray-600">Promoção</a>
+                    <a href="../pages/populares_gratis.php" class="block px-4 py-2 hover:bg-gray-600">Populares Grátis</a>
+                    <a href="../pages/populares_pagos.php" class="block px-4 py-2 hover:bg-gray-600">Populares Pagos</a>
+                </div>
+            </div>
             <a href="#" class="text-white">Loja</a>
             <a href="#" class="text-white">Jogador</a>
         </div>
