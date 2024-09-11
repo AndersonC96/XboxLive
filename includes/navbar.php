@@ -82,9 +82,9 @@
                 </button>
                 <div id="gamepass-menu" class="dropdown-menu hidden absolute mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg">
                     <a href="../pages/todos_os_jogos.php" class="block px-4 py-2 hover:bg-gray-600">Todos os Jogos</a>
-                    <a href="../pages/gamepass_pc.php" class="block px-4 py-2 hover:bg-gray-600">PC Gamepass</a>
                     <a href="../pages/ea_play.php" class="block px-4 py-2 hover:bg-gray-600">EA Play</a>
                     <a href="../pages/jogos_sem_controle.php" class="block px-4 py-2 hover:bg-gray-600">Jogos sem Controle</a>
+                    <a href="../pages/gamepass_pc.php" class="block px-4 py-2 hover:bg-gray-600">PC Gamepass</a>
                 </div>
             </div>
             <a href="#" class="text-white">Loja</a>
