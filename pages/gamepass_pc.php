@@ -28,7 +28,7 @@
     $response = openXBLPostRequest($endpoint, $body);
 ?>
 <div class="container mx-auto p-4">
-    <h1 class="text-3xl mb-4">Todos os Jogos do Game Pass</h1>
+    <h1 class="text-3xl mb-4">Todos os Jogos do PC Game Pass </h1>
     <?php if (!empty($response['Products'])) : ?>
         <ul>
             <?php foreach ($response['Products'] as $product) : ?>
