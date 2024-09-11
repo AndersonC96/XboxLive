@@ -73,8 +73,6 @@
                 </div>
             </div>
             <a href="conquistas.php" class="text-white">Conquistas</a>
-            <a href="#" class="text-white">Conversas</a>
-            <a href="#" class="text-white">DVR</a>
             <a href="#" class="text-white">Gamepass</a>
             <a href="#" class="text-white">Loja</a>
             <a href="#" class="text-white">Jogador</a>
