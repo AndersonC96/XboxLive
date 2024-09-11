@@ -40,11 +40,11 @@
                             <p class="text-sm text-gray-400">
                                 Preço:
                                 <?php
-                                if (isset($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'])) {
-                                    echo '$' . number_format($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'], 2);
-                                } else {
-                                    echo 'Não disponível';
-                                }
+                                    if (isset($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'])) {
+                                        echo '$' . number_format($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'], 2);
+                                    } else {
+                                        echo 'Não disponível';
+                                    }
                                 ?>
                             </p>
                             <p class="text-sm text-gray-400">Descrição: <?php echo htmlspecialchars($product['LocalizedProperties'][0]['ShortDescription']); ?></p>
