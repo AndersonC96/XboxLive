@@ -16,7 +16,6 @@
         echo "Nenhum jogo mais jogado encontrado.";
         exit;
     }
-    // Função para buscar o PredictedScore baseado no ProductId
     function getPredictedScore($productId, $items) {
         foreach ($items as $item) {
             if ($item['Id'] === $productId && isset($item['PredictedScore'])) {
@@ -41,12 +40,12 @@
                 <li class="mb-4">
                     <div class="flex items-center space-x-4">
                         <img src="<?php
-                                    foreach ($product['LocalizedProperties'][0]['Images'] as $image) {
-                                        if ($image['ImagePurpose'] === 'BoxArt') {
-                                            echo $image['Uri'];
-                                            break;
+                                        foreach ($product['LocalizedProperties'][0]['Images'] as $image) {
+                                            if ($image['ImagePurpose'] === 'BoxArt') {
+                                                echo $image['Uri'];
+                                                break;
+                                            }
                                         }
-                                    }
                                     ?>" alt="Imagem do jogo" class="w-16 h-16 rounded-full">
                         <div>
                             <p class="text-xl"><?php echo $predictedScore . '. ' . htmlspecialchars($product['LocalizedProperties'][0]['ProductTitle']); ?></p>
