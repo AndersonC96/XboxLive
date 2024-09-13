@@ -19,7 +19,6 @@
 <div class="container mx-auto mt-10 flex justify-center">
     <div class="bg-white/30 backdrop-blur-lg p-8 rounded-lg shadow-lg border border-white/20 max-w-lg text-center">
         <h1 class="text-4xl font-bold mb-4 text-black">Bem-vindo, <span class="text-green-500"><?php echo htmlspecialchars($gamertag); ?></span>!</h1>
-        <p class="text-black mb-6">Aqui estão os detalhes do seu perfil Xbox Live.</p>
         <ul class="text-left text-black space-y-3">
             <li><span class="text-green-500 font-bold">Gamerscore:</span>
                 <?php
