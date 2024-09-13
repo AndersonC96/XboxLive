@@ -36,115 +36,114 @@
             </a>
             <a href="dashboard.php" class="text-white">Home</a>
             <div class="relative">
-                <button id="dropdown-amigos" class="text-white hover:text-gray-400 focus:outline-none">
-                    Amigos
-                    <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
+                <button id="dropdown-amigos-btn" class="text-white hover:text-gray-400 focus:outline-none">
+                    <i class="fas fa-user-friends mr-2"></i> Amigos
+                    <i class="fas fa-chevron-down ml-1"></i>
                 </button>
-                <div id="amigos-menu" class="hidden absolute bg-gray-700 text-white rounded-lg shadow-lg">
-                    <a href="../pages/amigos.php" class="block px-4 py-2 hover:bg-gray-600">Amigos</a>
-                    <a href="../pages/bloqueados.php" class="block px-4 py-2 hover:bg-gray-600">Bloqueados</a>
-                    <a href="../pages/recentes.php" class="block px-4 py-2 hover:bg-gray-600">Recentes</a>
+                <div id="dropdown-amigos-menu" class="hidden absolute bg-gray-700 text-white rounded-lg shadow-lg mt-2">
+                    <a href="../pages/amigos.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-users mr-2"></i> Amigos
+                    </a>
+                    <a href="../pages/bloqueados.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-ban mr-2"></i> Bloqueados
+                    </a>
+                    <a href="../pages/recentes.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-history mr-2"></i> Recentes
+                    </a>
                 </div>
             </div>
             <div class="relative">
-                <button id="dropdown-activity" class="text-white hover:text-gray-400 focus:outline-none">
-                    Atividade
-                    <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
+                <button id="dropdown-activity-btn" class="text-white flex items-center hover:text-gray-400 focus:outline-none">
+                    <i class="fas fa-stream mr-2"></i> Atividade
+                    <i class="fas fa-chevron-down ml-1"></i>
                 </button>
-                <div id="activity-menu" class="hidden absolute bg-gray-700 text-white rounded-lg shadow-lg">
-                    <a href="../pages/feed.php" class="block px-4 py-2 hover:bg-gray-600">Feed</a>
-                    <a href="../pages/historico.php" class="block px-4 py-2 hover:bg-gray-600">Histórico</a>
+                <div id="dropdown-activity-menu" class="hidden absolute bg-gray-700 text-white rounded-lg shadow-lg mt-2">
+                    <a href="../pages/feed.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-rss mr-2"></i> Feed
+                    </a>
+                    <a href="../pages/historico.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-history mr-2"></i> Histórico
+                    </a>
+                </div>
+            </div>
+            <a href="conquistas.php" class="text-white flex items-center hover:text-gray-400">
+                <i class="fas fa-trophy mr-2"></i> Conquistas
+            </a>
+            <div class="relative">
+                <button id="dropdown-gamepass-btn" class="text-white flex items-center hover:text-gray-400 focus:outline-none">
+                    <i class="fas fa-gamepad mr-2"></i> Gamepass
+                    <i class="fas fa-chevron-down ml-1"></i>
+                </button>
+                <div id="dropdown-gamepass-menu" class="hidden absolute bg-gray-700 text-white rounded-lg shadow-lg mt-2">
+                    <a href="../pages/todos_os_jogos.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-list mr-2"></i> Todos os Jogos
+                    </a>
+                    <a href="../pages/ea_play.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-play-circle mr-2"></i> EA Play
+                    </a>
+                    <a href="../pages/jogos_sem_controle.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-gamepad mr-2"></i> Jogos sem Controle
+                    </a>
+                    <a href="../pages/gamepass_pc.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-laptop mr-2"></i> PC Gamepass
+                    </a>
                 </div>
             </div>
             <div class="relative">
-                <button id="dropdown-clubes" class="text-white hover:text-gray-400 focus:outline-none">
-                    Clubes
-                    <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
+                <button id="dropdown-loja-btn" class="text-white flex items-center hover:text-gray-400 focus:outline-none">
+                    <i class="fas fa-store mr-2"></i> Loja
+                    <i class="fas fa-chevron-down ml-1"></i>
                 </button>
-                <div id="clubes-menu" class="hidden absolute bg-gray-700 text-white rounded-lg shadow-lg">
-                    <a href="../pages/procurar_clube.php" class="block px-4 py-2 hover:bg-gray-600">Procurar clube</a>
-                    <a href="../pages/recomendacoes.php" class="block px-4 py-2 hover:bg-gray-600">Recomendações</a>
-                </div>
-            </div>
-            <a href="conquistas.php" class="text-white">Conquistas</a>
-            <div class="relative">
-                <button id="dropdown-gamepass" class="text-white hover:text-gray-400 focus:outline-none dropdown-btn">
-                    Gamepass
-                    <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
-                <div id="gamepass-menu" class="dropdown-menu hidden absolute mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg">
-                    <a href="../pages/todos_os_jogos.php" class="block px-4 py-2 hover:bg-gray-600">Todos os Jogos</a>
-                    <a href="../pages/ea_play.php" class="block px-4 py-2 hover:bg-gray-600">EA Play</a>
-                    <a href="../pages/jogos_sem_controle.php" class="block px-4 py-2 hover:bg-gray-600">Jogos sem Controle</a>
-                    <a href="../pages/gamepass_pc.php" class="block px-4 py-2 hover:bg-gray-600">PC Gamepass</a>
-                </div>
-            </div>
-            <div class="relative">
-                <button id="dropdown-loja" class="text-white hover:text-gray-400 focus:outline-none">
-                    Loja
-                    <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
-                <div id="loja-menu" class="absolute hidden group-hover:block mt-2 w-48 bg-gray-700 text-white rounded-lg shadow-lg">
-                    <a href="../pages/em_breve.php" class="block px-4 py-2 hover:bg-gray-600">Em Breve</a>
-                    <a href="../pages/mais_jogados.php" class="block px-4 py-2 hover:bg-gray-600">Mais Jogados</a>
-                    <a href="../pages/melhores_avaliados.php" class="block px-4 py-2 hover:bg-gray-600">Melhores Avaliados</a>
-                    <a href="../pages/novos_jogos.php" class="block px-4 py-2 hover:bg-gray-600">Novos Jogos</a>
-                    <a href="../pages/populares_gratis.php" class="block px-4 py-2 hover:bg-gray-600">Populares Grátis</a>
-                    <a href="../pages/populares_pagos.php" class="block px-4 py-2 hover:bg-gray-600">Populares Pagos</a>
-                    <a href="../pages/promocao.php" class="block px-4 py-2 hover:bg-gray-600">Promoção</a>
+                <div id="dropdown-loja-menu" class="hidden absolute bg-gray-700 text-white rounded-lg shadow-lg mt-2">
+                    <a href="../pages/em_breve.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-hourglass-start mr-2"></i> Em Breve
+                    </a>
+                    <a href="../pages/mais_jogados.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-fire mr-2"></i> Mais Jogados
+                    </a>
+                    <a href="../pages/melhores_avaliados.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-star mr-2"></i> Melhores Avaliados
+                    </a>
+                    <a href="../pages/novos_jogos.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-plus-circle mr-2"></i> Novos Jogos
+                    </a>
+                    <a href="../pages/populares_gratis.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-gift mr-2"></i> Populares Grátis
+                    </a>
+                    <a href="../pages/populares_pagos.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-dollar-sign mr-2"></i> Populares Pagos
+                    </a>
+                    <a href="../pages/promocao.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center">
+                        <i class="fas fa-tags mr-2"></i> Promoção
+                    </a>
                 </div>
             </div>
         </div>
-        <form action="search.php" method="GET" class="flex">
-            <input type="text" name="gamertag_search" placeholder="Buscar Gamertag" class="px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-400" required>
-            <button type="submit" class="ml-2 bg-green-500 text-white px-4 py-2 rounded-lg">Buscar</button>
-        </form>
-        <div class="relative ml-4">
+        <div class="flex items-center space-x-4">
+            <form action="search.php" method="GET" class="flex items-center">
+                <input type="text" name="gamertag_search" placeholder="Buscar Gamertag" class="px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-400" required>
+                <button type="submit" class="ml-2 bg-green-500 text-white px-4 py-2 rounded-lg">Buscar</button>
+            </form>
             <button class="focus:outline-none">
                 <img src="<?php echo $gamerpic; ?>" alt="Profile" class="w-10 h-10 rounded-full border-2 border-green-500" id="user-menu-button">
             </button>
-            <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg py-2 z-50">
-                <a href="../pages/gerar_gamertag.php" class="block px-4 py-2 text-sm hover:bg-gray-200">Gerar Gamertag</a>
-                <a href="../pages/alerts.php" class="block px-4 py-2 text-sm hover:bg-gray-200">Notificações</a>
-                <a href="../pages/presence.php" class="block px-4 py-2 text-sm hover:bg-gray-200">Status</a>
-                <a href="logout.php" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-200">Sair</a>
-            </div>
         </div>
     </div>
 </nav>
 <script>
-    document.getElementById('dropdown-activity').addEventListener('click', function() {
-        var menu = document.getElementById('activity-menu');
-        menu.classList.toggle('hidden');
+    document.getElementById('dropdown-amigos-btn').addEventListener('click', function() {
+        document.getElementById('dropdown-amigos-menu').classList.toggle('hidden');
     });
-    document.getElementById('dropdown-clubes').addEventListener('click', function() {
-        var menu = document.getElementById('clubes-menu');
-        menu.classList.toggle('hidden');
+    document.getElementById('dropdown-activity-btn').addEventListener('click', function() {
+        document.getElementById('dropdown-activity-menu').classList.toggle('hidden');
     });
-    document.getElementById('dropdown-amigos').addEventListener('click', function() {
-        var menu = document.getElementById('amigos-menu');
-        menu.classList.toggle('hidden');
+    document.getElementById('dropdown-gamepass-btn').addEventListener('click', function() {
+        document.getElementById('dropdown-gamepass-menu').classList.toggle('hidden');
     });
-    document.getElementById('dropdown-gamepass').addEventListener('click', function() {
-        var menu = document.getElementById('gamepass-menu');
-        menu.classList.toggle('hidden');
-    });
-    document.getElementById('dropdown-loja').addEventListener('click', function() {
-        var menu = document.getElementById('loja-menu');
-        menu.classList.toggle('hidden');
+    document.getElementById('dropdown-loja-btn').addEventListener('click', function() {
+        document.getElementById('dropdown-loja-menu').classList.toggle('hidden');
     });
     document.getElementById('user-menu-button').addEventListener('click', function() {
-        var menu = document.getElementById('user-menu');
-        menu.classList.toggle('hidden');
+        document.getElementById('user-menu').classList.toggle('hidden');
     });
 </script>
