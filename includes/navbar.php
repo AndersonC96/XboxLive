@@ -34,7 +34,6 @@
             <a href="dashboard.php">
                 <img src="../img/logo2.png" alt="Xbox Logo" class="w-10 h-10">
             </a>
-            <a href="dashboard.php" class="text-white">Home</a>
             <div class="relative">
                 <button id="dropdown-amigos-btn" class="text-white hover:text-gray-400 focus:outline-none">
                     <i class="fas fa-user-friends mr-2"></i> Amigos
