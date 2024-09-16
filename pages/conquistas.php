@@ -58,7 +58,7 @@
 <div class="container mx-auto p-4">
     <h1 class="text-3xl mb-4">Conquistas</h1>
     <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-        <div class="flex items-center border border-gray-300 rounded-full px-4 py-2 space-x-2 shadow-lg w-full md:w-1/2 bg-white">
+        <div class="flex items-center border rounded-full px-4 py-2 space-x-2 shadow-lg w-full md:w-1/2 bg-white">
             <input
                 type="text"
                 id="searchInput"
