@@ -29,25 +29,36 @@
 <div class="container mx-auto p-4">
     <h1 class="text-3xl mb-4">Jogadores Recentes</h1>
     <?php if (!empty($recentPlayers)) : ?>
-        <ul>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php foreach ($recentPlayers as $player) : ?>
-                <li class="mb-4">
-                    <div class="flex items-center space-x-4">
+                <div class="bg-gray-800 text-white shadow-lg rounded-lg overflow-hidden flex">
+                    <div class="w-1/3 bg-gray-700 flex items-center justify-center">
                         <?php
                             $avatar = !empty($player['displayPicRaw']) ? $player['displayPicRaw'] : '../img/default_avatar.jpg';
-                            $lastPlayed = isset($player['recentPlayer']['titles'][0]['lastPlayedWithDateTime']) ? date('d/m/Y', strtotime($player['recentPlayer']['titles'][0]['lastPlayedWithDateTime'])) : 'Data não disponível';
                         ?>
-                        <img src="<?php echo $avatar; ?>" alt="Avatar de <?php echo htmlspecialchars($player['gamertag']); ?>" class="w-16 h-16 rounded-full">
+                        <img src="<?php echo $avatar; ?>" alt="Avatar de <?php echo htmlspecialchars($player['gamertag']); ?>" class="w-full h-full object-cover">
+                    </div>
+                    <div class="w-2/3 p-4 flex flex-col justify-between">
                         <div>
-                            <p class="text-xl"><?php echo htmlspecialchars($player['gamertag']); ?></p>
-                            <p class="text-sm text-gray-400">Último jogo: <?php echo htmlspecialchars($player['recentPlayer']['titles'][0]['titleName']); ?></p>
-                            <p class="text-sm text-gray-400">Último encontro: <?php echo $lastPlayed; ?></p>
-                            <p class="text-sm text-gray-400">Gamerscore: <?php echo number_format($player['gamerScore'], 0, ',', '.'); ?> <img src="../img/gs.png" alt="Gamerscore Icon" class="inline-block w-4 h-4"></p>
+                            <h2 class="text-lg font-bold"><?php echo htmlspecialchars($player['gamertag']); ?></h2>
+                            <p class="text-sm text-gray-400 mt-1">Último jogo: <?php echo htmlspecialchars($player['recentPlayer']['titles'][0]['titleName']); ?></p>
+                            <p class="text-sm text-gray-400">Último encontro:
+                                <?php
+                                    $lastPlayed = isset($player['recentPlayer']['titles'][0]['lastPlayedWithDateTime']) ? date('d/m/Y', strtotime($player['recentPlayer']['titles'][0]['lastPlayedWithDateTime'])) : 'Data não disponível';
+                                    echo $lastPlayed;
+                                ?>
+                            </p>
+                        </div>
+                        <div class="mt-2">
+                            <p class="text-sm text-green-400 flex items-center">
+                                Gamerscore: <?php echo number_format($player['gamerScore'], 0, ',', '.'); ?>
+                                <img src="../img/gs.png" alt="Gamerscore Icon" class="inline-block ml-2 w-5 h-5">
+                            </p>
                         </div>
                     </div>
-                </li>
+                </div>
             <?php endforeach; ?>
-        </ul>
+        </div>
     <?php else : ?>
         <p>Você não jogou com outros jogadores recentemente.</p>
     <?php endif; ?>
