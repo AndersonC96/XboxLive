@@ -28,7 +28,7 @@
     function getDeviceIcon($deviceType) {
         switch ($deviceType) {
             case 'XboxSeries':
-                return '<img src="../img/xboxseries.png" alt="Xbox Series" width="62,5" height="62,5">';  // Ajuste de tamanho
+                return '<img src="../img/xboxseries.png" alt="Xbox Series" width="62,5" height="62,5">';
             case 'PC':
                 return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
             case 'XboxOne':
