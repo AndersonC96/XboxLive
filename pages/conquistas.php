@@ -28,7 +28,7 @@
     function getDeviceIcon($deviceType) {
         switch ($deviceType) {
             case 'XboxSeries':
-                return '<img src="../img/xboxseries.png" alt="Xbox Series" width="62,5" height="62,5">';
+                return '<img src="../img/xboxseries.png" alt="Xbox Series" width="62,5" height="62,5">';  // Ajuste de tamanho
             case 'PC':
                 return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
             case 'XboxOne':
@@ -67,7 +67,7 @@
             <?php foreach ($games_to_display as $game) : ?>
                 <div class="bg-gray-800 p-4 rounded-lg shadow-md flex">
                     <div class="relative w-1/3">
-                        <img src="<?php echo getBoxArt($game); ?>" alt="Imagem do jogo" class="object-cover rounded-l-md h-full">
+                        <img src="<?php echo getBoxArt($game); ?>" alt="Imagem do jogo" class="object-cover rounded-l-md h-full" onerror="this.src='../img/default-image.png';">
                     </div>
                     <div class="w-2/3 p-4">
                         <p class="text-xl font-bold text-white"><?php echo htmlspecialchars($game['name']); ?></p>
@@ -86,14 +86,15 @@
                         </p>
                         <p class="text-sm text-gray-400">Jogado pela última vez:
                             <?php
-                                $lastPlayed = new DateTime($game['titleHistory']['lastTimePlayed']);
-                                echo $lastPlayed->format('d/m/Y');
+                            $lastPlayed = new DateTime($game['titleHistory']['lastTimePlayed']);
+                            echo $lastPlayed->format('d/m/Y');
                             ?>
                         </p>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
+
         <div class="mt-4">
             <?php if ($page > 1): ?>
                 <a href="?page=<?php echo $page - 1; ?>" class="bg-gray-800 text-white px-4 py-2 rounded">Anterior</a>
