@@ -61,9 +61,9 @@
                 <div class="friend-card bg-white text-gray-800 rounded-lg shadow-md overflow-hidden" data-gamertag="<?php echo htmlspecialchars($friend['gamertag']); ?>" data-added="<?php echo (new DateTime($friend['addedDateTimeUtc']))->format('Y-m-d'); ?>" data-gamerscore="<?php echo $friend['gamerScore']; ?>">
                     <div class="flex">
                         <?php
-                        $avatar = !empty($friend['displayPicRaw']) ? $friend['displayPicRaw'] : '../img/default_avatar.jpg';
-                        $addedDate = new DateTime($friend['addedDateTimeUtc']);
-                        $formattedDate = $addedDate->format('d/m/Y');
+                            $avatar = !empty($friend['displayPicRaw']) ? $friend['displayPicRaw'] : '../img/default_avatar.jpg';
+                            $addedDate = new DateTime($friend['addedDateTimeUtc']);
+                            $formattedDate = $addedDate->format('d/m/Y');
                         ?>
                         <img src="<?php echo $avatar; ?>" alt="Avatar de <?php echo $friend['displayName']; ?>" class="w-1/3 h-auto object-cover">
                         <div class="p-4 flex-1">
