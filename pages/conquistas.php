@@ -28,17 +28,17 @@
     function getDeviceIcon($deviceType) {
         switch ($deviceType) {
             case 'XboxSeries':
-                return '<img src="../img/xboxseries.png" alt="Xbox Series" class="inline-block w-6 h-6">';
+            return '<img src="../img/xboxseries.png" alt="Xbox Series" width="62,5" height="62,5">';
             case 'PC':
-                return '<img src="../img/windows.png" alt="PC" class="inline-block w-6 h-6">';
+                return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
             case 'XboxOne':
-                return '<img src="../img/xboxone.png" alt="Xbox One" class="inline-block w-6 h-6">';
+                return '<img src="../img/xboxone.png" alt="Xbox One" width="62,5" height="62,5">';
             case 'Win32':
-                return '<img src="../img/windows.png" alt="PC" class="inline-block w-6 h-6">';
+                return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
             case 'Mobile':
-                return '<img src="../img/windowsphone.webp" alt="Windows Phone" class="inline-block w-6 h-6">';
+                return '<img src="../img/windowsphone.webp" alt="Windows Phone" width="62,5" height="62,5">';
             case 'Xbox360':
-                return '<img src="../img/xbox360.png" alt="Xbox 360" class="inline-block w-6 h-6">';
+                return '<img src="../img/xbox360.png" alt="Xbox 360" width="62,5" height="62,5">';
             default:
                 return $deviceType;
         }
@@ -88,11 +88,11 @@
             </select>
             <select id="filterPlatform" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm">
                 <option value="">Plataformas</option>
-                <option value="PC">PC</option>
+                <option value="PC">PC (Windows Store)</option>
+                <option value="Win32">PC (Outros)</option>
                 <option value="Xbox360">Xbox 360</option>
                 <option value="XboxOne">Xbox One</option>
                 <option value="XboxSeries">Xbox Series</option>
-                <option value="Xbox360">Windows Phone</option>
             </select>
         </div>
     </div>
@@ -123,9 +123,11 @@
                     </div>
                     <div class="w-2/3 p-4">
                         <p class="text-xl font-bold text-white game-name">${game.name}</p>
-                        <p class="text-sm text-gray-400 gamerscore">Gamerscore: ${game.achievement.currentGamerscore.toLocaleString()}</p>
+                        <p class="text-sm text-gray-400 gamerscore">Gamerscore: ${game.achievement.currentGamerscore.toLocaleString()} <img src="../img/gs.png" alt="Gamerscore Icon" class="inline-block w-4 h-4"></p>
                         <p class="text-sm text-gray-400 progress">Progresso: ${game.achievement.progressPercentage}%</p>
-                        <p class="text-sm text-gray-400 flex items-center space-x-2 platform">Plataformas: ${game.devices ? game.devices.join(', ') : 'Plataforma não disponível'}</p>
+                        <p class="text-sm text-gray-400 flex items-center space-x-2 platform">Plataformas: ${
+                            game.devices ? game.devices.map(device => getDeviceIcon(device)).join(' ') : 'Plataforma não disponível'
+                        }</p>
                         <p class="text-sm text-gray-400 last-played">Jogado pela última vez: ${new Date(game.titleHistory.lastTimePlayed).toLocaleDateString()}</p>
                     </div>
                 </div>`;
@@ -186,6 +188,24 @@
             renderGames();
         }
     });
+    function getDeviceIcon(deviceType) {
+        switch (deviceType) {
+            case 'XboxSeries':
+                return '<img src="../img/xboxseries.png" alt="Xbox Series" width="62,5" height="62,5">';
+            case 'PC':
+                return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
+            case 'XboxOne':
+                return '<img src="../img/xboxone.png" alt="Xbox One" width="62,5" height="62,5">';
+            case 'Win32':
+                return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
+            case 'Mobile':
+                return '<img src="../img/windowsphone.webp" alt="Windows Phone" width="62,5" height="62,5">';
+            case 'Xbox360':
+                return '<img src="../img/xbox360.png" alt="Xbox 360" width="62,5" height="62,5">';
+            default:
+                return deviceType;
+        }
+    }
     renderGames();
 </script>
 <?php include('../includes/footer.php'); ?>
