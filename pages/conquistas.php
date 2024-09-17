@@ -28,7 +28,7 @@
     function getDeviceIcon($deviceType) {
         switch ($deviceType) {
             case 'XboxSeries':
-            return '<img src="../img/xboxseries.png" alt="Xbox Series" width="62,5" height="62,5">';
+                return '<img src="../img/xboxseries.png" alt="Xbox Series" width="62,5" height="62,5">';
             case 'PC':
                 return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
             case 'XboxOne':
@@ -56,38 +56,39 @@
     $items_per_page = 12;
 ?>
 <div class="container mx-auto p-4">
-    <h1 class="text-3xl mb-4">Conquistas</h1>
-    <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-        <div class="flex items-center border rounded-full px-4 py-2 space-x-2 shadow-lg w-full md:w-1/2 bg-white">
+    <h1 class="text-3xl text-center mb-6">Conquistas</h1>
+    <div class="flex flex-col items-center space-y-4">
+        <div class="relative w-full max-w-lg">
             <input
                 type="text"
                 id="searchInput"
                 placeholder="Buscar por Nome..."
-                class="outline-none w-full px-2 bg-transparent text-gray-700" />
-            <button id="searchButton" class="outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.415l5.387 5.388a1 1 0 01-1.414 1.414l-5.387-5.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+                class="w-full px-6 py-3 text-gray-700 bg-white rounded-full shadow-lg outline-none focus:ring-2 focus:ring-blue-300" />
+            <button class="absolute right-4 top-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a7 7 0 107 7 7 7 0 00-7-7zM21 21l-4.35-4.35" />
                 </svg>
             </button>
         </div>
-        <div class="flex space-x-4">
-            <select id="filterName" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm">
+        <div class="flex flex-wrap justify-center space-x-4">
+            <select id="filterName" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm w-48">
                 <option value="">Nome</option>
                 <option value="asc">A-Z</option>
                 <option value="desc">Z-A</option>
             </select>
-            <select id="filterGamerscore" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm">
+            <select id="filterGamerscore" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm w-48">
                 <option value="">Gamerscore</option>
                 <option value="asc">Do menor para o maior</option>
                 <option value="desc">Do maior para o menor</option>
             </select>
-            <select id="filterLastPlayed" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm">
+            <select id="filterLastPlayed" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm w-56">
                 <option value="">Jogado pela Última Vez</option>
                 <option value="recent">Mais Recente</option>
                 <option value="oldest">Mais Antigo</option>
             </select>
-            <select id="filterPlatform" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm">
+            <select id="filterPlatform" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm w-48">
                 <option value="">Plataformas</option>
+                <option value="Mobile">Mobile (Windows Phone)</option>
                 <option value="PC">PC (Windows Store)</option>
                 <option value="Win32">PC (Outros)</option>
                 <option value="Xbox360">Xbox 360</option>
@@ -96,10 +97,10 @@
             </select>
         </div>
     </div>
-    <div id="gameList" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Carregar todos os jogos aqui via JavaScript -->
+    <div id="gameList" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+        <!-- Jogos carregados via JavaScript -->
     </div>
-    <div class="mt-4">
+    <div class="mt-4 flex justify-center space-x-4">
         <button id="prevPage" class="bg-gray-800 text-white px-4 py-2 rounded">Anterior</button>
         <button id="nextPage" class="bg-gray-800 text-white px-4 py-2 rounded">Próxima</button>
     </div>
