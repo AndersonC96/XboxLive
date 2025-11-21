@@ -25,6 +25,14 @@ Painel interativo desenvolvido com PHP, Tailwind CSS e a API do Xbox Live para v
 - **Composer (para gerenciamento de dependências)**
 - **API Key do Xbox Live**
 
+### Erro comum: `Class "mysqli" not found`
+
+Se você visualizar este erro ao carregar a aplicação, o PHP não está com a extensão de acesso ao MySQL habilitada.
+
+- **No XAMPP/Windows**: abra o arquivo `php.ini`, descomente a linha `extension=mysqli` (remova o `;` do início) e reinicie o Apache.
+- **No Linux (PHP instalado via pacote)**: instale ou habilite o pacote `php-mysql` (ou `php8.x-mysql`) e reinicie o servidor web.
+- Após habilitar a extensão, reinicie o servidor e recarregue a página.
+
 ## 📝 Instalação
 
 ### 1. Clone o repositório
