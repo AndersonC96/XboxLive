@@ -8,22 +8,17 @@
         echo "Erro: Usuário não está logado.";
         exit;
     }
-    $user_id = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT xuid FROM users WHERE id = :user_id");
-    $stmt->execute(['user_id' => $user_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($user && $user['xuid']) {
-        $xuid = $user['xuid'];
-        $endpoint = "achievements";
-        $response = openXBLRequest($endpoint);
-        if (isset($response['titles']) && is_array($response['titles'])) {
-            $games = $response['titles'];
-        } else {
-            $games = [];
-        }
+    
+    // Obter informações da conta para XUID (usa endpoint account que retorna dados da conta autenticada)
+    $endpoint = "achievements";
+    $response = openXBLRequest($endpoint);
+    
+    if ($response && isset($response['titles']) && is_array($response['titles'])) {
+        $games = $response['titles'];
     } else {
-        echo "Usuário não encontrado ou XUID não disponível.";
-        exit;
+        $games = [];
+        // Mensagem amigável se não houver dados disponíveis
+        $error_message = "Não foi possível carregar suas conquistas. Verifique se a chave da API está configurada corretamente no arquivo .env";
     }
     function getDeviceIcon($deviceType) {
         switch ($deviceType) {
@@ -57,6 +52,20 @@
 ?>
 <div class="container mx-auto p-4">
     <h1 class="text-3xl text-center mb-6">Conquistas</h1>
+    
+    <?php if (isset($error_message)): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Atenção!</strong>
+            <span class="block sm:inline"><?php echo htmlspecialchars($error_message); ?></span>
+        </div>
+    <?php endif; ?>
+    
+    <?php if (empty($games) && !isset($error_message)): ?>
+        <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">Você ainda não possui jogos com conquistas registradas.</span>
+        </div>
+    <?php else: ?>
+    
     <div class="flex flex-col items-center space-y-4">
         <div class="relative w-full max-w-lg">
             <input
@@ -105,6 +114,9 @@
         <button id="nextPage" class="bg-gray-800 text-white px-4 py-2 rounded">Próxima</button>
     </div>
 </div>
+
+<?php endif; ?>
+
 <script>
     const games = <?php echo json_encode($games); ?>;
     const itemsPerPage = <?php echo $items_per_page; ?>;

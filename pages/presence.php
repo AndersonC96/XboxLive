@@ -4,17 +4,22 @@
     include('../includes/navbar.php');
     require_once '../config/api.php';
     require '../config/db.php';
-    $user_id = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT xuid FROM users WHERE id = :user_id");
-    $stmt->execute(['user_id' => $user_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Obter informações da conta (inclui XUID nos metadados)
+    $accountResponse = openXBLRequest("account");
+    $xuid = null;
+    
+    if ($accountResponse && isset($accountResponse['profileUsers'][0]['id'])) {
+        $xuid = $accountResponse['profileUsers'][0]['id'];
+    }
+    
     $presenceData = null;
     $lastSeenDetails = null;
-    if ($user && $user['xuid']) {
-        $xuid = $user['xuid'];
+    
+    if ($xuid) {
         $endpoint = $xuid . "/presence";
         $response = openXBLRequest($endpoint);
-        if (isset($response[0]['state'])) {
+        if ($response && isset($response[0]['state'])) {
             $presenceData = $response[0]['state'];
             if ($response[0]['state'] === 'Offline' && isset($response[0]['lastSeen'])) {
                 $lastSeenDetails = $response[0]['lastSeen'];
@@ -22,6 +27,8 @@
         } else {
             $presenceData = 'Desconhecido';
         }
+    } else {
+        $presenceData = 'Não disponível';
     }
     function getDeviceIcon($deviceType) {
         switch ($deviceType) {
