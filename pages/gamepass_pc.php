@@ -15,7 +15,7 @@
         echo "Nenhum jogo encontrado no banco de dados.";
         exit;
     }
-    $items_per_page = 10;
+    $items_per_page = 12;
     $total_items = count($game_ids);
     $total_pages = ceil($total_items / $items_per_page);
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -27,61 +27,127 @@
     ];
     $response = openXBLPostRequest($endpoint, $body);
 ?>
-<div class="container mx-auto p-4">
-    <h1 class="text-3xl mb-4">Todos os Jogos do PC Game Pass </h1>
-    <?php if (!empty($response['Products'])) : ?>
-        <ul>
-            <?php foreach ($response['Products'] as $product) : ?>
-                <li class="mb-4">
-                    <div class="flex items-center space-x-4">
-                        <?php
-                            $boxArtImage = null;
-                            if (isset($product['LocalizedProperties'][0]['Images']) && is_array($product['LocalizedProperties'][0]['Images'])) {
-                                foreach ($product['LocalizedProperties'][0]['Images'] as $image) {
-                                    if ($image['ImagePurpose'] === 'BoxArt') {
-                                        $boxArtImage = $image['Uri'];
-                                        break;
-                                    }
+<main class="xbox-content">
+    <div class="xbox-page space-y-6">
+        <section class="xbox-hero">
+            <span class="xbox-hero-eyebrow">Game Pass</span>
+            <h1 class="xbox-hero-title">Todos os Jogos do PC Game Pass</h1>
+            <p class="xbox-hero-subtitle">Navegue pelos jogos do PC Game Pass com busca temática, cartões em vidro líquido e paginação consistente.</p>
+        </section>
+
+        <div class="xbox-panel space-y-4">
+            <div class="friends-search">
+                <i class="fas fa-search text-green-200/80"></i>
+                <input
+                    type="text"
+                    id="pcSearch"
+                    placeholder="Buscar por título..."
+                    class="friends-search-input"
+                />
+                <button id="pcSearchButton" class="friends-search-btn" aria-label="Buscar">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <?php if (!empty($response['Products'])) : ?>
+            <div id="pcList" class="friend-grid">
+                <?php foreach ($response['Products'] as $product) : ?>
+                    <?php
+                        $boxArtImage = null;
+                        if (isset($product['LocalizedProperties'][0]['Images']) && is_array($product['LocalizedProperties'][0]['Images'])) {
+                            foreach ($product['LocalizedProperties'][0]['Images'] as $image) {
+                                if ($image['ImagePurpose'] === 'BoxArt') {
+                                    $boxArtImage = $image['Uri'];
+                                    break;
                                 }
                             }
-                        ?>
-                        <?php if ($boxArtImage): ?>
-                            <img src="<?php echo 'https:' . $boxArtImage; ?>" alt="Imagem do jogo" class="w-16 h-16 rounded-full">
-                        <?php else: ?>
-                            <img src="../img/placeholder.png" alt="Imagem não disponível" class="w-16 h-16 rounded-full">
-                        <?php endif; ?>
-                        <div>
-                            <p class="text-xl"><?php echo htmlspecialchars($product['LocalizedProperties'][0]['ProductTitle'] ?? 'Título não disponível'); ?></p>
-                            <p class="text-sm text-gray-400">
-                                Preço:
-                                <?php
-                                    if (isset($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'])) {
-                                        echo '$' . number_format($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'], 2);
-                                    } else {
-                                        echo 'Não disponível';
-                                    }
-                                ?>
-                            </p>
-                            <p class="text-sm text-gray-400">Descrição: <?php echo htmlspecialchars($product['LocalizedProperties'][0]['ProductDescription'] ?? 'Descrição não disponível'); ?></p>
-                            <p class="text-sm text-gray-400">Desenvolvedora: <?php echo htmlspecialchars($product['LocalizedProperties'][0]['DeveloperName'] ?? 'Desconhecida'); ?></p>
-                            <p class="text-sm text-gray-400">Publisher: <?php echo htmlspecialchars($product['LocalizedProperties'][0]['PublisherName'] ?? 'Desconhecida'); ?></p>
-                            <p class="text-sm text-gray-400">Franquia: <?php echo htmlspecialchars($product['LocalizedProperties'][0]['Franchises'][0] ?? 'Não disponível'); ?></p>
-                            <p class="text-sm text-gray-400">Categoria: <?php echo htmlspecialchars($product['Properties']['Category'] ?? 'Não disponível'); ?></p>
+                        }
+
+                        $title = $product['LocalizedProperties'][0]['ProductTitle'] ?? 'Título não disponível';
+                        $description = $product['LocalizedProperties'][0]['ProductDescription'] ?? 'Descrição não disponível';
+                        $developer = $product['LocalizedProperties'][0]['DeveloperName'] ?? 'Desconhecida';
+                        $publisher = $product['LocalizedProperties'][0]['PublisherName'] ?? 'Desconhecida';
+                        $franchise = $product['LocalizedProperties'][0]['Franchises'][0] ?? 'Não disponível';
+                        $category = $product['Properties']['Category'] ?? 'Não disponível';
+
+                        $price = 'Não disponível';
+                        if (isset($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'])) {
+                            $priceValue = $product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'];
+                            $price = '$' . number_format($priceValue, 2);
+                        }
+                    ?>
+                    <article class="friend-card xbox-glass-card game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>">
+                        <div class="game-card-body">
+                            <div class="game-cover">
+                                <?php if ($boxArtImage) : ?>
+                                    <img src="<?php echo 'https:' . $boxArtImage; ?>" alt="Capa de <?php echo htmlspecialchars($title); ?>">
+                                <?php else : ?>
+                                    <img src="../img/placeholder.png" alt="Imagem não disponível">
+                                <?php endif; ?>
+                            </div>
+                            <div class="game-details">
+                                <div class="game-title"><?php echo htmlspecialchars($title); ?></div>
+                                <div class="game-meta">
+                                    <span class="game-badge">Desenvolvedora: <?php echo htmlspecialchars($developer); ?></span>
+                                    <span class="game-badge">Publisher: <?php echo htmlspecialchars($publisher); ?></span>
+                                    <span class="game-badge">Franquia: <?php echo htmlspecialchars($franchise); ?></span>
+                                    <span class="game-badge">Categoria: <?php echo htmlspecialchars($category); ?></span>
+                                </div>
+                                <p class="game-description"><?php echo htmlspecialchars($description); ?></p>
+                                <div class="game-price">Preço: <strong><?php echo htmlspecialchars($price); ?></strong></div>
+                            </div>
                         </div>
-                    </div>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php else : ?>
-        <p>Nenhum detalhe de jogo encontrado.</p>
-    <?php endif; ?>
-    <div class="mt-4">
-        <?php if ($page > 1) : ?>
-            <a href="?page=<?php echo $page - 1; ?>" class="px-4 py-2 bg-gray-300 rounded">Anterior</a>
-        <?php endif; ?>
-        <?php if ($page < $total_pages) : ?>
-            <a href="?page=<?php echo $page + 1; ?>" class="px-4 py-2 bg-gray-300 rounded">Próxima</a>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+            <div class="friends-pagination">
+                <?php
+                    $maxVisible = 5;
+                    $halfWindow = floor($maxVisible / 2);
+                    $startPage = max(1, $page - $halfWindow);
+                    $endPage = min($total_pages, $startPage + $maxVisible - 1);
+
+                    if (($endPage - $startPage + 1) < $maxVisible) {
+                        $startPage = max(1, $endPage - $maxVisible + 1);
+                    }
+
+                    $hasPrev = $page > 1;
+                    $hasNext = $page < $total_pages;
+                ?>
+                <a class="pagination-btn <?php echo $hasPrev ? '' : 'disabled'; ?>" href="<?php echo $hasPrev ? '?page=' . ($page - 1) : 'javascript:void(0);'; ?>">Anterior</a>
+                <span class="pagination-separator">|</span>
+                <?php for ($p = $startPage; $p <= $endPage; $p++) : ?>
+                    <a class="pagination-btn <?php echo $p === $page ? 'active' : ''; ?>" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                    <?php if ($p < $endPage) : ?>
+                        <span class="pagination-separator">|</span>
+                    <?php endif; ?>
+                <?php endfor; ?>
+                <span class="pagination-separator">|</span>
+                <a class="pagination-btn <?php echo $hasNext ? '' : 'disabled'; ?>" href="<?php echo $hasNext ? '?page=' . ($page + 1) : 'javascript:void(0);'; ?>">Próximo</a>
+            </div>
+        <?php else : ?>
+            <p class="text-green-50">Nenhum detalhe de jogo encontrado.</p>
         <?php endif; ?>
     </div>
-</div>
+</main>
+<script>
+    const pcSearchInput = document.getElementById('pcSearch');
+    const pcSearchButton = document.getElementById('pcSearchButton');
+    const pcList = document.getElementById('pcList');
+    const pcCards = pcList ? Array.from(pcList.querySelectorAll('.game-card')) : [];
+
+    function filterPcGames() {
+        const term = pcSearchInput.value.toLowerCase();
+        pcCards.forEach((card) => {
+            const title = card.getAttribute('data-title') || '';
+            card.style.display = title.includes(term) ? '' : 'none';
+        });
+    }
+
+    if (pcList) {
+        pcSearchInput.addEventListener('input', filterPcGames);
+        pcSearchButton.addEventListener('click', filterPcGames);
+    }
+</script>
 <?php include('../includes/footer.php'); ?>

@@ -10,4 +10,4 @@
         <link rel="icon" type="image/png" href="../img/logo2.png"/>
         <title>Xbox</title>
     </head>
-    <body class="bg-gray-100 flex flex-col min-h-screen">
+    <body class="xbox-body">
