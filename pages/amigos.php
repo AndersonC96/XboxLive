@@ -147,21 +147,55 @@
             return;
         }
 
-        const createButton = (label, page, isActive = false) => {
+        const createButton = (label, page, { isActive = false, disabled = false } = {}) => {
             const button = document.createElement('button');
             button.type = 'button';
             button.textContent = label;
-            button.className = `pagination-btn ${isActive ? 'active' : ''}`;
-            button.addEventListener('click', () => {
-                currentPage = page;
-                updateFriends();
-            });
+            button.className = `pagination-btn ${isActive ? 'active' : ''} ${disabled ? 'disabled' : ''}`;
+            if (!disabled) {
+                button.addEventListener('click', () => {
+                    currentPage = page;
+                    updateFriends();
+                });
+            }
             return button;
         };
 
-        for (let page = 1; page <= totalPages; page++) {
-            paginationContainer.appendChild(createButton(page, page, page === currentPage));
+        const addSeparator = () => {
+            const separator = document.createElement('span');
+            separator.className = 'pagination-separator';
+            separator.textContent = '|';
+            paginationContainer.appendChild(separator);
+        };
+
+        const maxVisible = 5;
+        const halfWindow = Math.floor(maxVisible / 2);
+        let startPage = Math.max(1, currentPage - halfWindow);
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+        if (endPage - startPage + 1 < maxVisible) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
         }
+
+        const hasPrev = currentPage > 1;
+        const hasNext = currentPage < totalPages;
+
+        paginationContainer.appendChild(
+            createButton('Anterior', currentPage - 1, { disabled: !hasPrev })
+        );
+
+        addSeparator();
+
+        for (let page = startPage; page <= endPage; page++) {
+            paginationContainer.appendChild(createButton(page, page, { isActive: page === currentPage }));
+            if (page < endPage) addSeparator();
+        }
+
+        addSeparator();
+
+        paginationContainer.appendChild(
+            createButton('Próximo', currentPage + 1, { disabled: !hasNext })
+        );
     }
 
     function updateFriends() {
