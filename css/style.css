@@ -2,6 +2,222 @@ html, body {
     height: 100%;
     margin: 0;
 }
+
+:root {
+    --xbox-green: #52b043;
+    --xbox-green-strong: #107c10;
+    --xbox-surface: rgba(255, 255, 255, 0.08);
+    --xbox-border: rgba(82, 176, 67, 0.35);
+    --xbox-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+}
+
+.xbox-body {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(82, 176, 67, 0.2), transparent 35%),
+        radial-gradient(circle at 80% 0%, rgba(16, 124, 16, 0.25), transparent 30%),
+        linear-gradient(135deg, #050f08 0%, #0b1c0d 40%, #071407 100%);
+    color: #e6ffed;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+}
+
+.xbox-body::before,
+.xbox-body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.xbox-body::before {
+    background:
+        radial-gradient(circle at 15% 75%, rgba(82, 176, 67, 0.25), transparent 35%),
+        radial-gradient(circle at 85% 30%, rgba(108, 198, 68, 0.22), transparent 38%),
+        radial-gradient(circle at 60% 80%, rgba(16, 124, 16, 0.18), transparent 42%);
+    filter: blur(40px);
+    opacity: 0.8;
+}
+
+.xbox-body::after {
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 140px 140px;
+    opacity: 0.18;
+}
+
+.xbox-body > * {
+    position: relative;
+    z-index: 1;
+}
+
+.xbox-content {
+    flex: 1 0 auto;
+    padding: 2.5rem 1.25rem 3rem;
+}
+
+.xbox-page {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.xbox-hero {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.xbox-hero-eyebrow {
+    color: rgba(230, 255, 237, 0.8);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-size: 0.85rem;
+}
+
+.xbox-hero-title {
+    font-size: clamp(2.1rem, 3vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.1;
+    text-shadow: 0 6px 24px rgba(82, 176, 67, 0.35);
+}
+
+.xbox-hero-subtitle {
+    color: rgba(230, 255, 237, 0.78);
+    max-width: 720px;
+    font-size: 1rem;
+}
+
+.xbox-panel {
+    position: relative;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid var(--xbox-border);
+    border-radius: 18px;
+    padding: 1.5rem;
+    box-shadow: var(--xbox-shadow);
+    backdrop-filter: blur(18px) saturate(150%);
+    overflow: hidden;
+}
+
+.xbox-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(82, 176, 67, 0.12), transparent 55%);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.xbox-panel h2 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #e6ffed;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.xbox-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(82, 176, 67, 0.15);
+    color: #d9ffe4;
+    padding: 0.45rem 0.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--xbox-border);
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.xbox-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, rgba(82, 176, 67, 0.25), rgba(16, 124, 16, 0.35));
+    border: 1px solid var(--xbox-border);
+    color: #e6ffed;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.xbox-stat-list {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.9rem;
+    color: rgba(230, 255, 237, 0.9);
+}
+
+.xbox-stat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(82, 176, 67, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.xbox-stat-label {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-weight: 700;
+}
+
+.xbox-stat-value {
+    font-weight: 800;
+    color: #7fe391;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.xbox-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 18px;
+    object-fit: cover;
+    border: 2px solid var(--xbox-border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 22px rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.xbox-footer {
+    position: relative;
+    margin-top: auto;
+    padding: 1.5rem 1rem;
+    background: rgba(5, 12, 8, 0.9);
+    border-top: 1px solid var(--xbox-border);
+    color: #e6ffed;
+    box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+}
+
+.xbox-footer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 10%, rgba(82, 176, 67, 0.25), transparent 50%);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.xbox-footer .xbox-footer-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
 #container {
     min-height: 100%;
     display: flex;
@@ -11,8 +227,8 @@ html, body {
     flex: 1;
 }
 footer {
-    background-color: #1a202c;
-    color: white;
+    background: transparent;
+    color: inherit;
     text-align: center;
     padding: 10px 0;
     position: relative;
