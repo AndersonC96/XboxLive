@@ -8,111 +8,239 @@
         echo "Erro: Usuário não está logado.";
         exit;
     }
-    
+
     $endpoint = "friends";
     $response = openXBLRequest($endpoint);
-    
+
     if ($response && isset($response['people']) && is_array($response['people'])) {
         $friends = $response['people'];
     } else {
         $friends = [];
     }
 ?>
-<div class="container mx-auto p-4">
-    <h1 class="text-3xl mb-4 text-gray-800">Lista de Amigos</h1>
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
-        <div class="flex items-center border border-gray-300 rounded-full px-4 py-2 space-x-2 shadow-lg w-full md:w-1/2 bg-white">
-            <input
-                type="text"
-                id="filterGamertag"
-                placeholder="Buscar por Gamertag..."
-                class="outline-none w-full px-4 bg-white text-gray-700 placeholder-gray-500"
-                style="border: none; box-shadow: none;" />
-            <button id="searchButton" class="outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.415l5.387 5.388a1 1 0 01-1.414 1.414l-5.387-5.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
-                </svg>
-            </button>
-        </div>
-        <div class="flex space-x-4">
-            <select id="filterDate" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm w-48">
-                <option value="">Data de Amizade</option>
-                <option value="oldest">Mais Antigo</option>
-                <option value="newest">Mais Recente</option>
-            </select>
-            <select id="filterGamerscore" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm">
-                <option value="">Gamerscore</option>
-                <option value="asc">Ordem Crescente</option>
-                <option value="desc">Ordem Decrescente</option>
-            </select>
-        </div>
-    </div>
-    <?php if (!empty($friends)) : ?>
-        <div id="friendsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php foreach ($friends as $friend) : ?>
-                <div class="friend-card bg-white text-gray-800 rounded-lg shadow-md overflow-hidden" data-gamertag="<?php echo htmlspecialchars($friend['gamertag']); ?>" data-added="<?php echo (new DateTime($friend['addedDateTimeUtc']))->format('Y-m-d'); ?>" data-gamerscore="<?php echo $friend['gamerScore']; ?>">
-                    <div class="flex">
-                        <?php
-                            $avatar = !empty($friend['displayPicRaw']) ? $friend['displayPicRaw'] : '../img/default_avatar.jpg';
-                            $addedDate = new DateTime($friend['addedDateTimeUtc']);
-                            $formattedDate = $addedDate->format('d/m/Y');
-                        ?>
-                        <img src="<?php echo $avatar; ?>" alt="Avatar de <?php echo $friend['displayName']; ?>" class="w-1/3 h-auto object-cover">
-                        <div class="p-4 flex-1">
-                            <h2 class="gamertag text-2xl font-bold mb-2"><?php echo htmlspecialchars($friend['gamertag']); ?></h2>
-                            <p class="added-date text-sm text-gray-500">Amigo desde: <?php echo $formattedDate; ?></p>
-                            <p class="gamerscore text-sm text-gray-500 flex items-center">
-                                Gamerscore: <?php echo number_format($friend['gamerScore'], 0, ',', '.'); ?>
-                                <img src="../img/gs.png" alt="Gamerscore Icon" class="w-4 h-4 ml-2">
-                            </p>
-                            <p class="text-xs text-gray-400 mt-4"><?php echo $friend['presenceText']; ?></p>
-                        </div>
-                    </div>
+<main class="xbox-content">
+    <div class="xbox-page space-y-6">
+        <section class="xbox-hero">
+            <span class="xbox-hero-eyebrow">Comunidade</span>
+            <h1 class="xbox-hero-title">Lista de Amigos</h1>
+            <p class="xbox-hero-subtitle">Encontre, ordene e navegue pela sua comunidade com cartões em vidro líquido e controles alinhados à navegação.</p>
+        </section>
+
+        <div class="xbox-panel space-y-4">
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div class="friends-search">
+                    <i class="fas fa-search text-green-200/80"></i>
+                    <input
+                        type="text"
+                        id="filterGamertag"
+                        placeholder="Buscar por Gamertag..."
+                        class="friends-search-input"
+                    />
+                    <button id="searchButton" class="friends-search-btn" aria-label="Buscar">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
                 </div>
-            <?php endforeach; ?>
+
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                    <label class="filter-select">
+                        <select id="filterDate" class="filter-select-input">
+                            <option value="">Data de Amizade</option>
+                            <option value="oldest">Mais Antigo</option>
+                            <option value="newest">Mais Recente</option>
+                        </select>
+                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </label>
+                    <label class="filter-select">
+                        <select id="filterGamerscore" class="filter-select-input">
+                            <option value="">Gamerscore</option>
+                            <option value="asc">Ordem Crescente</option>
+                            <option value="desc">Ordem Decrescente</option>
+                        </select>
+                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </label>
+                </div>
+            </div>
         </div>
-    <?php else : ?>
-        <p>Você não tem amigos adicionados no momento.</p>
-    <?php endif; ?>
-</div>
+
+        <?php if (!empty($friends)) : ?>
+            <div id="friendsList" class="friend-grid">
+                <?php foreach ($friends as $friend) : ?>
+                    <?php
+                        $avatar = !empty($friend['displayPicRaw']) ? $friend['displayPicRaw'] : '../img/default_avatar.jpg';
+                        $addedDate = new DateTime($friend['addedDateTimeUtc']);
+                        $formattedDate = $addedDate->format('d/m/Y');
+                    ?>
+                    <article class="friend-card xbox-glass-card" data-gamertag="<?php echo htmlspecialchars($friend['gamertag']); ?>" data-added="<?php echo (new DateTime($friend['addedDateTimeUtc']))->format('Y-m-d'); ?>" data-gamerscore="<?php echo $friend['gamerScore']; ?>">
+                        <div class="friend-card-header">
+                            <span class="friend-status-dot"></span>
+                            <span class="friend-added">Amigo desde <?php echo $formattedDate; ?></span>
+                        </div>
+                        <div class="friend-card-body">
+                            <div class="friend-avatar">
+                                <img src="<?php echo $avatar; ?>" alt="Avatar de <?php echo htmlspecialchars($friend['displayName']); ?>" />
+                            </div>
+                            <div class="friend-details">
+                                <div class="friend-gamertag"><?php echo htmlspecialchars($friend['gamertag']); ?></div>
+                                <div class="friend-presence"><?php echo $friend['presenceText']; ?></div>
+                                <div class="friend-gamerscore">
+                                    <span>Gamerscore</span>
+                                    <strong><?php echo number_format($friend['gamerScore'], 0, ',', '.'); ?></strong>
+                                    <img src="../img/gs.png" alt="Gamerscore Icon" class="friend-gs-icon">
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+            <div id="friendsPagination" class="friends-pagination"></div>
+        <?php else : ?>
+            <p class="text-green-50">Você não tem amigos adicionados no momento.</p>
+        <?php endif; ?>
+    </div>
+</main>
 <script>
-    document.getElementById('filterGamertag').addEventListener('input', filterFriends);
-    document.getElementById('filterDate').addEventListener('change', sortFriends);
-    document.getElementById('filterGamerscore').addEventListener('change', sortFriends);
-    function filterFriends() {
-        let filterGamertag = document.getElementById('filterGamertag').value.toLowerCase();
-        let friendCards = Array.from(document.querySelectorAll('.friend-card'));
-        friendCards.forEach(function(card) {
-            let gamertag = card.getAttribute('data-gamertag').toLowerCase();
-            if (gamertag.includes(filterGamertag)) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
+    const searchInput = document.getElementById('filterGamertag');
+    const searchButton = document.getElementById('searchButton');
+    const filterDate = document.getElementById('filterDate');
+    const filterGamerscore = document.getElementById('filterGamerscore');
+    const friendsList = document.getElementById('friendsList');
+    const paginationContainer = document.getElementById('friendsPagination');
+    const friendCards = friendsList ? Array.from(friendsList.querySelectorAll('.friend-card')) : [];
+    const PAGE_SIZE = 12;
+    let currentPage = 1;
+
+    function applyFilters() {
+        const gamertagTerm = searchInput.value.toLowerCase();
+        return friendCards.filter((card) => {
+            const gamertag = card.getAttribute('data-gamertag').toLowerCase();
+            return gamertag.includes(gamertagTerm);
         });
     }
-    function sortFriends() {
-        let filterDate = document.getElementById('filterDate').value;
-        let filterGamerscore = document.getElementById('filterGamerscore').value;
-        let friendCards = Array.from(document.querySelectorAll('.friend-card'));
-        if (filterDate !== "") {
-            friendCards.sort(function(a, b) {
-                let dateA = new Date(a.getAttribute('data-added'));
-                let dateB = new Date(b.getAttribute('data-added'));
-                return (filterDate === "newest") ? dateB - dateA : dateA - dateB;
+
+    function applySorting(list) {
+        const dateValue = filterDate.value;
+        const gamerscoreValue = filterGamerscore.value;
+        const sorted = [...list];
+
+        if (dateValue) {
+            sorted.sort((a, b) => {
+                const dateA = new Date(a.getAttribute('data-added'));
+                const dateB = new Date(b.getAttribute('data-added'));
+                return dateValue === 'newest' ? dateB - dateA : dateA - dateB;
             });
         }
-        if (filterGamerscore !== "") {
-            friendCards.sort(function(a, b) {
-                let scoreA = parseInt(a.getAttribute('data-gamerscore'));
-                let scoreB = parseInt(b.getAttribute('data-gamerscore'));
-                return (filterGamerscore === "asc") ? scoreA - scoreB : scoreB - scoreA;
+
+        if (gamerscoreValue) {
+            sorted.sort((a, b) => {
+                const scoreA = parseInt(a.getAttribute('data-gamerscore'), 10);
+                const scoreB = parseInt(b.getAttribute('data-gamerscore'), 10);
+                return gamerscoreValue === 'asc' ? scoreA - scoreB : scoreB - scoreA;
             });
         }
-        let friendsList = document.getElementById('friendsList');
-        friendCards.forEach(function(card) {
-            friendsList.appendChild(card); // Move o card para o fim para reordenar
+
+        return sorted;
+    }
+
+    function renderPagination(totalPages) {
+        paginationContainer.innerHTML = '';
+        if (totalPages <= 1) {
+            return;
+        }
+
+        const createButton = (label, page, { isActive = false, disabled = false } = {}) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = label;
+            button.className = `pagination-btn ${isActive ? 'active' : ''} ${disabled ? 'disabled' : ''}`;
+            if (!disabled) {
+                button.addEventListener('click', () => {
+                    currentPage = page;
+                    updateFriends();
+                });
+            }
+            return button;
+        };
+
+        const addSeparator = () => {
+            const separator = document.createElement('span');
+            separator.className = 'pagination-separator';
+            separator.textContent = '|';
+            paginationContainer.appendChild(separator);
+        };
+
+        const maxVisible = 5;
+        const halfWindow = Math.floor(maxVisible / 2);
+        let startPage = Math.max(1, currentPage - halfWindow);
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+        if (endPage - startPage + 1 < maxVisible) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+
+        const hasPrev = currentPage > 1;
+        const hasNext = currentPage < totalPages;
+
+        paginationContainer.appendChild(
+            createButton('Anterior', currentPage - 1, { disabled: !hasPrev })
+        );
+
+        addSeparator();
+
+        for (let page = startPage; page <= endPage; page++) {
+            paginationContainer.appendChild(createButton(page, page, { isActive: page === currentPage }));
+            if (page < endPage) addSeparator();
+        }
+
+        addSeparator();
+
+        paginationContainer.appendChild(
+            createButton('Próximo', currentPage + 1, { disabled: !hasNext })
+        );
+    }
+
+    function updateFriends() {
+        if (!friendsList) return;
+
+        const filtered = applyFilters();
+        const sorted = applySorting(filtered);
+        const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+        currentPage = Math.min(currentPage, totalPages);
+
+        friendCards.forEach((card) => {
+            card.style.display = 'none';
         });
+
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const visibleCards = sorted.slice(start, start + PAGE_SIZE);
+        visibleCards.forEach((card) => {
+            card.style.display = '';
+        });
+
+        renderPagination(totalPages);
+    }
+
+    if (friendsList) {
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            updateFriends();
+        });
+
+        searchButton.addEventListener('click', () => {
+            currentPage = 1;
+            updateFriends();
+        });
+
+        filterDate.addEventListener('change', () => {
+            currentPage = 1;
+            updateFriends();
+        });
+
+        filterGamerscore.addEventListener('change', () => {
+            currentPage = 1;
+            updateFriends();
+        });
+
+        updateFriends();
     }
 </script>
 <?php include('../includes/footer.php'); ?>
