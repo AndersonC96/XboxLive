@@ -1,10 +1,15 @@
 <?php
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    require_once __DIR__ . '/../vendor/autoload.php';
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
     $dotenv->load();
-    $api_key = $_ENV['OPENXBL_API_KEY'];
+    // Try multiple sources/names for the API key and avoid undefined index warnings
+    $api_key = getenv('OPENXBL_API_KEY') ?: getenv('XBOX_API_KEY') ?: (isset($_ENV['OPENXBL_API_KEY']) ? $_ENV['OPENXBL_API_KEY'] : (isset($_ENV['XBOX_API_KEY']) ? $_ENV['XBOX_API_KEY'] : null));
     // Função para requisições GET
     function openXBLRequest($endpoint) {
         global $api_key;
+        if (empty($api_key)) {
+            return null;
+        }
         $url = "https://xbl.io/api/v2/" . $endpoint;
         $headers = [
             "X-Authorization: $api_key"
@@ -14,12 +19,23 @@
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $response = curl_exec($ch);
+        $curlError = curl_error($ch);
         curl_close($ch);
-        return json_decode($response, true);
+        if ($response === false) {
+            return null;
+        }
+        $decoded = json_decode($response, true);
+        if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+        return $decoded;
     }
     // Função para requisições POST
     function openXBLPostRequest($endpoint, $body) {
         global $api_key;
+        if (empty($api_key)) {
+            return null;
+        }
         $url = "https://xbl.io/api/v2/" . $endpoint;
         $headers = [
             "X-Authorization: $api_key",
@@ -35,14 +51,12 @@
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); // Pegar o código de resposta HTTP
         $curlError = curl_error($ch); // Pegar erros do cURL, se houver
         curl_close($ch);
-        // Debugging opcional para verificar a resposta e o código HTTP
-        /*echo "<pre>";
-        echo "Corpo da requisição:\n" . json_encode($body) . "\n";
-        echo "Código HTTP: " . $httpCode . "\n";
-        if ($curlError) {
-            echo "Erro cURL: " . $curlError . "\n";
+        if ($response === false) {
+            return null;
         }
-        echo "Resposta da API:\n" . $response . "\n";
-        echo "</pre>";*/
-        return json_decode($response, true);
+        $decoded = json_decode($response, true);
+        if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+        return $decoded;
     }

@@ -5,12 +5,12 @@
     require_once '../config/api.php';
     $endpoint = "account";
     $response = openXBLRequest($endpoint);
-    $profileUsers = $response['profileUsers'][0] ?? null;
+    $profileUsers = (is_array($response) && isset($response['profileUsers'][0])) ? $response['profileUsers'][0] : null;
     $gamertag = null;
-    if ($profileUsers) {
+    if ($profileUsers && isset($profileUsers['settings']) && is_array($profileUsers['settings'])) {
         foreach ($profileUsers['settings'] as $setting) {
-            if ($setting['id'] === 'Gamertag') {
-                $gamertag = $setting['value'];
+            if (isset($setting['id']) && $setting['id'] === 'Gamertag') {
+                $gamertag = $setting['value'] ?? null;
                 break;
             }
         }
@@ -22,46 +22,62 @@
         <ul class="text-left text-black space-y-3">
             <li><span class="text-green-500 font-bold">Gamerscore:</span>
                 <?php
-                foreach ($profileUsers['settings'] as $setting) {
-                    if ($setting['id'] === 'Gamerscore') {
-                        $gamerscore = $setting['value'];
-                        if ($gamerscore >= 1000) {
-                            echo number_format($gamerscore, 0, '', '.') . ' ';
-                        } else {
-                            echo $gamerscore . ' ';
+                $settings = $profileUsers['settings'] ?? [];
+                if (is_array($settings)) {
+                    foreach ($settings as $setting) {
+                        if (isset($setting['id']) && $setting['id'] === 'Gamerscore') {
+                            $gamerscore = $setting['value'] ?? null;
+                            if (is_numeric($gamerscore)) {
+                                if ($gamerscore >= 1000) {
+                                    echo number_format($gamerscore, 0, '', '.') . ' ';
+                                } else {
+                                    echo $gamerscore . ' ';
+                                }
+                                echo '<img src="../img/gs.png" alt="Gamerscore Icon" class="inline w-5 h-5">';
+                            } else {
+                                echo '-';
+                            }
+                            break;
                         }
-                        echo '<img src="../img/gs.png" alt="Gamerscore Icon" class="inline w-5 h-5">';
-                        break;
                     }
                 }
                 ?>
             </li>
             <li><span class="text-green-500 font-bold">Conta:</span>
                 <?php
-                foreach ($profileUsers['settings'] as $setting) {
-                    if ($setting['id'] === 'AccountTier') {
-                        echo htmlspecialchars($setting['value']);
-                        break;
+                $settings = $profileUsers['settings'] ?? [];
+                if (is_array($settings)) {
+                    foreach ($settings as $setting) {
+                        if (isset($setting['id']) && $setting['id'] === 'AccountTier') {
+                            echo htmlspecialchars($setting['value'] ?? '-');
+                            break;
+                        }
                     }
                 }
                 ?>
             </li>
             <li><span class="text-green-500 font-bold">Reputação:</span>
                 <?php
-                foreach ($profileUsers['settings'] as $setting) {
-                    if ($setting['id'] === 'XboxOneRep') {
-                        echo htmlspecialchars($setting['value']);
-                        break;
+                $settings = $profileUsers['settings'] ?? [];
+                if (is_array($settings)) {
+                    foreach ($settings as $setting) {
+                        if (isset($setting['id']) && $setting['id'] === 'XboxOneRep') {
+                            echo htmlspecialchars($setting['value'] ?? '-');
+                            break;
+                        }
                     }
                 }
                 ?>
             </li>
             <li><span class="text-green-500 font-bold">Bio:</span>
                 <?php
-                foreach ($profileUsers['settings'] as $setting) {
-                    if ($setting['id'] === 'Bio') {
-                        echo htmlspecialchars($setting['value']);
-                        break;
+                $settings = $profileUsers['settings'] ?? [];
+                if (is_array($settings)) {
+                    foreach ($settings as $setting) {
+                        if (isset($setting['id']) && $setting['id'] === 'Bio') {
+                            echo htmlspecialchars($setting['value'] ?? '-');
+                            break;
+                        }
                     }
                 }
                 ?>

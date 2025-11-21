@@ -2,10 +2,8 @@
     session_start();
     include('../includes/header.php');
     include('../includes/navbar.php');
-    require_once '../config/api.php';
     require_once '../vendor/autoload.php';
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../config');
-    $dotenv->load();
+    require_once '../config/api.php';
     function generateGamertag() {
         $url = 'https://xbl.io/api/v2/generate/gamertag';
         $api_key = $_ENV['OPENXBL_API_KEY'];
