@@ -8,22 +8,14 @@
         echo "Erro: Usuário não está logado.";
         exit;
     }
-    $user_id = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT xuid FROM users WHERE id = :user_id");
-    $stmt->execute(['user_id' => $user_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($user && $user['xuid']) {
-        $xuid = $user['xuid'];
-        $endpoint = "friends/blocked";
-        $response = openXBLRequest($endpoint);
-        if (isset($response['users']) && is_array($response['users'])) {
-            $blockedFriends = $response['users'];
-        } else {
-            $blockedFriends = [];
-        }
+    
+    $endpoint = "friends/blocked";
+    $response = openXBLRequest($endpoint);
+    
+    if ($response && isset($response['users']) && is_array($response['users'])) {
+        $blockedFriends = $response['users'];
     } else {
-        echo "Usuário não encontrado ou XUID não disponível.";
-        exit;
+        $blockedFriends = [];
     }
 ?>
 <div class="container mx-auto p-4">
