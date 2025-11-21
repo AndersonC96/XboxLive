@@ -1,55 +1,42 @@
 <?php include('../includes/header.php'); ?>
-<div class="gamer-background flex items-center justify-center">
-    <div class="neon-orb green"></div>
-    <div class="neon-orb purple"></div>
+<div class="liquid-background flex items-center justify-center min-h-screen">
+    <div class="xbox-orb orb-1"></div>
+    <div class="xbox-orb orb-2"></div>
+    <div class="xbox-orb orb-3"></div>
 
-    <div class="glass-card-login max-w-lg w-full mx-4">
-        <div class="relative z-10">
-            <div class="flex justify-between items-center mb-4">
-                <div class="badge-soft">
-                    <i class="fa-solid fa-circle-nodes"></i>
-                    <span>Xbox Live</span>
-                </div>
-                <div class="text-sm text-gray-300">Acesso gamer seguro</div>
-            </div>
+    <div class="liquid-card max-w-md w-full mx-4">
+        <div class="liquid-glass-effect"></div>
+        <div class="xbox-glow"></div>
 
-            <div class="flex items-center gap-3 mb-6">
-                <img src="../img/logo.png" alt="Xbox Logo" class="w-14 drop-shadow-lg">
-                <div>
-                    <p class="uppercase text-xs tracking-widest text-gray-300">Bem-vindo de volta</p>
-                    <h2 class="text-3xl font-extrabold text-white">Entre na sua conta</h2>
+        <div class="relative z-10 p-8">
+            <div class="flex justify-center mb-6">
+                <div class="xbox-logo-container">
+                    <img src="../img/logo3.png" alt="Xbox Logo" class="w-80 h-24 drop-shadow-2xl">
                 </div>
             </div>
 
-            <form action="../actions/login_action.php" method="POST" class="space-y-5 relative z-10">
-                <div class="grid gap-4">
-                    <div class="input-group">
-                        <label for="username" class="block text-sm font-semibold text-gray-200 mb-2">Username</label>
-                        <div class="input-shell">
-                            <i class="fa-solid fa-user-astronaut input-icon"></i>
-                            <input type="text" name="username" id="username" placeholder="Seu username" required class="glass-input" />
-                            <span class="input-accent"></span>
-                        </div>
+            <form action="../actions/login_action.php" method="POST" class="space-y-6">
+                <div class="input-group">
+                    <div class="liquid-input">
+                        <i class="fa-solid fa-user input-icon-liquid"></i>
+                        <input type="text" name="username" id="username" placeholder="Username" required class="liquid-glass-input" />
                     </div>
-                    <div class="input-group">
-                        <label for="password" class="block text-sm font-semibold text-gray-200 mb-2">Senha</label>
-                        <div class="input-shell">
-                            <i class="fa-solid fa-lock input-icon"></i>
-                            <input type="password" name="password" id="password" placeholder="Sua senha" required class="glass-input" />
-                            <span class="input-accent"></span>
-                        </div>
+                </div>
+                <div class="input-group">
+                    <div class="liquid-input">
+                        <i class="fa-solid fa-lock input-icon-liquid"></i>
+                        <input type="password" name="password" id="password" placeholder="Password" required class="liquid-glass-input" />
                     </div>
                 </div>
 
-                <div class="divider-line"></div>
-
-                <button type="submit" class="w-full neon-button">
-                    Entrar
+                <button type="submit" class="w-full liquid-button xbox-button">
+                    <span class="relative z-10">Entrar</span>
+                    <div class="xbox-button-glow"></div>
                 </button>
 
-                <div class="text-center mt-5 text-sm text-gray-200">
-                    <span class="mr-2">Ainda não tem uma conta?</span>
-                    <a href="register.php" class="glass-link">Cadastre-se</a>
+                <div class="text-center mt-6 text-sm text-white">
+                    <span>Não tem uma conta? </span>
+                    <a href="register.php" class="liquid-link xbox-link">Cadastre-se</a>
                 </div>
             </form>
         </div>

@@ -20,6 +20,288 @@ footer {
     width: 100%;
 }
 
+/* Liquid Glass Login Effect */
+.liquid-background {
+    position: relative;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #107c10 0%, #0e6b0e 25%, #0e7a0e 50%, #0c5f0c 75%, #0a4d0a 100%);
+    background-size: 400% 400%;
+    animation: liquidGradient 15s ease infinite;
+    overflow: hidden;
+}
+
+@keyframes liquidGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.liquid-background::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(16, 124, 16, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(14, 122, 14, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(10, 77, 10, 0.25) 0%, transparent 50%);
+    animation: liquidMove 20s ease-in-out infinite;
+}
+
+.liquid-background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+        repeating-linear-gradient(45deg, transparent, transparent 50px, rgba(255, 255, 255, 0.03) 50px, rgba(255, 255, 255, 0.03) 51px);
+    pointer-events: none;
+}
+
+@keyframes liquidMove {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(30px, -50px) rotate(120deg); }
+    66% { transform: translate(-20px, 20px) rotate(240deg); }
+}
+
+/* Xbox Orbs */
+.xbox-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: xboxOrbitFloat 15s ease-in-out infinite;
+}
+
+.xbox-orb.orb-1 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, #52b043, #107c10);
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.xbox-orb.orb-2 {
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, #6cc644, #34a532);
+    top: 60%;
+    right: 15%;
+    animation-delay: 5s;
+}
+
+.xbox-orb.orb-3 {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, #8bd682, #52b043);
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 10s;
+}
+
+@keyframes xboxOrbitFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(50px, -30px) scale(1.1); }
+    66% { transform: translate(-30px, 40px) scale(0.9); }
+}
+
+.liquid-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 24px;
+    border: 2px solid rgba(82, 176, 67, 0.3);
+    box-shadow: 
+        0 8px 32px 0 rgba(16, 124, 16, 0.4),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
+        0 0 40px rgba(82, 176, 67, 0.2);
+    overflow: hidden;
+}
+
+.liquid-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(82, 176, 67, 0.3), 
+        transparent
+    );
+    animation: liquidShine 3s infinite;
+}
+
+@keyframes liquidShine {
+    0% { left: -100%; }
+    50%, 100% { left: 100%; }
+}
+
+.xbox-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(82, 176, 67, 0.15) 0%, transparent 70%);
+    animation: xboxPulse 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes xboxPulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.xbox-logo-container {
+    animation: xboxLogoFloat 3s ease-in-out infinite;
+}
+
+@keyframes xboxLogoFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.liquid-glass-effect {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(82, 176, 67, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(108, 198, 68, 0.15) 0%, transparent 50%);
+    animation: glassMove 10s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes glassMove {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(20px, 20px) scale(1.1); }
+}
+
+.liquid-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(82, 176, 67, 0.3);
+    transition: all 0.3s ease;
+}
+
+.liquid-input:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(82, 176, 67, 0.4);
+    box-shadow: 0 0 15px rgba(82, 176, 67, 0.2);
+}
+
+.liquid-input:focus-within {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(82, 176, 67, 0.6);
+    box-shadow: 0 0 25px rgba(82, 176, 67, 0.3);
+}
+
+.input-icon-liquid {
+    color: rgba(82, 176, 67, 1);
+    font-size: 1.1rem;
+    filter: drop-shadow(0 0 5px rgba(82, 176, 67, 0.5));
+}
+
+.liquid-glass-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color:#76bd6e;
+    font-size: 1rem;
+    outline: none;
+}
+
+.liquid-glass-input::placeholder {
+    color: rgba(255, 255, 255, 0.027);
+}
+
+.xbox-button {
+    position: relative;
+    background: linear-gradient(135deg, #52b043 0%, #107c10 100%);
+    backdrop-filter: blur(10px);
+    color: white;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    border: 2px solid rgba(82, 176, 67, 0.5);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.xbox-button-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.xbox-button:hover .xbox-button-glow {
+    opacity: 1;
+    animation: buttonPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes buttonPulse {
+    0%, 100% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+}
+
+.xbox-button:hover {
+    background: linear-gradient(135deg, #6cc644 0%, #34a532 100%);
+    border-color: rgba(108, 198, 68, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 20px rgba(16, 124, 16, 0.4),
+        0 0 30px rgba(82, 176, 67, 0.5);
+}
+
+.xbox-button:active {
+    transform: translateY(0px);
+}
+
+.xbox-link {
+    color: #52b043;
+    font-weight: 700;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.xbox-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #52b043;
+    transition: width 0.3s ease;
+}
+
+.xbox-link:hover {
+    color: #6cc644;
+    text-shadow: 0 0 10px rgba(82, 176, 67, 0.5);
+}
+
+.xbox-link:hover::after {
+    width: 100%;
+}
+
 /* Gamer login styling */
 .gamer-background {
     position: relative;
