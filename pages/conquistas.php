@@ -4,7 +4,6 @@
     include('../includes/navbar.php');
     require '../config/db.php';
     require_once '../config/api.php';
-
     if (!isset($_SESSION['user_id'])) {
         echo "Erro: Usuário não está logado.";
         exit;

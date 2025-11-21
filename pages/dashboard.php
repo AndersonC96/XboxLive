@@ -1,59 +1,74 @@
 <?php
-    session_start();
-    include('../includes/header.php');
-    include('../includes/navbar.php');
-    require_once '../config/api.php';
-    $endpoint = "account";
-    $response = openXBLRequest($endpoint);
-    $profileUsers = (is_array($response) && isset($response['profileUsers'][0])) ? $response['profileUsers'][0] : null;
+session_start();
+include('../includes/header.php');
+include('../includes/navbar.php');
+require_once '../config/api.php';
 
-    $gamertag = null;
-    $settings = $profileUsers['settings'] ?? [];
-    $gamerpic = '../img/default_avatar.jpg';
-    $gamerscoreDisplay = '-';
-    $showGamerscoreIcon = false;
-    $accountTier = '-';
-    $reputation = '-';
-    $bio = '-';
+// Endpoint para informações da conta
+$endpoint = "account";
+$response = openXBLRequest($endpoint);
+$profileUsers = (is_array($response) && isset($response['profileUsers'][0])) ? $response['profileUsers'][0] : null;
 
-    if ($profileUsers && is_array($settings)) {
-        foreach ($settings as $setting) {
-            $id = $setting['id'] ?? null;
-            $value = $setting['value'] ?? null;
+// Endpoint para resumo do jogador (presença)
+$summaryEndpoint = "player/summary";
+$summaryResponse = openXBLRequest($summaryEndpoint);
+$presenceState = $summaryResponse['people'][0]['presenceState'] ?? 'Offline';
+$presenceText = $summaryResponse['people'][0]['presenceText'] ?? 'N/A';
 
-            if ($id === 'Gamertag') {
-                $gamertag = $value;
-            }
+// Endpoint para histórico de jogos
+$titleHistoryEndpoint = "player/titleHistory";
+$titleHistoryResponse = openXBLRequest($titleHistoryEndpoint);
+$recentTitles = isset($titleHistoryResponse['titles']) ? array_slice($titleHistoryResponse['titles'], 0, 3) : [];
 
-            if ($id === 'GameDisplayPicRaw') {
-                $gamerpic = $value;
-            }
+$gamertag = null;
+$settings = $profileUsers['settings'] ?? [];
+$gamerpic = '../img/default_avatar.jpg';
+$gamerscoreDisplay = '-';
+$showGamerscoreIcon = false;
+$accountTier = '-';
+$reputation = '-';
+$bio = '-';
+$location = '-';
 
-            if ($id === 'Gamerscore' && is_numeric($value)) {
-                $gamerscoreDisplay = $value >= 1000 ? number_format($value, 0, '', '.') : $value;
-                $showGamerscoreIcon = true;
-            }
+if ($profileUsers && is_array($settings)) {
+    foreach ($settings as $setting) {
+        $id = $setting['id'] ?? null;
+        $value = $setting['value'] ?? null;
 
-            if ($id === 'AccountTier') {
-                $accountTier = $value ?: '-';
-            }
+        if ($id === 'Gamertag') {
+            $gamertag = $value;
+        }
 
-            if ($id === 'XboxOneRep') {
-                $reputation = $value ?: '-';
-            }
+        if ($id === 'GameDisplayPicRaw') {
+            $gamerpic = $value;
+        }
 
-            if ($id === 'Bio') {
-                $bio = $value ?: '-';
-            }
+        if ($id === 'Gamerscore' && is_numeric($value)) {
+            $gamerscoreDisplay = $value >= 1000 ? number_format($value, 0, '', '.') : $value;
+            $showGamerscoreIcon = true;
+        }
+
+        if ($id === 'AccountTier') {
+            $accountTier = $value ?: '-';
+        }
+
+        if ($id === 'XboxOneRep') {
+            $reputation = $value ?: '-';
+        }
+
+        if ($id === 'Bio') {
+            $bio = $value ?: '-';
+        }
+        if ($id === 'Location') {
+            $location = $value ?: '-';
         }
     }
+}
 ?>
 <main class="xbox-content">
     <div class="xbox-page">
         <section class="xbox-hero">
-            <span class="xbox-hero-eyebrow">Painel</span>
             <h1 class="xbox-hero-title">Bem-vindo, <span class="text-green-400"><?php echo htmlspecialchars($gamertag); ?></span>!</h1>
-            <p class="xbox-hero-subtitle">Um resumo líquido e iluminado do seu perfil para manter a identidade visual alinhada com a página de login.</p>
         </section>
 
         <div class="grid gap-6 lg:grid-cols-2">
@@ -61,7 +76,7 @@
                 <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
                     <h2>
                         <span class="xbox-icon"><i class="fas fa-id-card"></i></span>
-                        Identidade Xbox
+                        Identidade
                     </h2>
                     <span class="xbox-pill"><i class="fas fa-check"></i> Perfil ativo</span>
                 </div>
@@ -88,26 +103,46 @@
                         <span class="xbox-stat-label"><i class="fas fa-quote-left text-green-400"></i> Bio</span>
                         <span class="xbox-stat-value"><?php echo htmlspecialchars($bio); ?></span>
                     </li>
+                    <li class="xbox-stat-item">
+                        <span class="xbox-stat-label"><i class="fa-solid fa-location-crosshairs text-green-400"></i> Local</span>
+                        <span class="xbox-stat-value"><?php echo htmlspecialchars($location); ?></span>
+                    </li>
                 </ul>
             </div>
 
-            <div class="xbox-panel flex flex-col gap-4">
-                <div class="flex items-center gap-4 flex-wrap">
-                    <div class="xbox-icon">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    <div>
-                        <h2 class="mb-1">Seu perfil</h2>
-                        <p class="xbox-hero-subtitle text-sm">Detalhes rápidos em um cartão translúcido para manter a experiência consistente.</p>
-                    </div>
+            <div class="xbox-panel">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+                    <h2>
+                        <span class="xbox-icon"><i class="fa-brands fa-xbox"></i></span>
+                        Presença
+                    </h2>
+                    <span class="xbox-pill <?php echo ($presenceState === 'Online') ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-red-400'; ?>">
+                        <i class="fas fa-circle mr-1"></i> <?php echo htmlspecialchars($presenceState); ?>
+                    </span>
                 </div>
-                <div class="flex items-center gap-4 flex-wrap">
-                    <img src="<?php echo htmlspecialchars($gamerpic); ?>" alt="Avatar" class="xbox-avatar">
-                    <div class="space-y-2">
-                        <span class="xbox-pill"><i class="fas fa-user"></i> <?php echo htmlspecialchars($gamertag ?? 'Jogador'); ?></span>
-                        <div class="text-sm text-green-100/80">Personalize seu perfil e conquiste mais com o novo visual.</div>
-                    </div>
-                </div>
+                <ul class="xbox-stat-list">
+                    <li class="xbox-stat-item">
+                        <span class="xbox-stat-label"><i class="fa-solid fa-globe text-green-400"></i> </span>
+                        <span class="xbox-stat-value"><?php echo htmlspecialchars($presenceText); ?></span>
+                    </li>
+                    <li class="xbox-stat-item">
+                        <span class="xbox-stat-label"><i class="fas fa-gamepad text-green-400"></i> Jogados recentemente</span>
+                        <span class="xbox-stat-value"></span>
+                    </li>
+                    <?php if (!empty($recentTitles)): ?>
+                        <?php foreach ($recentTitles as $title): ?>
+                            <li class="xbox-stat-item">
+                                <span class="xbox-stat-label"><i class="fas fa-gamepad text-green-400"></i></span>
+                                <span class="xbox-stat-value"><?php echo htmlspecialchars($title['name']); ?></span>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <li class="xbox-stat-item">
+                            <span class="xbox-stat-label"><i class="fas fa-gamepad text-green-400"></i></span>
+                            <span>Nenhum jogo recente encontrado.</span>
+                        </li>
+                    <?php endif; ?>
+                </ul>
             </div>
         </div>
     </div>
