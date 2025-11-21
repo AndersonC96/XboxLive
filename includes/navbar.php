@@ -125,31 +125,61 @@
             </div>
         </div>
 
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-4 ml-4 lg:ml-6">
             <form action="search.php" method="GET" class="nav-search">
                 <i class="fas fa-search text-green-200"></i>
                 <input type="text" name="gamertag_search" placeholder="Buscar Gamertag" class="nav-search-input" required>
                 <button type="submit" class="nav-search-button">Buscar</button>
             </form>
-            <button class="focus:outline-none nav-profile" id="user-menu-button">
-                <div class="nav-profile-ring"></div>
-                <img src="<?php echo $gamerpic; ?>" alt="Profile" class="nav-profile-img">
-                <span class="nav-profile-name"><?php echo htmlspecialchars($gamertag); ?></span>
-            </button>
+            <div class="relative">
+                <button class="focus:outline-none nav-profile" id="user-menu-button">
+                    <div class="nav-profile-ring"></div>
+                    <img src="<?php echo $gamerpic; ?>" alt="Profile" class="nav-profile-img">
+                    <span class="nav-profile-name"><?php echo htmlspecialchars($gamertag); ?></span>
+                    <i class="fas fa-chevron-down text-xs"></i>
+                </button>
+                <div id="user-menu" class="nav-profile-menu hidden">
+                    <a href="../pages/logout.php">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
 <script>
-    document.getElementById('dropdown-amigos-btn').addEventListener('click', function() {
-        document.getElementById('dropdown-amigos-menu').classList.toggle('hidden');
+    const dropdowns = [
+        { button: 'dropdown-amigos-btn', menu: 'dropdown-amigos-menu' },
+        { button: 'dropdown-activity-btn', menu: 'dropdown-activity-menu' },
+        { button: 'dropdown-gamepass-btn', menu: 'dropdown-gamepass-menu' },
+        { button: 'dropdown-loja-btn', menu: 'dropdown-loja-menu' },
+        { button: 'user-menu-button', menu: 'user-menu' }
+    ];
+
+    dropdowns.forEach(({ button, menu }) => {
+        const btn = document.getElementById(button);
+        const menuEl = document.getElementById(menu);
+
+        if (btn && menuEl) {
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const isHidden = menuEl.classList.contains('hidden');
+                closeAllDropdowns();
+                if (isHidden) {
+                    menuEl.classList.remove('hidden');
+                }
+            });
+        }
     });
-    document.getElementById('dropdown-activity-btn').addEventListener('click', function() {
-        document.getElementById('dropdown-activity-menu').classList.toggle('hidden');
-    });
-    document.getElementById('dropdown-gamepass-btn').addEventListener('click', function() {
-        document.getElementById('dropdown-gamepass-menu').classList.toggle('hidden');
-    });
-    document.getElementById('dropdown-loja-btn').addEventListener('click', function() {
-        document.getElementById('dropdown-loja-menu').classList.toggle('hidden');
-    });
+
+    document.addEventListener('click', closeAllDropdowns);
+
+    function closeAllDropdowns() {
+        dropdowns.forEach(({ menu }) => {
+            const el = document.getElementById(menu);
+            if (el && !el.classList.contains('hidden')) {
+                el.classList.add('hidden');
+            }
+        });
+    }
 </script>
