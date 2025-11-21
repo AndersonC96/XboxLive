@@ -19,6 +19,227 @@ footer {
     bottom: 0;
     width: 100%;
 }
+
+/* Gamer login styling */
+.gamer-background {
+    position: relative;
+    min-height: 100vh;
+    background: radial-gradient(circle at 20% 20%, rgba(52, 211, 153, 0.18), transparent 25%),
+        radial-gradient(circle at 80% 0%, rgba(59, 130, 246, 0.2), transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.15), transparent 28%),
+        #050915;
+    color: #e5e7eb;
+    overflow: hidden;
+}
+
+.gamer-background::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 120px 120px;
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.neon-orb {
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.6;
+}
+
+.neon-orb.green {
+    background: #22c55e;
+    top: -60px;
+    left: -60px;
+}
+
+.neon-orb.purple {
+    background: #a855f7;
+    bottom: -80px;
+    right: -50px;
+}
+
+.glass-card-login {
+    position: relative;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    overflow: hidden;
+}
+
+.glass-card-login::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(34, 197, 94, 0.18), rgba(59, 130, 246, 0.18), rgba(167, 139, 250, 0.18));
+    opacity: 0.45;
+    filter: blur(30px);
+    z-index: 0;
+}
+
+.glass-card-login::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 19px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-shell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 38px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    transition: all 0.25s ease;
+}
+
+.input-shell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(34, 197, 94, 0.14), rgba(59, 130, 246, 0.12), rgba(167, 139, 250, 0.1));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.input-shell::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), inset 0 -8px 18px rgba(15, 23, 42, 0.35);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.input-shell:hover::before {
+    opacity: 0.4;
+}
+
+.input-shell:focus-within {
+    border-color: rgba(34, 197, 94, 0.5);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18), 0 18px 48px rgba(34, 197, 94, 0.24);
+}
+
+.input-shell:focus-within::before {
+    opacity: 0.6;
+}
+
+.input-icon {
+    position: relative;
+    z-index: 2;
+    color: #a5f3fc;
+    font-size: 1rem;
+    text-shadow: 0 0 10px rgba(165, 243, 252, 0.4);
+}
+
+.glass-input {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #f8fafc;
+    font-size: 1rem;
+    padding: 0;
+    outline: none;
+}
+
+.glass-input::placeholder {
+    color: rgba(226, 232, 240, 0.8);
+}
+
+.input-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #22c55e, #22d3ee);
+    border-radius: 12px;
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.7);
+    opacity: 0.9;
+    transition: transform 0.25s ease;
+    z-index: 2;
+}
+
+.input-shell:focus-within .input-accent {
+    transform: translateX(-2px) scaleY(1.05);
+}
+
+.neon-button {
+    position: relative;
+    background: linear-gradient(120deg, #22c55e, #10b981, #22c55e);
+    color: #0b1021;
+    font-weight: 800;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.neon-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 20px 45px rgba(16, 185, 129, 0.5);
+}
+
+.neon-button:active {
+    transform: translateY(0);
+}
+
+.badge-soft {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(34, 197, 94, 0.12);
+    color: #bbf7d0;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    font-size: 0.85rem;
+}
+
+.divider-line {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    margin: 1.5rem 0;
+}
+
+a.glass-link {
+    color: #86efac;
+    font-weight: 600;
+}
+
+a.glass-link:hover {
+    color: #a7f3d0;
+}
+
 .glass-card {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
