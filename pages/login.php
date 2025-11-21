@@ -23,13 +23,21 @@
 
             <form action="../actions/login_action.php" method="POST" class="space-y-5 relative z-10">
                 <div class="grid gap-4">
-                    <div>
+                    <div class="input-group">
                         <label for="username" class="block text-sm font-semibold text-gray-200 mb-2">Username</label>
-                        <input type="text" name="username" id="username" placeholder="Seu username" required class="w-full px-4 py-3 glass-input" />
+                        <div class="input-shell">
+                            <i class="fa-solid fa-user-astronaut input-icon"></i>
+                            <input type="text" name="username" id="username" placeholder="Seu username" required class="glass-input" />
+                            <span class="input-accent"></span>
+                        </div>
                     </div>
-                    <div>
+                    <div class="input-group">
                         <label for="password" class="block text-sm font-semibold text-gray-200 mb-2">Senha</label>
-                        <input type="password" name="password" id="password" placeholder="Sua senha" required class="w-full px-4 py-3 glass-input" />
+                        <div class="input-shell">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" name="password" id="password" placeholder="Sua senha" required class="glass-input" />
+                            <span class="input-accent"></span>
+                        </div>
                     </div>
                 </div>
 

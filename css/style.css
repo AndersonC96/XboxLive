@@ -94,20 +94,83 @@ footer {
     pointer-events: none;
 }
 
-.glass-input {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #f8fafc;
-    border-radius: 12px;
-    transition: all 0.2s ease;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+.input-group {
+    position: relative;
 }
 
-.glass-input:focus {
+.input-shell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 38px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    transition: all 0.25s ease;
+}
+
+.input-shell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(34, 197, 94, 0.14), rgba(59, 130, 246, 0.12), rgba(167, 139, 250, 0.1));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.input-shell:hover::before {
+    opacity: 0.4;
+}
+
+.input-shell:focus-within {
+    border-color: rgba(34, 197, 94, 0.5);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18), 0 18px 48px rgba(34, 197, 94, 0.24);
+}
+
+.input-shell:focus-within::before {
+    opacity: 0.6;
+}
+
+.input-icon {
+    color: #a5f3fc;
+    font-size: 1rem;
+    text-shadow: 0 0 10px rgba(165, 243, 252, 0.4);
+}
+
+.glass-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #f8fafc;
+    font-size: 1rem;
+    padding: 0;
     outline: none;
-    border-color: #22c55e;
-    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2), 0 10px 30px rgba(34, 197, 94, 0.18);
-    background: rgba(255, 255, 255, 0.1);
+}
+
+.glass-input::placeholder {
+    color: rgba(226, 232, 240, 0.7);
+}
+
+.input-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #22c55e, #22d3ee);
+    border-radius: 12px;
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.7);
+    opacity: 0.9;
+    transition: transform 0.25s ease;
+}
+
+.input-shell:focus-within .input-accent {
+    transform: translateX(-2px) scaleY(1.05);
 }
 
 .neon-button {
