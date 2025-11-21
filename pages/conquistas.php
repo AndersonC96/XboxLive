@@ -4,41 +4,45 @@
     include('../includes/navbar.php');
     require '../config/db.php';
     require_once '../config/api.php';
+
     if (!isset($_SESSION['user_id'])) {
         echo "Erro: Usuário não está logado.";
         exit;
     }
-    
-    // Obter informações da conta para XUID (usa endpoint account que retorna dados da conta autenticada)
+
     $endpoint = "achievements";
     $response = openXBLRequest($endpoint);
-    
+
     if ($response && isset($response['titles']) && is_array($response['titles'])) {
         $games = $response['titles'];
     } else {
         $games = [];
-        // Mensagem amigável se não houver dados disponíveis
         $error_message = "Não foi possível carregar suas conquistas. Verifique se a chave da API está configurada corretamente no arquivo .env";
     }
-    function getDeviceIcon($deviceType) {
+
+    $items_per_page = 12;
+
+    function getDeviceIcon($deviceType)
+    {
         switch ($deviceType) {
             case 'XboxSeries':
-                return '<img src="../img/xboxseries.png" alt="Xbox Series" width="62,5" height="62,5">';
+                return '<img src="../img/xboxseries.png" alt="Xbox Series" width="24" height="24">';
             case 'PC':
-                return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
-            case 'XboxOne':
-                return '<img src="../img/xboxone.png" alt="Xbox One" width="62,5" height="62,5">';
             case 'Win32':
-                return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
+                return '<img src="../img/windows.png" alt="PC" width="24" height="24">';
+            case 'XboxOne':
+                return '<img src="../img/xboxone.png" alt="Xbox One" width="24" height="24">';
             case 'Mobile':
-                return '<img src="../img/windowsphone.webp" alt="Windows Phone" width="62,5" height="62,5">';
+                return '<img src="../img/windowsphone.webp" alt="Windows Phone" width="24" height="24">';
             case 'Xbox360':
-                return '<img src="../img/xbox360.png" alt="Xbox 360" width="62,5" height="62,5">';
+                return '<img src="../img/xbox360.png" alt="Xbox 360" width="24" height="24">';
             default:
-                return $deviceType;
+                return htmlspecialchars($deviceType);
         }
     }
-    function getBoxArt($game) {
+
+    function getBoxArt($game)
+    {
         if (isset($game['images'])) {
             foreach ($game['images'] as $image) {
                 if ($image['type'] === 'BoxArt') {
@@ -46,179 +50,298 @@
                 }
             }
         }
+
         return '../img/default_game.jpg';
     }
-    $items_per_page = 12;
 ?>
-<div class="container mx-auto p-4">
-    <h1 class="text-3xl text-center mb-6">Conquistas</h1>
-    
-    <?php if (isset($error_message)): ?>
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <strong class="font-bold">Atenção!</strong>
-            <span class="block sm:inline"><?php echo htmlspecialchars($error_message); ?></span>
-        </div>
-    <?php endif; ?>
-    
-    <?php if (empty($games) && !isset($error_message)): ?>
-        <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <span class="block sm:inline">Você ainda não possui jogos com conquistas registradas.</span>
-        </div>
-    <?php else: ?>
-    
-    <div class="flex flex-col items-center space-y-4">
-        <div class="relative w-full max-w-lg">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Buscar por Nome..."
-                class="w-full px-6 py-3 text-gray-700 bg-white rounded-full shadow-lg outline-none focus:ring-2 focus:ring-blue-300" />
-            <button class="absolute right-4 top-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a7 7 0 107 7 7 7 0 00-7-7zM21 21l-4.35-4.35" />
-                </svg>
-            </button>
-        </div>
-        <div class="flex flex-wrap justify-center space-x-4">
-            <select id="filterName" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm w-48">
-                <option value="">Nome</option>
-                <option value="asc">A-Z</option>
-                <option value="desc">Z-A</option>
-            </select>
-            <select id="filterGamerscore" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm w-48">
-                <option value="">Gamerscore</option>
-                <option value="asc">Do menor para o maior</option>
-                <option value="desc">Do maior para o menor</option>
-            </select>
-            <select id="filterLastPlayed" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm w-56">
-                <option value="">Jogado pela Última Vez</option>
-                <option value="recent">Mais Recente</option>
-                <option value="oldest">Mais Antigo</option>
-            </select>
-            <select id="filterPlatform" class="border p-2 rounded-full bg-white text-gray-700 shadow-sm w-48">
-                <option value="">Plataformas</option>
-                <option value="Mobile">Mobile (Windows Phone)</option>
-                <option value="PC">PC (Windows Store)</option>
-                <option value="Win32">PC (Outros)</option>
-                <option value="Xbox360">Xbox 360</option>
-                <option value="XboxOne">Xbox One</option>
-                <option value="XboxSeries">Xbox Series</option>
-            </select>
-        </div>
-    </div>
-    <div id="gameList" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <!-- Jogos carregados via JavaScript -->
-    </div>
-    <div class="mt-4 flex justify-center space-x-4">
-        <button id="prevPage" class="bg-gray-800 text-white px-4 py-2 rounded">Anterior</button>
-        <button id="nextPage" class="bg-gray-800 text-white px-4 py-2 rounded">Próxima</button>
-    </div>
-</div>
+<main class="xbox-content">
+    <div class="xbox-page space-y-6">
+        <section class="xbox-hero">
+            <span class="xbox-hero-eyebrow">Jogos</span>
+            <h1 class="xbox-hero-title">Conquistas</h1>
+            <p class="xbox-hero-subtitle">
+                Explore seus títulos com filtros e paginação no estilo Xbox, mantendo a identidade de vidro líquido.
+            </p>
+        </section>
 
-<?php endif; ?>
+        <div class="xbox-panel space-y-4">
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div class="friends-search">
+                    <i class="fas fa-search text-green-200/80"></i>
+                    <input
+                        type="text"
+                        id="achievementSearch"
+                        placeholder="Buscar por Nome..."
+                        class="friends-search-input"
+                    />
+                    <button id="achievementSearchButton" class="friends-search-btn" aria-label="Buscar">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
 
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                    <label class="filter-select">
+                        <select id="filterName" class="filter-select-input">
+                            <option value="">Nome</option>
+                            <option value="asc">A-Z</option>
+                            <option value="desc">Z-A</option>
+                        </select>
+                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </label>
+                    <label class="filter-select">
+                        <select id="filterGamerscore" class="filter-select-input">
+                            <option value="">Gamerscore</option>
+                            <option value="asc">Do menor para o maior</option>
+                            <option value="desc">Do maior para o menor</option>
+                        </select>
+                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </label>
+                    <label class="filter-select">
+                        <select id="filterLastPlayed" class="filter-select-input">
+                            <option value="">Jogado pela Última Vez</option>
+                            <option value="recent">Mais Recente</option>
+                            <option value="oldest">Mais Antigo</option>
+                        </select>
+                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </label>
+                    <label class="filter-select">
+                        <select id="filterPlatform" class="filter-select-input">
+                            <option value="">Plataformas</option>
+                            <option value="Mobile">Mobile (Windows Phone)</option>
+                            <option value="PC">PC (Windows Store)</option>
+                            <option value="Win32">PC (Outros)</option>
+                            <option value="Xbox360">Xbox 360</option>
+                            <option value="XboxOne">Xbox One</option>
+                            <option value="XboxSeries">Xbox Series</option>
+                        </select>
+                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <?php if (isset($error_message)) : ?>
+            <p class="text-green-50"><?php echo htmlspecialchars($error_message); ?></p>
+        <?php elseif (empty($games)) : ?>
+            <p class="text-green-50">Você ainda não possui jogos com conquistas registradas.</p>
+        <?php else : ?>
+            <div id="achievementsList" class="friend-grid">
+                <?php foreach ($games as $game) : ?>
+                    <?php
+                        $boxArt = getBoxArt($game);
+                        $name = $game['name'] ?? 'Título não disponível';
+                        $devices = $game['devices'] ?? [];
+                        $deviceIcons = !empty($devices)
+                            ? implode(' ', array_map('getDeviceIcon', $devices))
+                            : 'Plataforma não disponível';
+                        $currentGs = $game['achievement']['currentGamerscore'] ?? 0;
+                        $progress = $game['achievement']['progressPercentage'] ?? 0;
+                        $lastPlayedRaw = $game['titleHistory']['lastTimePlayed'] ?? null;
+                        $lastPlayed = $lastPlayedRaw ? date('d/m/Y', strtotime($lastPlayedRaw)) : 'Data não disponível';
+                        $lastPlayedSort = $lastPlayedRaw ? strtotime($lastPlayedRaw) : 0;
+                        $platformsAttr = !empty($devices) ? strtolower(implode(',', $devices)) : '';
+                    ?>
+                    <article
+                        class="friend-card xbox-glass-card achievement-card"
+                        data-name="<?php echo htmlspecialchars(strtolower($name)); ?>"
+                        data-gamerscore="<?php echo $currentGs; ?>"
+                        data-last-played="<?php echo $lastPlayedSort; ?>"
+                        data-platforms="<?php echo htmlspecialchars($platformsAttr); ?>"
+                    >
+                        <div class="activity-card-header">
+                            <div class="friend-card-header">
+                                <span class="friend-status-dot"></span>
+                                <span class="friend-added">Atualizado em <?php echo htmlspecialchars($lastPlayed); ?></span>
+                            </div>
+                            <div class="badge-soft">Progresso: <?php echo $progress; ?>%</div>
+                        </div>
+                        <div class="activity-card-body achievement-body">
+                            <div class="friend-avatar achievement-cover">
+                                <img src="<?php echo htmlspecialchars($boxArt); ?>" alt="Capa de <?php echo htmlspecialchars($name); ?>" />
+                            </div>
+                            <div class="activity-details achievement-details">
+                                <div class="activity-author">
+                                    <div class="friend-gamertag"><?php echo htmlspecialchars($name); ?></div>
+                                    <div class="friend-presence">Jogado pela última vez em <?php echo htmlspecialchars($lastPlayed); ?></div>
+                                </div>
+                                <div class="achievement-meta">
+                                    <div class="friend-gamerscore">
+                                        <span>Gamerscore</span>
+                                        <strong><?php echo number_format($currentGs, 0, ',', '.'); ?></strong>
+                                        <img src="../img/gs.png" alt="Gamerscore Icon" class="friend-gs-icon">
+                                    </div>
+                                    <div class="achievement-platforms">
+                                        <span class="text-label">Plataformas:</span>
+                                        <span class="platform-icons"><?php echo $deviceIcons; ?></span>
+                                    </div>
+                                </div>
+                                <div class="achievement-progress-bar">
+                                    <div class="achievement-progress-fill" style="width: <?php echo min(100, (float)$progress); ?>%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+            <div id="achievementsPagination" class="friends-pagination"></div>
+        <?php endif; ?>
+    </div>
+</main>
 <script>
-    const games = <?php echo json_encode($games); ?>;
-    const itemsPerPage = <?php echo $items_per_page; ?>;
+    const achievementSearch = document.getElementById('achievementSearch');
+    const achievementSearchButton = document.getElementById('achievementSearchButton');
+    const filterName = document.getElementById('filterName');
+    const filterGamerscore = document.getElementById('filterGamerscore');
+    const filterLastPlayed = document.getElementById('filterLastPlayed');
+    const filterPlatform = document.getElementById('filterPlatform');
+    const achievementsList = document.getElementById('achievementsList');
+    const paginationContainer = document.getElementById('achievementsPagination');
+    const achievementCards = achievementsList ? Array.from(achievementsList.querySelectorAll('.achievement-card')) : [];
+    const PAGE_SIZE = <?php echo $items_per_page; ?>;
     let currentPage = 1;
-    let filteredGames = games;
-    function renderGames() {
-        const gameList = document.getElementById('gameList');
-        gameList.innerHTML = '';
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = currentPage * itemsPerPage;
-        const gamesToShow = filteredGames.slice(start, end);
-        gamesToShow.forEach(game => {
-            const gameCard = `
-                <div class="bg-gray-800 p-4 rounded-lg shadow-md flex game-card">
-                    <div class="relative w-1/3">
-                        <img src="${game.images && game.images.find(image => image.type === 'BoxArt') ? game.images.find(image => image.type === 'BoxArt').url : '../img/default_game.jpg'}" alt="Imagem do jogo" class="object-cover rounded-l-md h-full">
-                    </div>
-                    <div class="w-2/3 p-4">
-                        <p class="text-xl font-bold text-white game-name">${game.name}</p>
-                        <p class="text-sm text-gray-400 gamerscore">Gamerscore: ${game.achievement.currentGamerscore.toLocaleString()} <img src="../img/gs.png" alt="Gamerscore Icon" class="inline-block w-4 h-4"></p>
-                        <p class="text-sm text-gray-400 progress">Progresso: ${game.achievement.progressPercentage}%</p>
-                        <p class="text-sm text-gray-400 flex items-center space-x-2 platform">Plataformas: ${
-                            game.devices ? game.devices.map(device => getDeviceIcon(device)).join(' ') : 'Plataforma não disponível'
-                        }</p>
-                        <p class="text-sm text-gray-400 last-played">Jogado pela última vez: ${new Date(game.titleHistory.lastTimePlayed).toLocaleDateString()}</p>
-                    </div>
-                </div>`;
-            gameList.innerHTML += gameCard;
+
+    function applyFilters() {
+        const term = achievementSearch.value.toLowerCase();
+        const platform = filterPlatform.value.toLowerCase();
+
+        return achievementCards.filter((card) => {
+            const matchesName = card.getAttribute('data-name').includes(term);
+            const platforms = card.getAttribute('data-platforms');
+            const matchesPlatform = !platform || (platforms && platforms.split(',').includes(platform));
+            return matchesName && matchesPlatform;
         });
-        document.getElementById('prevPage').style.display = currentPage === 1 ? 'none' : 'inline';
-        document.getElementById('nextPage').style.display = currentPage * itemsPerPage >= filteredGames.length ? 'none' : 'inline';
     }
-    function filterGames() {
-        const searchInput = document.getElementById('searchInput').value.toLowerCase();
-        const filterPlatform = document.getElementById('filterPlatform').value;
-        filteredGames = games.filter(game => {
-            const nameMatch = game.name.toLowerCase().includes(searchInput);
-            const platformMatch = filterPlatform === "" || (game.devices && game.devices.includes(filterPlatform));
-            return nameMatch && platformMatch;
+
+    function applySorting(list) {
+        const nameSort = filterName.value;
+        const gsSort = filterGamerscore.value;
+        const lastPlayedSort = filterLastPlayed.value;
+        const sorted = [...list];
+
+        if (nameSort) {
+            sorted.sort((a, b) => {
+                const nameA = a.getAttribute('data-name');
+                const nameB = b.getAttribute('data-name');
+                return nameSort === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+            });
+        }
+
+        if (gsSort) {
+            sorted.sort((a, b) => {
+                const gsA = parseInt(a.getAttribute('data-gamerscore'), 10) || 0;
+                const gsB = parseInt(b.getAttribute('data-gamerscore'), 10) || 0;
+                return gsSort === 'asc' ? gsA - gsB : gsB - gsA;
+            });
+        }
+
+        if (lastPlayedSort) {
+            sorted.sort((a, b) => {
+                const dateA = parseInt(a.getAttribute('data-last-played'), 10) || 0;
+                const dateB = parseInt(b.getAttribute('data-last-played'), 10) || 0;
+                return lastPlayedSort === 'recent' ? dateB - dateA : dateA - dateB;
+            });
+        }
+
+        return sorted;
+    }
+
+    function renderPagination(totalPages) {
+        paginationContainer.innerHTML = '';
+        if (totalPages <= 1) {
+            return;
+        }
+
+        const createButton = (label, page, { isActive = false, disabled = false } = {}) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = label;
+            button.className = `pagination-btn ${isActive ? 'active' : ''} ${disabled ? 'disabled' : ''}`;
+            if (!disabled) {
+                button.addEventListener('click', () => {
+                    currentPage = page;
+                    updateAchievements();
+                });
+            }
+            return button;
+        };
+
+        const addSeparator = () => {
+            const separator = document.createElement('span');
+            separator.className = 'pagination-separator';
+            separator.textContent = '|';
+            paginationContainer.appendChild(separator);
+        };
+
+        const maxVisible = 5;
+        const halfWindow = Math.floor(maxVisible / 2);
+        let startPage = Math.max(1, currentPage - halfWindow);
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+        if (endPage - startPage + 1 < maxVisible) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+
+        const hasPrev = currentPage > 1;
+        const hasNext = currentPage < totalPages;
+
+        paginationContainer.appendChild(
+            createButton('Anterior', currentPage - 1, { disabled: !hasPrev })
+        );
+
+        addSeparator();
+
+        for (let page = startPage; page <= endPage; page++) {
+            paginationContainer.appendChild(createButton(page, page, { isActive: page === currentPage }));
+            if (page < endPage) addSeparator();
+        }
+
+        addSeparator();
+
+        paginationContainer.appendChild(
+            createButton('Próximo', currentPage + 1, { disabled: !hasNext })
+        );
+    }
+
+    function updateAchievements() {
+        if (!achievementsList) return;
+
+        const filtered = applyFilters();
+        const sorted = applySorting(filtered);
+        const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+        currentPage = Math.min(currentPage, totalPages);
+
+        achievementCards.forEach((card) => {
+            card.style.display = 'none';
         });
-        currentPage = 1;
-        renderGames();
+
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const visible = sorted.slice(start, start + PAGE_SIZE);
+        visible.forEach((card) => {
+            card.style.display = '';
+        });
+
+        renderPagination(totalPages);
     }
-    function sortGames() {
-        const filterName = document.getElementById('filterName').value;
-        const filterGamerscore = document.getElementById('filterGamerscore').value;
-        const filterLastPlayed = document.getElementById('filterLastPlayed').value;
-        if (filterName !== "") {
-            filteredGames.sort((a, b) => {
-                return filterName === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+
+    if (achievementsList) {
+        achievementSearch.addEventListener('input', () => {
+            currentPage = 1;
+            updateAchievements();
+        });
+
+        achievementSearchButton.addEventListener('click', () => {
+            currentPage = 1;
+            updateAchievements();
+        });
+
+        [filterName, filterGamerscore, filterLastPlayed, filterPlatform].forEach((select) => {
+            select.addEventListener('change', () => {
+                currentPage = 1;
+                updateAchievements();
             });
-        }
-        if (filterGamerscore !== "") {
-            filteredGames.sort((a, b) => {
-                return filterGamerscore === 'asc' ? a.achievement.currentGamerscore - b.achievement.currentGamerscore : b.achievement.currentGamerscore - a.achievement.currentGamerscore;
-            });
-        }
-        if (filterLastPlayed !== "") {
-            filteredGames.sort((a, b) => {
-                const lastPlayedA = new Date(a.titleHistory.lastTimePlayed);
-                const lastPlayedB = new Date(b.titleHistory.lastTimePlayed);
-                return filterLastPlayed === 'recent' ? lastPlayedB - lastPlayedA : lastPlayedA - lastPlayedB;
-            });
-        }
-        currentPage = 1;
-        renderGames();
+        });
+
+        updateAchievements();
     }
-    document.getElementById('searchInput').addEventListener('input', filterGames);
-    document.getElementById('filterName').addEventListener('change', sortGames);
-    document.getElementById('filterGamerscore').addEventListener('change', sortGames);
-    document.getElementById('filterLastPlayed').addEventListener('change', sortGames);
-    document.getElementById('filterPlatform').addEventListener('change', filterGames);
-    document.getElementById('prevPage').addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderGames();
-        }
-    });
-    document.getElementById('nextPage').addEventListener('click', () => {
-        if (currentPage * itemsPerPage < filteredGames.length) {
-            currentPage++;
-            renderGames();
-        }
-    });
-    function getDeviceIcon(deviceType) {
-        switch (deviceType) {
-            case 'XboxSeries':
-                return '<img src="../img/xboxseries.png" alt="Xbox Series" width="62,5" height="62,5">';
-            case 'PC':
-                return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
-            case 'XboxOne':
-                return '<img src="../img/xboxone.png" alt="Xbox One" width="62,5" height="62,5">';
-            case 'Win32':
-                return '<img src="../img/windows.png" alt="PC" width="62,5" height="62,5">';
-            case 'Mobile':
-                return '<img src="../img/windowsphone.webp" alt="Windows Phone" width="62,5" height="62,5">';
-            case 'Xbox360':
-                return '<img src="../img/xbox360.png" alt="Xbox 360" width="62,5" height="62,5">';
-            default:
-                return deviceType;
-        }
-    }
-    renderGames();
 </script>
 <?php include('../includes/footer.php'); ?>
