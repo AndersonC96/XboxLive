@@ -1,31 +1,24 @@
 <?php
     require '../config/db.php';
     require_once '../config/api.php';
-    $user_id = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT xuid FROM users WHERE id = :user_id");
-    $stmt->execute(['user_id' => $user_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($user && $user['xuid']) {
-        $xuid = $user['xuid'];
-        $endpoint = "account";
-        $response = openXBLRequest($endpoint);
-        if (isset($response['profileUsers'][0]['settings'])) {
-            $settings = $response['profileUsers'][0]['settings'];
-            foreach ($settings as $setting) {
-                if ($setting['id'] === 'GameDisplayPicRaw') {
-                    $gamerpic = $setting['value'];
-                }
-                if ($setting['id'] === 'Gamertag') {
-                    $gamertag = $setting['value'];
-                }
+    
+    // Obter dados da conta diretamente da API (não depende de xuid no banco)
+    $endpoint = "account";
+    $response = openXBLRequest($endpoint);
+    
+    $gamerpic = '../img/default_avatar.jpg';
+    $gamertag = 'Usuário';
+    
+    if ($response && isset($response['profileUsers'][0]['settings'])) {
+        $settings = $response['profileUsers'][0]['settings'];
+        foreach ($settings as $setting) {
+            if ($setting['id'] === 'GameDisplayPicRaw') {
+                $gamerpic = $setting['value'];
             }
-        } else {
-            $gamerpic = '../img/default_avatar.jpg';
-            $gamertag = 'Usuário';
+            if ($setting['id'] === 'Gamertag') {
+                $gamertag = $setting['value'];
+            }
         }
-    } else {
-        $gamerpic = '../img/default_avatar.jpg';
-        $gamertag = 'Usuário';
     }
 ?>
 <nav class="bg-gray-800 p-4">
