@@ -1,25 +1,25 @@
 <?php
-    require '../config/db.php';
-    require_once '../config/api.php';
+require '../config/db.php';
+require_once '../config/api.php';
 
-    // Obter dados da conta diretamente da API (não depende de xuid no banco)
-    $endpoint = "account";
-    $response = openXBLRequest($endpoint);
+// Obter dados da conta diretamente da API (não depende de xuid no banco)
+$endpoint = "account";
+$response = openXBLRequest($endpoint);
 
-    $gamerpic = '../img/default_avatar.jpg';
-    $gamertag = 'Usuário';
+$gamerpic = '../img/default_avatar.jpg';
+$gamertag = 'Usuário';
 
-    if ($response && isset($response['profileUsers'][0]['settings'])) {
-        $settings = $response['profileUsers'][0]['settings'];
-        foreach ($settings as $setting) {
-            if ($setting['id'] === 'GameDisplayPicRaw') {
-                $gamerpic = $setting['value'];
-            }
-            if ($setting['id'] === 'Gamertag') {
-                $gamertag = $setting['value'];
-            }
+if ($response && isset($response['profileUsers'][0]['settings'])) {
+    $settings = $response['profileUsers'][0]['settings'];
+    foreach ($settings as $setting) {
+        if ($setting['id'] === 'GameDisplayPicRaw') {
+            $gamerpic = $setting['value'];
+        }
+        if ($setting['id'] === 'Gamertag') {
+            $gamertag = $setting['value'];
         }
     }
+}
 ?>
 <nav class="liquid-nav relative">
     <div class="nav-glass-overlay"></div>
@@ -33,7 +33,6 @@
                 <span class="nav-brand-icon grid place-items-center">
                     <img src="../img/logo2.png" alt="Xbox Logo" class="w-10 h-10">
                 </span>
-                <span class="nav-brand-text">Xbox Live</span>
             </a>
 
             <div class="relative nav-item">
@@ -148,15 +147,32 @@
     </div>
 </nav>
 <script>
-    const dropdowns = [
-        { button: 'dropdown-amigos-btn', menu: 'dropdown-amigos-menu' },
-        { button: 'dropdown-activity-btn', menu: 'dropdown-activity-menu' },
-        { button: 'dropdown-gamepass-btn', menu: 'dropdown-gamepass-menu' },
-        { button: 'dropdown-loja-btn', menu: 'dropdown-loja-menu' },
-        { button: 'user-menu-button', menu: 'user-menu' }
+    const dropdowns = [{
+            button: 'dropdown-amigos-btn',
+            menu: 'dropdown-amigos-menu'
+        },
+        {
+            button: 'dropdown-activity-btn',
+            menu: 'dropdown-activity-menu'
+        },
+        {
+            button: 'dropdown-gamepass-btn',
+            menu: 'dropdown-gamepass-menu'
+        },
+        {
+            button: 'dropdown-loja-btn',
+            menu: 'dropdown-loja-menu'
+        },
+        {
+            button: 'user-menu-button',
+            menu: 'user-menu'
+        }
     ];
 
-    dropdowns.forEach(({ button, menu }) => {
+    dropdowns.forEach(({
+        button,
+        menu
+    }) => {
         const btn = document.getElementById(button);
         const menuEl = document.getElementById(menu);
 
@@ -175,7 +191,9 @@
     document.addEventListener('click', closeAllDropdowns);
 
     function closeAllDropdowns() {
-        dropdowns.forEach(({ menu }) => {
+        dropdowns.forEach(({
+            menu
+        }) => {
             const el = document.getElementById(menu);
             if (el && !el.classList.contains('hidden')) {
                 el.classList.add('hidden');
