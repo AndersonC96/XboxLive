@@ -129,10 +129,10 @@ $response = openXBLPostRequest($endpoint, $body);
                 <?php for ($p = $startPage; $p <= $endPage; $p++) : ?>
                     <a class="pagination-btn <?php echo $p === $page ? 'active' : ''; ?>" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
                     <?php if ($p < $endPage) : ?>
-                        <span class="pagination-separator">|</span>
+                        <span class="pagination-separator"></span>
                     <?php endif; ?>
                 <?php endfor; ?>
-                <span class="pagination-separator">|</span>
+                <span class="pagination-separator"></span>
                 <a class="pagination-btn <?php echo $hasNext ? '' : 'disabled'; ?>" href="<?php echo $hasNext ? '?page=' . ($page + 1) : 'javascript:void(0);'; ?>">Próximo</a>
             </div>
         <?php else : ?>
