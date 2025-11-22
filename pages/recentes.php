@@ -1,32 +1,29 @@
 <?php
-    session_start();
-    include('../includes/header.php');
-    include('../includes/navbar.php');
-    require '../config/db.php';
-    require_once '../config/api.php';
+session_start();
+include('../includes/header.php');
+include('../includes/navbar.php');
+require '../config/db.php';
+require_once '../config/api.php';
 
-    if (!isset($_SESSION['user_id'])) {
-        echo "Erro: Usuário não está logado.";
-        exit;
-    }
+if (!isset($_SESSION['user_id'])) {
+    echo "Erro: Usuário não está logado.";
+    exit;
+}
 
-    $endpoint = "recent-players";
-    $response = openXBLRequest($endpoint);
+$endpoint = "recent-players";
+$response = openXBLRequest($endpoint);
 
-    if ($response && isset($response['people']) && is_array($response['people'])) {
-        $recentPlayers = $response['people'];
-    } else {
-        $recentPlayers = [];
-    }
+if ($response && isset($response['people']) && is_array($response['people'])) {
+    $recentPlayers = $response['people'];
+} else {
+    $recentPlayers = [];
+}
 ?>
 <main class="xbox-content">
     <div class="xbox-page space-y-6">
         <section class="xbox-hero">
             <span class="xbox-hero-eyebrow">Comunidade</span>
             <h1 class="xbox-hero-title">Jogadores Recentes</h1>
-            <p class="xbox-hero-subtitle">
-                Revise quem jogou com você recentemente com o mesmo visual líquido e controles de busca usados em Amigos e Bloqueados.
-            </p>
         </section>
 
         <div class="xbox-panel space-y-4">
@@ -36,8 +33,7 @@
                     type="text"
                     id="filterRecentGamertag"
                     placeholder="Buscar por Gamertag..."
-                    class="friends-search-input"
-                />
+                    class="friends-search-input" />
                 <button id="recentSearchButton" class="friends-search-btn" aria-label="Buscar">
                     <i class="fas fa-arrow-right"></i>
                 </button>
@@ -48,17 +44,16 @@
             <div id="recentList" class="friend-grid">
                 <?php foreach ($recentPlayers as $player) : ?>
                     <?php
-                        $avatar = !empty($player['displayPicRaw']) ? $player['displayPicRaw'] : '../img/default_avatar.jpg';
-                        $gamertag = $player['gamertag'] ?? ($player['displayName'] ?? 'Usuário');
-                        $recentTitle = $player['recentPlayer']['titles'][0]['titleName'] ?? 'Jogo recente não informado';
-                        $lastPlayedRaw = $player['recentPlayer']['titles'][0]['lastPlayedWithDateTime'] ?? null;
-                        $lastPlayed = $lastPlayedRaw ? date('d/m/Y', strtotime($lastPlayedRaw)) : 'Data não disponível';
-                        $gamerscore = isset($player['gamerScore']) ? number_format($player['gamerScore'], 0, ',', '.') : '0';
+                    $avatar = !empty($player['displayPicRaw']) ? $player['displayPicRaw'] : '../img/default_avatar.jpg';
+                    $gamertag = $player['gamertag'] ?? ($player['displayName'] ?? 'Usuário');
+                    $recentTitle = $player['recentPlayer']['titles'][0]['titleName'] ?? 'Jogo recente não informado';
+                    $lastPlayedRaw = $player['recentPlayer']['titles'][0]['lastPlayedWithDateTime'] ?? null;
+                    $lastPlayed = $lastPlayedRaw ? date('d/m/Y', strtotime($lastPlayedRaw)) : 'Data não disponível';
+                    $gamerscore = isset($player['gamerScore']) ? number_format($player['gamerScore'], 0, ',', '.') : '0';
                     ?>
                     <article
                         class="friend-card xbox-glass-card"
-                        data-gamertag="<?php echo htmlspecialchars($gamertag); ?>"
-                    >
+                        data-gamertag="<?php echo htmlspecialchars($gamertag); ?>">
                         <div class="friend-card-header">
                             <span class="friend-status-dot"></span>
                             <span class="friend-added">Jogou recentemente</span>
@@ -72,7 +67,6 @@
                                 <div class="friend-presence">Último jogo: <?php echo htmlspecialchars($recentTitle); ?></div>
                                 <div class="friend-presence">Último encontro: <?php echo htmlspecialchars($lastPlayed); ?></div>
                                 <div class="friend-gamerscore">
-                                    <span>Gamerscore</span>
                                     <strong><?php echo $gamerscore; ?></strong>
                                     <img src="../img/gs.png" alt="Gamerscore Icon" class="friend-gs-icon" />
                                 </div>
@@ -110,7 +104,10 @@
             return;
         }
 
-        const createButton = (label, page, { isActive = false, disabled = false } = {}) => {
+        const createButton = (label, page, {
+            isActive = false,
+            disabled = false
+        } = {}) => {
             const button = document.createElement('button');
             button.type = 'button';
             button.textContent = label;
@@ -127,7 +124,7 @@
         const addSeparator = () => {
             const separator = document.createElement('span');
             separator.className = 'pagination-separator';
-            separator.textContent = '|';
+            separator.textContent = '';
             recentPagination.appendChild(separator);
         };
 
@@ -144,20 +141,26 @@
         const hasNext = recentCurrentPage < totalPages;
 
         recentPagination.appendChild(
-            createButton('Anterior', recentCurrentPage - 1, { disabled: !hasPrev })
+            createButton('Anterior', recentCurrentPage - 1, {
+                disabled: !hasPrev
+            })
         );
 
         addSeparator();
 
         for (let page = startPage; page <= endPage; page++) {
-            recentPagination.appendChild(createButton(page, page, { isActive: page === recentCurrentPage }));
+            recentPagination.appendChild(createButton(page, page, {
+                isActive: page === recentCurrentPage
+            }));
             if (page < endPage) addSeparator();
         }
 
         addSeparator();
 
         recentPagination.appendChild(
-            createButton('Próximo', recentCurrentPage + 1, { disabled: !hasNext })
+            createButton('Próximo', recentCurrentPage + 1, {
+                disabled: !hasNext
+            })
         );
     }
 
