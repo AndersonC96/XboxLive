@@ -62,4 +62,4 @@ Dashboard interativo em PHP que integra a API do OpenXBL para exibir perfil, pre
 - Caso veja o erro `Class "mysqli" not found`, habilite a extensão MySQL do PHP e reinicie o servidor.
 
 ## 📜 Licença
-Este projeto é fornecido no estado em que se encontra. Consulte o repositório original para obter detalhes adicionais de licenciamento.
+Este projeto é fornecido no estado em que se encontra.
