@@ -1056,6 +1056,11 @@ a.glass-link:hover {
     gap: 1.25rem;
 }
 
+/* For pages that need a single column (Game Pass PC list) */
+.friend-grid.single-column {
+    grid-template-columns: 1fr !important;
+}
+
 /* Responsividade: 2 colunas em tablets, 1 coluna em mobile */
 @media (max-width: 1024px) {
     .friend-grid {
