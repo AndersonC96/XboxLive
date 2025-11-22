@@ -1,32 +1,31 @@
 <?php
-    session_start();
-    include('../includes/header.php');
-    include('../includes/navbar.php');
-    require '../config/db.php';
-    require_once '../config/api.php';
-    if (!isset($_SESSION['user_id'])) {
-        echo "Erro: Usuário não está logado.";
-        exit;
-    }
+session_start();
+include('../includes/header.php');
+include('../includes/navbar.php');
+require '../config/db.php';
+require_once '../config/api.php';
+if (!isset($_SESSION['user_id'])) {
+    echo "Erro: Usuário não está logado.";
+    exit;
+}
 
-    $endpoint = "friends";
-    $response = openXBLRequest($endpoint);
+$endpoint = "friends";
+$response = openXBLRequest($endpoint);
 
-    if ($response && isset($response['people']) && is_array($response['people'])) {
-        $friends = $response['people'];
-    } else {
-        $friends = [];
-    }
+if ($response && isset($response['people']) && is_array($response['people'])) {
+    $friends = $response['people'];
+} else {
+    $friends = [];
+}
 ?>
 <main class="xbox-content">
     <div class="xbox-page space-y-6">
         <section class="xbox-hero">
             <span class="xbox-hero-eyebrow">Comunidade</span>
             <h1 class="xbox-hero-title">Lista de Amigos</h1>
-            <p class="xbox-hero-subtitle">Encontre, ordene e navegue pela sua comunidade com cartões em vidro líquido e controles alinhados à navegação.</p>
         </section>
 
-        <div class="xbox-panel space-y-4">
+        <div class="xbox-panel xbox-panel--dropdowns space-y-4">
             <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div class="friends-search">
                     <i class="fas fa-search text-green-200/80"></i>
@@ -34,30 +33,50 @@
                         type="text"
                         id="filterGamertag"
                         placeholder="Buscar por Gamertag..."
-                        class="friends-search-input"
-                    />
+                        class="friends-search-input" />
                     <button id="searchButton" class="friends-search-btn" aria-label="Buscar">
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
 
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                    <label class="filter-select">
-                        <select id="filterDate" class="filter-select-input">
-                            <option value="">Data de Amizade</option>
-                            <option value="oldest">Mais Antigo</option>
-                            <option value="newest">Mais Recente</option>
-                        </select>
-                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
-                    </label>
-                    <label class="filter-select">
-                        <select id="filterGamerscore" class="filter-select-input">
-                            <option value="">Gamerscore</option>
-                            <option value="asc">Ordem Crescente</option>
-                            <option value="desc">Ordem Decrescente</option>
-                        </select>
-                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
-                    </label>
+                    <!-- Select nativo oculto para manter a lógica existente -->
+                    <select id="filterDate" class="filter-select-input hidden">
+                        <option value="">Data de Amizade</option>
+                        <option value="oldest">Mais Antigo</option>
+                        <option value="newest">Mais Recente</option>
+                    </select>
+                    <!-- Dropdown custom Xbox -->
+                    <div class="relative nav-item">
+                        <button type="button" id="filter-date-btn" class="nav-link">
+                            <span id="filter-date-label">Data de Amizade</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="filter-date-menu" class="nav-dropdown hidden">
+                            <button type="button" class="nav-dropdown-item" data-filter="date" data-value="">Data de Amizade</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="date" data-value="oldest">Mais Antigo</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="date" data-value="newest">Mais Recente</button>
+                        </div>
+                    </div>
+
+                    <!-- Select nativo oculto para manter a lógica existente -->
+                    <select id="filterGamerscore" class="filter-select-input hidden">
+                        <option value="">Gamerscore</option>
+                        <option value="asc">Ordem Crescente</option>
+                        <option value="desc">Ordem Decrescente</option>
+                    </select>
+                    <!-- Dropdown custom Xbox -->
+                    <div class="relative nav-item">
+                        <button type="button" id="filter-score-btn" class="nav-link">
+                            <span id="filter-score-label">Gamerscore</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="filter-score-menu" class="nav-dropdown hidden">
+                            <button type="button" class="nav-dropdown-item" data-filter="score" data-value="">Gamerscore</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="score" data-value="asc">Ordem Crescente</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="score" data-value="desc">Ordem Decrescente</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -66,9 +85,9 @@
             <div id="friendsList" class="friend-grid">
                 <?php foreach ($friends as $friend) : ?>
                     <?php
-                        $avatar = !empty($friend['displayPicRaw']) ? $friend['displayPicRaw'] : '../img/default_avatar.jpg';
-                        $addedDate = new DateTime($friend['addedDateTimeUtc']);
-                        $formattedDate = $addedDate->format('d/m/Y');
+                    $avatar = !empty($friend['displayPicRaw']) ? $friend['displayPicRaw'] : '../img/default_avatar.jpg';
+                    $addedDate = new DateTime($friend['addedDateTimeUtc']);
+                    $formattedDate = $addedDate->format('d/m/Y');
                     ?>
                     <article class="friend-card xbox-glass-card" data-gamertag="<?php echo htmlspecialchars($friend['gamertag']); ?>" data-added="<?php echo (new DateTime($friend['addedDateTimeUtc']))->format('Y-m-d'); ?>" data-gamerscore="<?php echo $friend['gamerScore']; ?>">
                         <div class="friend-card-header">
@@ -83,7 +102,6 @@
                                 <div class="friend-gamertag"><?php echo htmlspecialchars($friend['gamertag']); ?></div>
                                 <div class="friend-presence"><?php echo $friend['presenceText']; ?></div>
                                 <div class="friend-gamerscore">
-                                    <span>Gamerscore</span>
                                     <strong><?php echo number_format($friend['gamerScore'], 0, ',', '.'); ?></strong>
                                     <img src="../img/gs.png" alt="Gamerscore Icon" class="friend-gs-icon">
                                 </div>
@@ -147,7 +165,10 @@
             return;
         }
 
-        const createButton = (label, page, { isActive = false, disabled = false } = {}) => {
+        const createButton = (label, page, {
+            isActive = false,
+            disabled = false
+        } = {}) => {
             const button = document.createElement('button');
             button.type = 'button';
             button.textContent = label;
@@ -164,7 +185,7 @@
         const addSeparator = () => {
             const separator = document.createElement('span');
             separator.className = 'pagination-separator';
-            separator.textContent = '|';
+            separator.textContent = '';
             paginationContainer.appendChild(separator);
         };
 
@@ -181,20 +202,26 @@
         const hasNext = currentPage < totalPages;
 
         paginationContainer.appendChild(
-            createButton('Anterior', currentPage - 1, { disabled: !hasPrev })
+            createButton('Anterior', currentPage - 1, {
+                disabled: !hasPrev
+            })
         );
 
         addSeparator();
 
         for (let page = startPage; page <= endPage; page++) {
-            paginationContainer.appendChild(createButton(page, page, { isActive: page === currentPage }));
+            paginationContainer.appendChild(createButton(page, page, {
+                isActive: page === currentPage
+            }));
             if (page < endPage) addSeparator();
         }
 
         addSeparator();
 
         paginationContainer.appendChild(
-            createButton('Próximo', currentPage + 1, { disabled: !hasNext })
+            createButton('Próximo', currentPage + 1, {
+                disabled: !hasNext
+            })
         );
     }
 
@@ -217,6 +244,70 @@
         });
 
         renderPagination(totalPages);
+    }
+
+    // Componente de dropdown custom: sincroniza com o <select> oculto (estilo navbar)
+    const filterDropdowns = [{
+            button: 'filter-date-btn',
+            menu: 'filter-date-menu',
+            label: 'filter-date-label',
+            select: filterDate
+        },
+        {
+            button: 'filter-score-btn',
+            menu: 'filter-score-menu',
+            label: 'filter-score-label',
+            select: filterGamerscore
+        }
+    ];
+
+    filterDropdowns.forEach(({
+        button,
+        menu,
+        label,
+        select
+    }) => {
+        const btn = document.getElementById(button);
+        const menuEl = document.getElementById(menu);
+        const labelEl = document.getElementById(label);
+
+        if (btn && menuEl) {
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const isHidden = menuEl.classList.contains('hidden');
+                closeAllFilterDropdowns();
+                if (isHidden) {
+                    menuEl.classList.remove('hidden');
+                }
+            });
+
+            menuEl.querySelectorAll('[data-filter]').forEach((item) => {
+                item.addEventListener('click', () => {
+                    const val = item.getAttribute('data-value');
+                    select.value = val;
+                    labelEl.textContent = item.textContent;
+                    menuEl.classList.add('hidden');
+                    // Dispara change para reaproveitar a lógica existente
+                    const evt = new Event('change', {
+                        bubbles: true
+                    });
+                    select.dispatchEvent(evt);
+                });
+            });
+        }
+    });
+
+    document.addEventListener('click', closeAllFilterDropdowns);
+
+    function closeAllFilterDropdowns() {
+        filterDropdowns.forEach(({
+            menu
+        }) => {
+            const el = document.getElementById(menu);
+            if (el && !el.classList.contains('hidden')) {
+                el.classList.add('hidden');
+            }
+        });
     }
 
     if (friendsList) {
