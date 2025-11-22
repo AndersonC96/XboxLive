@@ -1,21 +1,18 @@
 <?php
-    session_start();
-    include('../includes/header.php');
-    include('../includes/navbar.php');
-    require_once '../config/api.php';
+session_start();
+include('../includes/header.php');
+include('../includes/navbar.php');
+require_once '../config/api.php';
 
-    $endpoint = "activity/feed";
-    $response = openXBLRequest($endpoint);
-    $activityItems = $response['activityItems'] ?? [];
+$endpoint = "activity/feed";
+$response = openXBLRequest($endpoint);
+$activityItems = $response['activityItems'] ?? [];
 ?>
 <main class="xbox-content">
     <div class="xbox-page space-y-6">
         <section class="xbox-hero">
             <span class="xbox-hero-eyebrow">Comunidade</span>
             <h1 class="xbox-hero-title">Feed de Atividades</h1>
-            <p class="xbox-hero-subtitle">
-                Veja capturas, clips e atualizações recentes com cartões de vidro líquido e navegação alinhada ao restante da experiência.
-            </p>
         </section>
 
         <div class="xbox-panel space-y-4">
@@ -25,8 +22,7 @@
                     type="text"
                     id="feedSearch"
                     placeholder="Buscar por Gamertag..."
-                    class="friends-search-input"
-                />
+                    class="friends-search-input" />
                 <button id="feedSearchButton" class="friends-search-btn" aria-label="Buscar">
                     <i class="fas fa-arrow-right"></i>
                 </button>
@@ -37,17 +33,17 @@
             <div id="feedList" class="friend-grid">
                 <?php foreach ($activityItems as $item) : ?>
                     <?php
-                        $author = $item['authorInfo'] ?? [];
-                        $avatar = !empty($author['imageUrl']) ? $author['imageUrl'] : '../img/default_avatar.jpg';
-                        $gamertag = $author['modernGamertag'] ?? 'Gamertag indisponível';
-                        $secondary = $author['secondName'] ?? 'Nome não disponível';
-                        $description = $item['description'] ?? 'Atividade';
-                        $itemText = $item['itemText'] ?? 'Texto não disponível';
-                        $timeline = $item['timeline']['timelineName'] ?? 'Timeline não disponível';
-                        $dateRaw = $item['date'] ?? null;
-                        $formattedDate = $dateRaw ? date('d/m/Y H:i', strtotime($dateRaw)) : 'Data não disponível';
-                        $comments = isset($item['numComments']) ? $item['numComments'] : 'Sem comentários';
-                        $liked = !empty($item['hasLiked']);
+                    $author = $item['authorInfo'] ?? [];
+                    $avatar = !empty($author['imageUrl']) ? $author['imageUrl'] : '../img/default_avatar.jpg';
+                    $gamertag = $author['modernGamertag'] ?? 'Gamertag indisponível';
+                    $secondary = $author['secondName'] ?? 'Nome não disponível';
+                    $description = $item['description'] ?? 'Atividade';
+                    $itemText = $item['itemText'] ?? 'Texto não disponível';
+                    $timeline = $item['timeline']['timelineName'] ?? 'Timeline não disponível';
+                    $dateRaw = $item['date'] ?? null;
+                    $formattedDate = $dateRaw ? date('d/m/Y H:i', strtotime($dateRaw)) : 'Data não disponível';
+                    $comments = isset($item['numComments']) ? $item['numComments'] : 'Sem comentários';
+                    $liked = !empty($item['hasLiked']);
                     ?>
                     <article class="friend-card xbox-glass-card activity-card" data-gamertag="<?php echo htmlspecialchars(strtolower($gamertag)); ?>">
                         <div class="activity-card-header">
@@ -101,7 +97,10 @@
         paginationContainer.innerHTML = '';
         if (totalPages <= 1) return;
 
-        const createButton = (label, page, { isActive = false, disabled = false } = {}) => {
+        const createButton = (label, page, {
+            isActive = false,
+            disabled = false
+        } = {}) => {
             const button = document.createElement('button');
             button.type = 'button';
             button.textContent = label;
@@ -118,7 +117,7 @@
         const addSeparator = () => {
             const separator = document.createElement('span');
             separator.className = 'pagination-separator';
-            separator.textContent = '|';
+            separator.textContent = '';
             paginationContainer.appendChild(separator);
         };
 
@@ -135,20 +134,26 @@
         const hasNext = currentPage < totalPages;
 
         paginationContainer.appendChild(
-            createButton('Anterior', currentPage - 1, { disabled: !hasPrev })
+            createButton('Anterior', currentPage - 1, {
+                disabled: !hasPrev
+            })
         );
 
         addSeparator();
 
         for (let page = startPage; page <= endPage; page++) {
-            paginationContainer.appendChild(createButton(page, page, { isActive: page === currentPage }));
+            paginationContainer.appendChild(createButton(page, page, {
+                isActive: page === currentPage
+            }));
             if (page < endPage) addSeparator();
         }
 
         addSeparator();
 
         paginationContainer.appendChild(
-            createButton('Próximo', currentPage + 1, { disabled: !hasNext })
+            createButton('Próximo', currentPage + 1, {
+                disabled: !hasNext
+            })
         );
     }
 
