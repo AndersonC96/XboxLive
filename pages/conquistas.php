@@ -1,66 +1,76 @@
 <?php
-    session_start();
-    include('../includes/header.php');
-    include('../includes/navbar.php');
-    require '../config/db.php';
-    require_once '../config/api.php';
-    if (!isset($_SESSION['user_id'])) {
-        echo "Erro: Usuário não está logado.";
-        exit;
+session_start();
+include('../includes/header.php');
+include('../includes/navbar.php');
+require '../config/db.php';
+require_once '../config/api.php';
+if (!isset($_SESSION['user_id'])) {
+    echo "Erro: Usuário não está logado.";
+    exit;
+}
+
+$endpoint = "achievements";
+$response = openXBLRequest($endpoint);
+
+if ($response && isset($response['titles']) && is_array($response['titles'])) {
+    $games = $response['titles'];
+} else {
+    $games = [];
+    $error_message = "Não foi possível carregar suas conquistas. Verifique se a chave da API está configurada corretamente no arquivo .env";
+}
+
+$items_per_page = 12;
+
+function getDeviceIcon($deviceType)
+{
+    switch ($deviceType) {
+        case 'XboxSeries':
+            return '<img src="../img/xboxseries.png" alt="Xbox Series" width="24" height="24">';
+        case 'PC':
+        case 'Win32':
+            return '<img src="../img/windows.png" alt="PC" width="24" height="24">';
+        case 'XboxOne':
+            return '<img src="../img/xboxone.png" alt="Xbox One" width="24" height="24">';
+        case 'Mobile':
+            return '<img src="../img/windowsphone.webp" alt="Windows Phone" width="24" height="24">';
+        case 'Xbox360':
+            return '<img src="../img/xbox360.png" alt="Xbox 360" width="24" height="24">';
+        default:
+            return htmlspecialchars($deviceType);
     }
+}
 
-    $endpoint = "achievements";
-    $response = openXBLRequest($endpoint);
-
-    if ($response && isset($response['titles']) && is_array($response['titles'])) {
-        $games = $response['titles'];
-    } else {
-        $games = [];
-        $error_message = "Não foi possível carregar suas conquistas. Verifique se a chave da API está configurada corretamente no arquivo .env";
-    }
-
-    $items_per_page = 12;
-
-    function getDeviceIcon($deviceType)
-    {
-        switch ($deviceType) {
-            case 'XboxSeries':
-                return '<img src="../img/xboxseries.png" alt="Xbox Series" width="24" height="24">';
-            case 'PC':
-            case 'Win32':
-                return '<img src="../img/windows.png" alt="PC" width="24" height="24">';
-            case 'XboxOne':
-                return '<img src="../img/xboxone.png" alt="Xbox One" width="24" height="24">';
-            case 'Mobile':
-                return '<img src="../img/windowsphone.webp" alt="Windows Phone" width="24" height="24">';
-            case 'Xbox360':
-                return '<img src="../img/xbox360.png" alt="Xbox 360" width="24" height="24">';
-            default:
-                return htmlspecialchars($deviceType);
-        }
-    }
-
-    function getBoxArt($game)
-    {
-        if (isset($game['images'])) {
-            foreach ($game['images'] as $image) {
-                if ($image['type'] === 'BoxArt') {
-                    return $image['url'];
-                }
+function getBoxArt($game)
+{
+    if (isset($game['images'])) {
+        foreach ($game['images'] as $image) {
+            if ($image['type'] === 'BoxArt') {
+                return $image['url'];
             }
         }
-
-        return '../img/default_game.jpg';
     }
+
+    return '../img/default_game.jpg';
+}
+
+function getSuperHeroArt($game)
+{
+    if (isset($game['images'])) {
+        foreach ($game['images'] as $image) {
+            if ($image['type'] === 'SuperHeroArt') {
+                return $image['url'];
+            }
+        }
+    }
+
+    return '';
+}
 ?>
 <main class="xbox-content">
     <div class="xbox-page space-y-6">
         <section class="xbox-hero">
             <span class="xbox-hero-eyebrow">Jogos</span>
             <h1 class="xbox-hero-title">Conquistas</h1>
-            <p class="xbox-hero-subtitle">
-                Explore seus títulos com filtros e paginação no estilo Xbox, mantendo a identidade de vidro líquido.
-            </p>
         </section>
 
         <div class="xbox-panel space-y-4">
@@ -71,8 +81,7 @@
                         type="text"
                         id="achievementSearch"
                         placeholder="Buscar por Nome..."
-                        class="friends-search-input"
-                    />
+                        class="friends-search-input" />
                     <button id="achievementSearchButton" class="friends-search-btn" aria-label="Buscar">
                         <i class="fas fa-arrow-right"></i>
                     </button>
@@ -127,18 +136,19 @@
             <div id="achievementsList" class="friend-grid">
                 <?php foreach ($games as $game) : ?>
                     <?php
-                        $boxArt = getBoxArt($game);
-                        $name = $game['name'] ?? 'Título não disponível';
-                        $devices = $game['devices'] ?? [];
-                        $deviceIcons = !empty($devices)
-                            ? implode(' ', array_map('getDeviceIcon', $devices))
-                            : 'Plataforma não disponível';
-                        $currentGs = $game['achievement']['currentGamerscore'] ?? 0;
-                        $progress = $game['achievement']['progressPercentage'] ?? 0;
-                        $lastPlayedRaw = $game['titleHistory']['lastTimePlayed'] ?? null;
-                        $lastPlayed = $lastPlayedRaw ? date('d/m/Y', strtotime($lastPlayedRaw)) : 'Data não disponível';
-                        $lastPlayedSort = $lastPlayedRaw ? strtotime($lastPlayedRaw) : 0;
-                        $platformsAttr = !empty($devices) ? strtolower(implode(',', $devices)) : '';
+                    $boxArt = getBoxArt($game);
+                    $heroArt = getSuperHeroArt($game);
+                    $name = $game['name'] ?? 'Título não disponível';
+                    $devices = $game['devices'] ?? [];
+                    $deviceIcons = !empty($devices)
+                        ? implode(' ', array_map('getDeviceIcon', $devices))
+                        : 'Plataforma não disponível';
+                    $currentGs = $game['achievement']['currentGamerscore'] ?? 0;
+                    $progress = $game['achievement']['progressPercentage'] ?? 0;
+                    $lastPlayedRaw = $game['titleHistory']['lastTimePlayed'] ?? null;
+                    $lastPlayed = $lastPlayedRaw ? date('d/m/Y', strtotime($lastPlayedRaw)) : 'Data não disponível';
+                    $lastPlayedSort = $lastPlayedRaw ? strtotime($lastPlayedRaw) : 0;
+                    $platformsAttr = !empty($devices) ? strtolower(implode(',', $devices)) : '';
                     ?>
                     <article
                         class="friend-card xbox-glass-card achievement-card"
@@ -146,11 +156,11 @@
                         data-gamerscore="<?php echo $currentGs; ?>"
                         data-last-played="<?php echo $lastPlayedSort; ?>"
                         data-platforms="<?php echo htmlspecialchars($platformsAttr); ?>"
-                    >
+                        data-hero-art="<?php echo htmlspecialchars($heroArt); ?>">
                         <div class="activity-card-header">
                             <div class="friend-card-header">
                                 <span class="friend-status-dot"></span>
-                                <span class="friend-added">Atualizado em <?php echo htmlspecialchars($lastPlayed); ?></span>
+                                <span class="friend-added">Jogado pela última vez em <?php echo htmlspecialchars($lastPlayed); ?></span>
                             </div>
                             <div class="badge-soft">Progresso: <?php echo $progress; ?>%</div>
                         </div>
@@ -165,7 +175,6 @@
                                 </div>
                                 <div class="achievement-meta">
                                     <div class="friend-gamerscore">
-                                        <span>Gamerscore</span>
                                         <strong><?php echo number_format($currentGs, 0, ',', '.'); ?></strong>
                                         <img src="../img/gs.png" alt="Gamerscore Icon" class="friend-gs-icon">
                                     </div>
@@ -250,7 +259,10 @@
             return;
         }
 
-        const createButton = (label, page, { isActive = false, disabled = false } = {}) => {
+        const createButton = (label, page, {
+            isActive = false,
+            disabled = false
+        } = {}) => {
             const button = document.createElement('button');
             button.type = 'button';
             button.textContent = label;
@@ -267,7 +279,7 @@
         const addSeparator = () => {
             const separator = document.createElement('span');
             separator.className = 'pagination-separator';
-            separator.textContent = '|';
+            separator.textContent = '';
             paginationContainer.appendChild(separator);
         };
 
@@ -284,20 +296,26 @@
         const hasNext = currentPage < totalPages;
 
         paginationContainer.appendChild(
-            createButton('Anterior', currentPage - 1, { disabled: !hasPrev })
+            createButton('Anterior', currentPage - 1, {
+                disabled: !hasPrev
+            })
         );
 
         addSeparator();
 
         for (let page = startPage; page <= endPage; page++) {
-            paginationContainer.appendChild(createButton(page, page, { isActive: page === currentPage }));
+            paginationContainer.appendChild(createButton(page, page, {
+                isActive: page === currentPage
+            }));
             if (page < endPage) addSeparator();
         }
 
         addSeparator();
 
         paginationContainer.appendChild(
-            createButton('Próximo', currentPage + 1, { disabled: !hasNext })
+            createButton('Próximo', currentPage + 1, {
+                disabled: !hasNext
+            })
         );
     }
 
@@ -320,6 +338,33 @@
         });
 
         renderPagination(totalPages);
+    }
+
+    // Background dinâmico ao passar mouse sobre os cards
+    if (achievementsList) {
+        const xboxContent = document.querySelector('.xbox-content');
+        const defaultBg = window.getComputedStyle(xboxContent).backgroundImage;
+
+        achievementCards.forEach((card) => {
+            card.addEventListener('mouseenter', () => {
+                const heroArt = card.getAttribute('data-hero-art');
+                if (heroArt && xboxContent) {
+                    xboxContent.style.backgroundImage = `
+                        linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 20, 10, 0.95)),
+                        url('${heroArt}')
+                    `;
+                    xboxContent.style.backgroundSize = 'cover';
+                    xboxContent.style.backgroundPosition = 'center';
+                    xboxContent.style.transition = 'background-image 0.5s ease-in-out';
+                }
+            });
+
+            card.addEventListener('mouseleave', () => {
+                if (xboxContent) {
+                    xboxContent.style.backgroundImage = defaultBg;
+                }
+            });
+        });
     }
 
     if (achievementsList) {
