@@ -34,9 +34,6 @@ if ($response && isset($response['people']) && is_array($response['people'])) {
                         id="filterGamertag"
                         placeholder="Buscar por Gamertag..."
                         class="friends-search-input" />
-                    <button id="searchButton" class="friends-search-btn" aria-label="Buscar">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
                 </div>
 
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
@@ -118,7 +115,6 @@ if ($response && isset($response['people']) && is_array($response['people'])) {
 </main>
 <script>
     const searchInput = document.getElementById('filterGamertag');
-    const searchButton = document.getElementById('searchButton');
     const filterDate = document.getElementById('filterDate');
     const filterGamerscore = document.getElementById('filterGamerscore');
     const friendsList = document.getElementById('friendsList');
@@ -312,11 +308,6 @@ if ($response && isset($response['people']) && is_array($response['people'])) {
 
     if (friendsList) {
         searchInput.addEventListener('input', () => {
-            currentPage = 1;
-            updateFriends();
-        });
-
-        searchButton.addEventListener('click', () => {
             currentPage = 1;
             updateFriends();
         });
