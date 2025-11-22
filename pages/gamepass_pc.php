@@ -32,7 +32,6 @@ $response = openXBLPostRequest($endpoint, $body);
         <section class="xbox-hero">
             <span class="xbox-hero-eyebrow">Game Pass</span>
             <h1 class="xbox-hero-title">Todos os Jogos do PC Game Pass</h1>
-            <p class="xbox-hero-subtitle">Navegue pelos jogos do PC Game Pass com busca temática, cartões em vidro líquido e paginação consistente.</p>
         </section>
 
         <div class="xbox-panel space-y-4">
@@ -100,7 +99,6 @@ $response = openXBLPostRequest($endpoint, $body);
                                     <span class="game-badge">Categoria: <?php echo htmlspecialchars($category); ?></span>
                                 </div>
                                 <p class="game-description"><?php echo htmlspecialchars($description); ?></p>
-                                <div class="game-price">Preço: <strong><?php echo htmlspecialchars($price); ?></strong></div>
                             </div>
                         </div>
                     </article>
@@ -128,7 +126,7 @@ $response = openXBLPostRequest($endpoint, $body);
                         <span class="pagination-separator"></span>
                     <?php endif; ?>
                 <?php endfor; ?>
-                <span class="pagination-separator">|</span>
+                <span class="pagination-separator"></span>
                 <a class="pagination-btn <?php echo $hasNext ? '' : 'disabled'; ?>" href="<?php echo $hasNext ? '?page=' . ($page + 1) : 'javascript:void(0);'; ?>">Próximo</a>
             </div>
         <?php else : ?>

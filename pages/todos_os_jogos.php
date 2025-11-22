@@ -1,44 +1,43 @@
 <?php
-    session_start();
-    include('../includes/header.php');
-    include('../includes/navbar.php');
-    require '../config/db.php';
-    require_once '../config/api.php';
+session_start();
+include('../includes/header.php');
+include('../includes/navbar.php');
+require '../config/db.php';
+require_once '../config/api.php';
 
-    if (!isset($_SESSION['user_id'])) {
-        echo "Erro: Usuário não está logado.";
-        exit;
-    }
+if (!isset($_SESSION['user_id'])) {
+    echo "Erro: Usuário não está logado.";
+    exit;
+}
 
-    $stmt = $pdo->prepare("SELECT game_id FROM gamepass_games");
-    $stmt->execute();
-    $game_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+$stmt = $pdo->prepare("SELECT game_id FROM gamepass_games");
+$stmt->execute();
+$game_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    if (empty($game_ids)) {
-        echo "Nenhum jogo encontrado no banco de dados.";
-        exit;
-    }
+if (empty($game_ids)) {
+    echo "Nenhum jogo encontrado no banco de dados.";
+    exit;
+}
 
-    $items_per_page = 12;
-    $total_items = count($game_ids);
-    $total_pages = ceil($total_items / $items_per_page);
-    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $offset = ($page - 1) * $items_per_page;
-    $current_page_ids = array_slice($game_ids, $offset, $items_per_page);
+$items_per_page = 12;
+$total_items = count($game_ids);
+$total_pages = ceil($total_items / $items_per_page);
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $items_per_page;
+$current_page_ids = array_slice($game_ids, $offset, $items_per_page);
 
-    $endpoint = "marketplace/details";
-    $body = [
-        "products" => implode(',', $current_page_ids)
-    ];
+$endpoint = "marketplace/details";
+$body = [
+    "products" => implode(',', $current_page_ids)
+];
 
-    $response = openXBLPostRequest($endpoint, $body);
+$response = openXBLPostRequest($endpoint, $body);
 ?>
 <main class="xbox-content">
     <div class="xbox-page space-y-6">
         <section class="xbox-hero">
             <span class="xbox-hero-eyebrow">Game Pass</span>
             <h1 class="xbox-hero-title">Todos os Jogos do Game Pass</h1>
-            <p class="xbox-hero-subtitle">Navegue pela biblioteca completa com cartões em vidro líquido, busca temática e paginação alinhada ao restante da experiência.</p>
         </section>
 
         <div class="xbox-panel space-y-4">
@@ -48,8 +47,7 @@
                     type="text"
                     id="gamesSearch"
                     placeholder="Buscar por título..."
-                    class="friends-search-input"
-                />
+                    class="friends-search-input" />
                 <button id="gamesSearchButton" class="friends-search-btn" aria-label="Buscar">
                     <i class="fas fa-arrow-right"></i>
                 </button>
@@ -57,33 +55,39 @@
         </div>
 
         <?php if (!empty($response['Products'])) : ?>
-            <div id="gamesList" class="friend-grid">
+            <div id="gamesList" class="friend-grid single-column">
                 <?php foreach ($response['Products'] as $product) : ?>
                     <?php
-                        $boxArtImage = null;
-                        if (isset($product['LocalizedProperties'][0]['Images']) && is_array($product['LocalizedProperties'][0]['Images'])) {
-                            foreach ($product['LocalizedProperties'][0]['Images'] as $image) {
-                                if ($image['ImagePurpose'] === 'BoxArt') {
-                                    $boxArtImage = $image['Uri'];
-                                    break;
-                                }
+                    $boxArtImage = null;
+                    $heroArtImage = null;
+                    if (isset($product['LocalizedProperties'][0]['Images']) && is_array($product['LocalizedProperties'][0]['Images'])) {
+                        foreach ($product['LocalizedProperties'][0]['Images'] as $image) {
+                            if ($image['ImagePurpose'] === 'BoxArt' && !$boxArtImage) {
+                                $boxArtImage = $image['Uri'];
+                            }
+                            if ($image['ImagePurpose'] === 'SuperHeroArt' && !$heroArtImage) {
+                                $heroArtImage = $image['Uri'];
+                            }
+                            if ($boxArtImage && $heroArtImage) {
+                                break;
                             }
                         }
+                    }
 
-                        $title = $product['LocalizedProperties'][0]['ProductTitle'] ?? 'Título não disponível';
-                        $description = $product['LocalizedProperties'][0]['ProductDescription'] ?? 'Descrição não disponível';
-                        $developer = $product['LocalizedProperties'][0]['DeveloperName'] ?? 'Desconhecida';
-                        $publisher = $product['LocalizedProperties'][0]['PublisherName'] ?? 'Desconhecida';
-                        $franchise = $product['LocalizedProperties'][0]['Franchises'][0] ?? 'Não disponível';
-                        $category = $product['Properties']['Category'] ?? 'Não disponível';
+                    $title = $product['LocalizedProperties'][0]['ProductTitle'] ?? 'Título não disponível';
+                    $description = $product['LocalizedProperties'][0]['ProductDescription'] ?? 'Descrição não disponível';
+                    $developer = $product['LocalizedProperties'][0]['DeveloperName'] ?? 'Desconhecida';
+                    $publisher = $product['LocalizedProperties'][0]['PublisherName'] ?? 'Desconhecida';
+                    $franchise = $product['LocalizedProperties'][0]['Franchises'][0] ?? 'Não disponível';
+                    $category = $product['Properties']['Category'] ?? 'Não disponível';
 
-                        $price = 'Não disponível';
-                        if (isset($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'])) {
-                            $priceValue = $product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'];
-                            $price = '$' . number_format($priceValue, 2);
-                        }
+                    $price = 'Não disponível';
+                    if (isset($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'])) {
+                        $priceValue = $product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'];
+                        $price = '$' . number_format($priceValue, 2);
+                    }
                     ?>
-                    <article class="friend-card xbox-glass-card game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>">
+                    <article class="friend-card xbox-glass-card game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>" data-hero-art="<?php echo htmlspecialchars($heroArtImage ? 'https:' . $heroArtImage : ''); ?>">
                         <div class="game-card-body">
                             <div class="game-cover">
                                 <?php if ($boxArtImage) : ?>
@@ -101,7 +105,6 @@
                                     <span class="game-badge">Categoria: <?php echo htmlspecialchars($category); ?></span>
                                 </div>
                                 <p class="game-description"><?php echo htmlspecialchars($description); ?></p>
-                                <div class="game-price">Preço: <strong><?php echo htmlspecialchars($price); ?></strong></div>
                             </div>
                         </div>
                     </article>
@@ -109,20 +112,20 @@
             </div>
             <div class="friends-pagination">
                 <?php
-                    $maxVisible = 5;
-                    $halfWindow = floor($maxVisible / 2);
-                    $startPage = max(1, $page - $halfWindow);
-                    $endPage = min($total_pages, $startPage + $maxVisible - 1);
+                $maxVisible = 5;
+                $halfWindow = floor($maxVisible / 2);
+                $startPage = max(1, $page - $halfWindow);
+                $endPage = min($total_pages, $startPage + $maxVisible - 1);
 
-                    if (($endPage - $startPage + 1) < $maxVisible) {
-                        $startPage = max(1, $endPage - $maxVisible + 1);
-                    }
+                if (($endPage - $startPage + 1) < $maxVisible) {
+                    $startPage = max(1, $endPage - $maxVisible + 1);
+                }
 
-                    $hasPrev = $page > 1;
-                    $hasNext = $page < $total_pages;
+                $hasPrev = $page > 1;
+                $hasNext = $page < $total_pages;
                 ?>
                 <a class="pagination-btn <?php echo $hasPrev ? '' : 'disabled'; ?>" href="<?php echo $hasPrev ? '?page=' . ($page - 1) : 'javascript:void(0);'; ?>">Anterior</a>
-                <span class="pagination-separator">|</span>
+                <span class="pagination-separator"></span>
                 <?php for ($p = $startPage; $p <= $endPage; $p++) : ?>
                     <a class="pagination-btn <?php echo $p === $page ? 'active' : ''; ?>" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
                     <?php if ($p < $endPage) : ?>
@@ -142,6 +145,8 @@
     const gamesSearchButton = document.getElementById('gamesSearchButton');
     const gamesList = document.getElementById('gamesList');
     const gameCards = gamesList ? Array.from(gamesList.querySelectorAll('.game-card')) : [];
+    const xboxContentAll = document.querySelector('.xbox-content');
+    const defaultBgAll = xboxContentAll ? window.getComputedStyle(xboxContentAll).backgroundImage : '';
 
     function filterGames() {
         const term = gamesSearchInput.value.toLowerCase();
@@ -154,6 +159,22 @@
     if (gamesList) {
         gamesSearchInput.addEventListener('input', filterGames);
         gamesSearchButton.addEventListener('click', filterGames);
+
+        // Dynamic background hover (SuperHeroArt)
+        gameCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                const hero = card.getAttribute('data-hero-art');
+                if (hero && xboxContentAll) {
+                    xboxContentAll.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.65), rgba(0,20,10,0.9)), url('${hero}')`;
+                    xboxContentAll.style.backgroundSize = 'cover';
+                    xboxContentAll.style.backgroundPosition = 'center';
+                    xboxContentAll.style.transition = 'background-image 0.45s ease';
+                }
+            });
+            card.addEventListener('mouseleave', () => {
+                if (xboxContentAll) xboxContentAll.style.backgroundImage = defaultBgAll;
+            });
+        });
     }
 </script>
 <?php include('../includes/footer.php'); ?>
