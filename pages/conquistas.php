@@ -73,7 +73,7 @@ function getSuperHeroArt($game)
             <h1 class="xbox-hero-title">Conquistas</h1>
         </section>
 
-        <div class="xbox-panel space-y-4">
+        <div class="xbox-panel xbox-panel--dropdowns space-y-4">
             <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div class="friends-search">
                     <i class="fas fa-search text-green-200/80"></i>
@@ -82,48 +82,89 @@ function getSuperHeroArt($game)
                         id="achievementSearch"
                         placeholder="Buscar por Nome..."
                         class="friends-search-input" />
-                    <button id="achievementSearchButton" class="friends-search-btn" aria-label="Buscar">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
                 </div>
 
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                    <label class="filter-select">
-                        <select id="filterName" class="filter-select-input">
-                            <option value="">Nome</option>
-                            <option value="asc">A-Z</option>
-                            <option value="desc">Z-A</option>
-                        </select>
-                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
-                    </label>
-                    <label class="filter-select">
-                        <select id="filterGamerscore" class="filter-select-input">
-                            <option value="">Gamerscore</option>
-                            <option value="asc">Do menor para o maior</option>
-                            <option value="desc">Do maior para o menor</option>
-                        </select>
-                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
-                    </label>
-                    <label class="filter-select">
-                        <select id="filterLastPlayed" class="filter-select-input">
-                            <option value="">Jogado pela Última Vez</option>
-                            <option value="recent">Mais Recente</option>
-                            <option value="oldest">Mais Antigo</option>
-                        </select>
-                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
-                    </label>
-                    <label class="filter-select">
-                        <select id="filterPlatform" class="filter-select-input">
-                            <option value="">Plataformas</option>
-                            <option value="Mobile">Mobile (Windows Phone)</option>
-                            <option value="PC">PC (Windows Store)</option>
-                            <option value="Win32">PC (Outros)</option>
-                            <option value="Xbox360">Xbox 360</option>
-                            <option value="XboxOne">Xbox One</option>
-                            <option value="XboxSeries">Xbox Series</option>
-                        </select>
-                        <span class="filter-chevron"><i class="fas fa-chevron-down"></i></span>
-                    </label>
+                    <!-- Select nativo oculto para manter a lógica existente -->
+                    <select id="filterName" class="filter-select-input hidden">
+                        <option value="">Nome</option>
+                        <option value="asc">A-Z</option>
+                        <option value="desc">Z-A</option>
+                    </select>
+                    <!-- Dropdown custom Xbox -->
+                    <div class="relative nav-item">
+                        <button type="button" id="filter-name-btn" class="nav-link">
+                            <span id="filter-name-label">Nome</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="filter-name-menu" class="nav-dropdown hidden">
+                            <button type="button" class="nav-dropdown-item" data-filter="name" data-value="">Nome</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="name" data-value="asc">A-Z</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="name" data-value="desc">Z-A</button>
+                        </div>
+                    </div>
+                    <!-- Select nativo oculto para manter a lógica existente -->
+                    <select id="filterGamerscore" class="filter-select-input hidden">
+                        <option value="">Gamerscore</option>
+                        <option value="asc">Do menor para o maior</option>
+                        <option value="desc">Do maior para o menor</option>
+                    </select>
+                    <!-- Dropdown custom Xbox -->
+                    <div class="relative nav-item">
+                        <button type="button" id="filter-gamerscore-btn" class="nav-link">
+                            <span id="filter-gamerscore-label">Gamerscore</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="filter-gamerscore-menu" class="nav-dropdown hidden">
+                            <button type="button" class="nav-dropdown-item" data-filter="gamerscore" data-value="">Gamerscore</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="gamerscore" data-value="asc">Do menor para o maior</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="gamerscore" data-value="desc">Do maior para o menor</button>
+                        </div>
+                    </div>
+                    <!-- Select nativo oculto para manter a lógica existente -->
+                    <select id="filterLastPlayed" class="filter-select-input hidden">
+                        <option value="">Jogado pela Última Vez</option>
+                        <option value="recent">Mais Recente</option>
+                        <option value="oldest">Mais Antigo</option>
+                    </select>
+                    <!-- Dropdown custom Xbox -->
+                    <div class="relative nav-item">
+                        <button type="button" id="filter-lastplayed-btn" class="nav-link">
+                            <span id="filter-lastplayed-label">Jogado pela Última Vez</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="filter-lastplayed-menu" class="nav-dropdown hidden">
+                            <button type="button" class="nav-dropdown-item" data-filter="lastplayed" data-value="">Jogado pela Última Vez</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="lastplayed" data-value="recent">Mais Recente</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="lastplayed" data-value="oldest">Mais Antigo</button>
+                        </div>
+                    </div>
+                    <!-- Select nativo oculto para manter a lógica existente -->
+                    <select id="filterPlatform" class="filter-select-input hidden">
+                        <option value="">Plataformas</option>
+                        <option value="Mobile">Mobile (Windows Phone)</option>
+                        <option value="PC">PC (Windows Store)</option>
+                        <option value="Win32">PC (Outros)</option>
+                        <option value="Xbox360">Xbox 360</option>
+                        <option value="XboxOne">Xbox One</option>
+                        <option value="XboxSeries">Xbox Series</option>
+                    </select>
+                    <!-- Dropdown custom Xbox -->
+                    <div class="relative nav-item">
+                        <button type="button" id="filter-platform-btn" class="nav-link">
+                            <span id="filter-platform-label">Plataformas</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="filter-platform-menu" class="nav-dropdown hidden">
+                            <button type="button" class="nav-dropdown-item" data-filter="platform" data-value="">Plataformas</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="platform" data-value="Mobile">Mobile (Windows Phone)</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="platform" data-value="PC">PC (Windows Store)</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="platform" data-value="Win32">PC (Outros)</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="platform" data-value="Xbox360">Xbox 360</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="platform" data-value="XboxOne">Xbox One</button>
+                            <button type="button" class="nav-dropdown-item" data-filter="platform" data-value="XboxSeries">Xbox Series</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -171,7 +212,6 @@ function getSuperHeroArt($game)
                             <div class="activity-details achievement-details">
                                 <div class="activity-author">
                                     <div class="friend-gamertag"><?php echo htmlspecialchars($name); ?></div>
-                                    <div class="friend-presence">Jogado pela última vez em <?php echo htmlspecialchars($lastPlayed); ?></div>
                                 </div>
                                 <div class="achievement-meta">
                                     <div class="friend-gamerscore">
@@ -197,7 +237,6 @@ function getSuperHeroArt($game)
 </main>
 <script>
     const achievementSearch = document.getElementById('achievementSearch');
-    const achievementSearchButton = document.getElementById('achievementSearchButton');
     const filterName = document.getElementById('filterName');
     const filterGamerscore = document.getElementById('filterGamerscore');
     const filterLastPlayed = document.getElementById('filterLastPlayed');
@@ -340,6 +379,54 @@ function getSuperHeroArt($game)
         renderPagination(totalPages);
     }
 
+    // Componente de dropdown custom: sincroniza com o <select> oculto (estilo navbar)
+    const filterDropdowns = [
+        { button: 'filter-name-btn', menu: 'filter-name-menu', label: 'filter-name-label', select: filterName },
+        { button: 'filter-gamerscore-btn', menu: 'filter-gamerscore-menu', label: 'filter-gamerscore-label', select: filterGamerscore },
+        { button: 'filter-lastplayed-btn', menu: 'filter-lastplayed-menu', label: 'filter-lastplayed-label', select: filterLastPlayed },
+        { button: 'filter-platform-btn', menu: 'filter-platform-menu', label: 'filter-platform-label', select: filterPlatform }
+    ];
+
+    filterDropdowns.forEach(({ button, menu, label, select }) => {
+        const btn = document.getElementById(button);
+        const menuEl = document.getElementById(menu);
+        const labelEl = document.getElementById(label);
+
+        if (btn && menuEl) {
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const isHidden = menuEl.classList.contains('hidden');
+                closeAllFilterDropdowns();
+                if (isHidden) {
+                    menuEl.classList.remove('hidden');
+                }
+            });
+
+            menuEl.querySelectorAll('[data-filter]').forEach((item) => {
+                item.addEventListener('click', () => {
+                    const val = item.getAttribute('data-value');
+                    select.value = val;
+                    labelEl.textContent = item.textContent;
+                    menuEl.classList.add('hidden');
+                    // Dispara change para reaproveitar a lógica existente
+                    const evt = new Event('change', { bubbles: true });
+                    select.dispatchEvent(evt);
+                });
+            });
+        }
+    });
+
+    document.addEventListener('click', closeAllFilterDropdowns);
+
+    function closeAllFilterDropdowns() {
+        filterDropdowns.forEach(({ menu }) => {
+            const el = document.getElementById(menu);
+            if (el && !el.classList.contains('hidden')) {
+                el.classList.add('hidden');
+            }
+        });
+    }
+
     // Background dinâmico ao passar mouse sobre os cards
     if (achievementsList) {
         const xboxContent = document.querySelector('.xbox-content');
@@ -369,11 +456,6 @@ function getSuperHeroArt($game)
 
     if (achievementsList) {
         achievementSearch.addEventListener('input', () => {
-            currentPage = 1;
-            updateAchievements();
-        });
-
-        achievementSearchButton.addEventListener('click', () => {
             currentPage = 1;
             updateAchievements();
         });
