@@ -1,29 +1,28 @@
 <?php
-    session_start();
-    include('../includes/header.php');
-    include('../includes/navbar.php');
-    require '../config/db.php';
-    require_once '../config/api.php';
-    if (!isset($_SESSION['user_id'])) {
-        echo "Erro: Usuário não está logado.";
-        exit;
-    }
+session_start();
+include('../includes/header.php');
+include('../includes/navbar.php');
+require '../config/db.php';
+require_once '../config/api.php';
+if (!isset($_SESSION['user_id'])) {
+    echo "Erro: Usuário não está logado.";
+    exit;
+}
 
-    $endpoint = "friends/blocked";
-    $response = openXBLRequest($endpoint);
+$endpoint = "friends/blocked";
+$response = openXBLRequest($endpoint);
 
-    if ($response && isset($response['users']) && is_array($response['users'])) {
-        $blockedFriends = $response['users'];
-    } else {
-        $blockedFriends = [];
-    }
+if ($response && isset($response['users']) && is_array($response['users'])) {
+    $blockedFriends = $response['users'];
+} else {
+    $blockedFriends = [];
+}
 ?>
 <main class="xbox-content">
     <div class="xbox-page space-y-6">
         <section class="xbox-hero">
             <span class="xbox-hero-eyebrow">Comunidade</span>
             <h1 class="xbox-hero-title">Amigos Bloqueados</h1>
-            <p class="xbox-hero-subtitle">Gerencie a lista de bloqueados com o mesmo visual líquido, filtros e paginação que você usa em Amigos.</p>
         </section>
 
         <div class="xbox-panel space-y-4">
@@ -33,8 +32,7 @@
                     type="text"
                     id="filterBlockedGamertag"
                     placeholder="Buscar por Gamertag..."
-                    class="friends-search-input"
-                />
+                    class="friends-search-input" />
                 <button id="blockedSearchButton" class="friends-search-btn" aria-label="Buscar">
                     <i class="fas fa-arrow-right"></i>
                 </button>
@@ -45,15 +43,14 @@
             <div id="blockedList" class="friend-grid">
                 <?php foreach ($blockedFriends as $blockedFriend) : ?>
                     <?php
-                        $avatar = !empty($blockedFriend['displayPicRaw']) ? $blockedFriend['displayPicRaw'] : '../img/default_avatar.jpg';
-                        $gamertag = isset($blockedFriend['gamertag']) ? $blockedFriend['gamertag'] : ($blockedFriend['displayName'] ?? 'Usuário');
-                        $realName = $blockedFriend['realName'] ?? '';
-                        $bio = $blockedFriend['bio'] ?? '';
+                    $avatar = !empty($blockedFriend['displayPicRaw']) ? $blockedFriend['displayPicRaw'] : '../img/default_avatar.jpg';
+                    $gamertag = isset($blockedFriend['gamertag']) ? $blockedFriend['gamertag'] : ($blockedFriend['displayName'] ?? 'Usuário');
+                    $realName = $blockedFriend['realName'] ?? '';
+                    $bio = $blockedFriend['bio'] ?? '';
                     ?>
                     <article
                         class="friend-card xbox-glass-card"
-                        data-gamertag="<?php echo htmlspecialchars($gamertag); ?>"
-                    >
+                        data-gamertag="<?php echo htmlspecialchars($gamertag); ?>">
                         <div class="friend-card-header">
                             <span class="friend-status-dot"></span>
                             <span class="friend-added">Status: Bloqueado</span>
@@ -110,7 +107,10 @@
             return;
         }
 
-        const createButton = (label, page, { isActive = false, disabled = false } = {}) => {
+        const createButton = (label, page, {
+            isActive = false,
+            disabled = false
+        } = {}) => {
             const button = document.createElement('button');
             button.type = 'button';
             button.textContent = label;
@@ -144,20 +144,26 @@
         const hasNext = blockedCurrentPage < totalPages;
 
         blockedPagination.appendChild(
-            createButton('Anterior', blockedCurrentPage - 1, { disabled: !hasPrev })
+            createButton('Anterior', blockedCurrentPage - 1, {
+                disabled: !hasPrev
+            })
         );
 
         addSeparator();
 
         for (let page = startPage; page <= endPage; page++) {
-            blockedPagination.appendChild(createButton(page, page, { isActive: page === blockedCurrentPage }));
+            blockedPagination.appendChild(createButton(page, page, {
+                isActive: page === blockedCurrentPage
+            }));
             if (page < endPage) addSeparator();
         }
 
         addSeparator();
 
         blockedPagination.appendChild(
-            createButton('Próximo', blockedCurrentPage + 1, { disabled: !hasNext })
+            createButton('Próximo', blockedCurrentPage + 1, {
+                disabled: !hasNext
+            })
         );
     }
 
