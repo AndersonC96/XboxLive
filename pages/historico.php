@@ -1,12 +1,12 @@
 <?php
-    session_start();
-    include('../includes/header.php');
-    include('../includes/navbar.php');
-    require_once '../config/api.php';
+session_start();
+include('../includes/header.php');
+include('../includes/navbar.php');
+require_once '../config/api.php';
 
-    $endpoint = "activity/history";
-    $response = openXBLRequest($endpoint);
-    $activityItems = $response['activityItems'] ?? [];
+$endpoint = "activity/history";
+$response = openXBLRequest($endpoint);
+$activityItems = $response['activityItems'] ?? [];
 ?>
 <main class="xbox-content">
     <div class="xbox-page space-y-6">
@@ -25,8 +25,7 @@
                     type="text"
                     id="historySearch"
                     placeholder="Buscar por Gamertag..."
-                    class="friends-search-input"
-                />
+                    class="friends-search-input" />
                 <button id="historySearchButton" class="friends-search-btn" aria-label="Buscar">
                     <i class="fas fa-arrow-right"></i>
                 </button>
@@ -37,21 +36,21 @@
             <div id="historyList" class="friend-grid">
                 <?php foreach ($activityItems as $item) : ?>
                     <?php
-                        $author = $item['authorInfo'] ?? [];
-                        $avatar = !empty($author['imageUrl']) ? $author['imageUrl'] : '../img/default_avatar.jpg';
-                        $gamertag = $author['modernGamertag'] ?? 'Gamertag indisponível';
-                        $secondary = $author['secondName'] ?? 'Nome não disponível';
-                        $description = $item['description'] ?? 'Atividade';
-                        $shortDescription = $item['shortDescription'] ?? ($item['itemText'] ?? 'Sem detalhes adicionais');
-                        $timeline = $item['timeline']['timelineName'] ?? 'Histórico';
-                        $contentTitle = $item['contentTitle'] ?? 'Jogo desconhecido';
-                        $platform = $item['platform'] ?? 'Plataforma não informada';
-                        $dateRaw = $item['date'] ?? null;
-                        $formattedDate = $dateRaw ? date('d/m/Y H:i', strtotime($dateRaw)) : 'Data não disponível';
-                        $comments = isset($item['numComments']) ? $item['numComments'] : 'Sem comentários';
-                        $viewCount = isset($item['viewCount']) ? $item['viewCount'] : '0';
-                        $liked = !empty($item['hasLiked']);
-                        $media = $item['screenshotUri'] ?? ($item['contentImageUri'] ?? '');
+                    $author = $item['authorInfo'] ?? [];
+                    $avatar = !empty($author['imageUrl']) ? $author['imageUrl'] : '../img/default_avatar.jpg';
+                    $gamertag = $author['modernGamertag'] ?? 'Gamertag indisponível';
+                    $secondary = $author['secondName'] ?? 'Nome não disponível';
+                    $description = $item['description'] ?? 'Atividade';
+                    $shortDescription = $item['shortDescription'] ?? ($item['itemText'] ?? 'Sem detalhes adicionais');
+                    $timeline = $item['timeline']['timelineName'] ?? 'Histórico';
+                    $contentTitle = $item['contentTitle'] ?? 'Jogo desconhecido';
+                    $platform = $item['platform'] ?? 'Plataforma não informada';
+                    $dateRaw = $item['date'] ?? null;
+                    $formattedDate = $dateRaw ? date('d/m/Y H:i', strtotime($dateRaw)) : 'Data não disponível';
+                    $comments = isset($item['numComments']) ? $item['numComments'] : 'Sem comentários';
+                    $viewCount = isset($item['viewCount']) ? $item['viewCount'] : '0';
+                    $liked = !empty($item['hasLiked']);
+                    $media = $item['screenshotUri'] ?? ($item['contentImageUri'] ?? '');
                     ?>
                     <article class="friend-card xbox-glass-card activity-card" data-gamertag="<?php echo htmlspecialchars(strtolower($gamertag)); ?>">
                         <div class="activity-card-header">
@@ -74,7 +73,6 @@
                                 <div class="activity-text"><?php echo htmlspecialchars($shortDescription); ?></div>
                                 <div class="activity-meta">
                                     <span>Jogo: <?php echo htmlspecialchars($contentTitle); ?></span>
-                                    <span>Plataforma: <?php echo htmlspecialchars($platform); ?></span>
                                     <span>Visualizações: <?php echo htmlspecialchars($viewCount); ?></span>
                                     <span>Comentários: <?php echo htmlspecialchars($comments); ?></span>
                                     <span class="activity-like">Likes: <?php echo $liked ? '✔️' : '❌'; ?></span>
@@ -113,7 +111,10 @@
         historyPagination.innerHTML = '';
         if (totalPages <= 1) return;
 
-        const createButton = (label, page, { isActive = false, disabled = false } = {}) => {
+        const createButton = (label, page, {
+            isActive = false,
+            disabled = false
+        } = {}) => {
             const button = document.createElement('button');
             button.type = 'button';
             button.textContent = label;
@@ -130,7 +131,7 @@
         const addSeparator = () => {
             const separator = document.createElement('span');
             separator.className = 'pagination-separator';
-            separator.textContent = '|';
+            separator.textContent = '';
             historyPagination.appendChild(separator);
         };
 
@@ -147,20 +148,26 @@
         const hasNext = currentPage < totalPages;
 
         historyPagination.appendChild(
-            createButton('Anterior', currentPage - 1, { disabled: !hasPrev })
+            createButton('Anterior', currentPage - 1, {
+                disabled: !hasPrev
+            })
         );
 
         addSeparator();
 
         for (let page = startPage; page <= endPage; page++) {
-            historyPagination.appendChild(createButton(page, page, { isActive: page === currentPage }));
+            historyPagination.appendChild(createButton(page, page, {
+                isActive: page === currentPage
+            }));
             if (page < endPage) addSeparator();
         }
 
         addSeparator();
 
         historyPagination.appendChild(
-            createButton('Próximo', currentPage + 1, { disabled: !hasNext })
+            createButton('Próximo', currentPage + 1, {
+                disabled: !hasNext
+            })
         );
     }
 
