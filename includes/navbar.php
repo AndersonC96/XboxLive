@@ -114,12 +114,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </button>
                     
                     <div class="absolute top-full right-0 mt-2 w-48 glass rounded-xl overflow-hidden hidden group-hover:block animate-fade-in shadow-2xl">
-                        <div class="px-4 py-3 border-b border-white/5 bg-white/5">
-                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Conta</p>
-                            <p class="text-sm font-bold truncate">Anderson Cavalcante</p>
+                        <div class="nav-dropdown-item font-black uppercase text-[10px] tracking-widest text-xbox-green/50 px-4 py-2 border-b border-white/5 mb-1">
+                            Conta
                         </div>
-                        <a href="logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-500/20 text-red-400 transition-colors">
-                            <i class="fas fa-sign-out-alt w-4"></i> Sair
+                        <a href="perfil.php" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-white/5 transition-colors">
+                            Meu Perfil
+                            <i class="fas fa-id-card text-[10px] text-gray-700 group-hover/link:text-xbox-green transition-colors"></i>
+                        </a>
+                        <a href="logout.php" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-red-500/20 text-red-400 transition-colors">
+                            Sair
+                            <i class="fas fa-sign-out-alt text-[10px] text-gray-700 group-hover/link:text-red-500 transition-colors"></i>
                         </a>
                     </div>
                 </div>

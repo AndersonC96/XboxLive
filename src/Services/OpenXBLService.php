@@ -24,6 +24,11 @@ class OpenXBLService
         return $this->request($endpoint, 'POST', $body);
     }
 
+    public function searchGamertag($gamertag)
+    {
+        return $this->get("friends/search?gt=" . urlencode($gamertag));
+    }
+
     private function request($endpoint, $method = 'GET', $body = null)
     {
         if (empty($this->apiKey)) {
@@ -57,6 +62,19 @@ class OpenXBLService
         $decoded = json_decode($response, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             return null;
+        }
+
+        // Se a resposta vier encapsulada em 'content' (comum em algumas chamadas do OpenXBL)
+        if (isset($decoded['content'])) {
+            $content = $decoded['content'];
+            // Se o 'content' for uma string JSON, decodificar novamente
+            if (is_string($content)) {
+                $unwrapped = json_decode($content, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    return $unwrapped;
+                }
+            }
+            return $content;
         }
 
         return $decoded;

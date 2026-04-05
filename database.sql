@@ -37,5 +37,5 @@ CREATE TABLE IF NOT EXISTS pc_gamepass (
 -- Seed a default user account for initial access.
 -- Password: senha123
 INSERT INTO users (username, email, password)
-VALUES ('admin', 'admin@example.com', '$2y$12$Gb8lU3MsdfFdw1cqErqtU.bdpM7gcNtRGGpe45MrV/8hm4h76JUle')
+VALUES ('admin', 'admin@example.com', '$2y$10$qpb9A498pAoTTR1kMrha8fYuUu1HJh5Qvo08GOk6gYnJRwefqf')
 ON DUPLICATE KEY UPDATE username = username;

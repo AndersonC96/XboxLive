@@ -17,6 +17,7 @@ class AuthService
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
+            $_SESSION['xuid'] = $user['xuid'] ?? null;
             return true;
         }
 
@@ -40,6 +41,17 @@ class AuthService
         }
     }
 
+    public static function updateXuid($userId, $xuid)
+    {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("UPDATE users SET xuid = :xuid WHERE id = :id");
+        if ($stmt->execute(['id' => $userId, 'xuid' => $xuid])) {
+            $_SESSION['xuid'] = $xuid;
+            return true;
+        }
+        return false;
+    }
+
     public static function check()
     {
         return isset($_SESSION['user_id']);
@@ -51,6 +63,7 @@ class AuthService
             'id'       => $_SESSION['user_id'] ?? null,
             'username' => $_SESSION['username'] ?? null,
             'email'    => $_SESSION['email'] ?? null,
+            'xuid'     => $_SESSION['xuid'] ?? null,
         ];
     }
 

@@ -28,8 +28,7 @@ class Database
         try {
             $this->pdo = new PDO($dsn, $user, $pass, $options);
         } catch (PDOException $e) {
-            // No production, logar o erro. Aqui mostramos de forma simples.
-            die("Erro de conexão com o banco de dados.");
+            die("Erro de conexão com o banco de dados: " . $e->getMessage() . "<br><br><b>Dica:</b> Certifique-se de que o banco de dados '{$db}' existe e que o arquivo <b>.env</b> na raiz está configurado corretamente.");
         }
     }
 
