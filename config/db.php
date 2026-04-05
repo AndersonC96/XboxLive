@@ -1,14 +1,7 @@
 <?php
-    require_once __DIR__ . '/../vendor/autoload.php';
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
-    $dotenv->load();
-    $host = $_ENV['DB_HOST'];
-    $db = $_ENV['DB_NAME'];
-    $user = $_ENV['DB_USER'];
-    $pass = isset($_ENV['DB_PASSWORD']) ? $_ENV['DB_PASSWORD'] : (isset($_ENV['DB_PASS']) ? $_ENV['DB_PASS'] : '');
-    try {
-        $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        echo 'Error: ' . $e->getMessage();
-    }
+
+require_once __DIR__ . '/../vendor/autoload.php';
+\Anderson\XboxLive\Core\Bootstrap::run();
+
+// Backward compatibility: expose $pdo variable
+$pdo = \Anderson\XboxLive\Core\Database::getInstance();

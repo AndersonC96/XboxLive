@@ -1,44 +1,79 @@
-<?php include('../includes/header.php'); ?>
-<div class="liquid-background flex items-center justify-center min-h-screen">
-    <div class="xbox-orb orb-1"></div>
-    <div class="xbox-orb orb-2"></div>
-    <div class="xbox-orb orb-3"></div>
+<?php
+require_once __DIR__ . '/../vendor/autoload.php';
+\Anderson\XboxLive\Core\Bootstrap::run();
 
-    <div class="liquid-card max-w-md w-full mx-4">
-        <div class="liquid-glass-effect"></div>
-        <div class="xbox-glow"></div>
+if (\Anderson\XboxLive\Services\AuthService::check()) {
+    header('Location: dashboard.php');
+    exit();
+}
 
-        <div class="relative z-10 p-8">
-            <div class="flex justify-center mb-6">
-                <div class="xbox-logo-container">
-                    <img src="../img/logo3.png" alt="Xbox Logo" class="w-80 h-24 drop-shadow-2xl">
-                </div>
+$error = $_GET['error'] ?? null;
+include('../includes/header.php');
+?>
+
+<main class="auth-bg min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md animate-fade-in">
+        <div class="glass-card p-10 rounded-2xl border-white/10 shadow-2xl">
+            <div class="text-center mb-10">
+                <img src="../img/logo2.png" alt="Xbox" class="w-20 h-20 mx-auto mb-6 drop-shadow-[0_0_20px_rgba(16,124,16,0.6)]">
+                <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Bem-vindo de volta</h1>
+                <p class="text-gray-400 font-medium">Gerencie sua experiência Xbox Live</p>
             </div>
 
+            <?php if ($error): ?>
+                <div class="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm font-bold flex items-center gap-3">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>
+                        <?php 
+                            if ($error === 'emptyfields') echo 'Preencha todos os campos.';
+                            elseif ($error === 'wrongcredentials') echo 'Usuário ou senha incorretos.';
+                            else echo 'Ocorreu um erro. Tente novamente.';
+                        ?>
+                    </span>
+                </div>
+            <?php endif; ?>
+
             <form action="../actions/login_action.php" method="POST" class="space-y-6">
-                <div class="input-group">
-                    <div class="liquid-input">
-                        <i class="fa-solid fa-user input-icon-liquid"></i>
-                        <input type="text" name="username" id="username" placeholder="Username" required class="liquid-glass-input" />
-                    </div>
-                </div>
-                <div class="input-group">
-                    <div class="liquid-input">
-                        <i class="fa-solid fa-lock input-icon-liquid"></i>
-                        <input type="password" name="password" id="password" placeholder="Password" required class="liquid-glass-input" />
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 ml-1">Usuário</label>
+                    <div class="relative group">
+                        <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-xbox-green transition-colors"></i>
+                        <input type="text" name="username" required 
+                            class="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-xbox-green focus:bg-white/[0.08] transition-all placeholder:text-gray-700"
+                            placeholder="Seu gamertag ou usuário">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full liquid-button xbox-button">
-                    <span class="relative z-10">Entrar</span>
-                    <div class="xbox-button-glow"></div>
-                </button>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 ml-1">Senha</label>
+                    <div class="relative group">
+                        <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-xbox-green transition-colors"></i>
+                        <input type="password" name="password" required 
+                            class="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-xbox-green focus:bg-white/[0.08] transition-all placeholder:text-gray-700"
+                            placeholder="••••••••">
+                    </div>
+                </div>
 
-                <div class="text-center mt-6 text-sm text-white">
-                    <span>Não tem uma conta? </span>
-                    <a href="register.php" class="liquid-link xbox-link">Cadastre-se</a>
+                <div class="pt-2">
+                    <button type="submit" class="w-full btn-xbox py-4 rounded-xl text-lg tracking-wide uppercase font-black">
+                        Entrar na Dashboard
+                    </button>
                 </div>
             </form>
+
+            <div class="mt-8 pt-8 border-t border-white/5 text-center">
+                <p class="text-gray-500 font-medium">
+                    Não tem uma conta? 
+                    <a href="register.php" class="text-xbox-green hover:text-xbox-green-light font-bold transition-colors">Crie agora</a>
+                </p>
+            </div>
         </div>
+        
+        <p class="text-center mt-8 text-gray-600 text-xs font-bold uppercase tracking-widest">
+            &copy; 2026 Xbox Live Dashboard Project
+        </p>
     </div>
-</div>
+</main>
+
+</body>
+</html>

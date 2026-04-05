@@ -1,22 +1,23 @@
 <?php
-session_start();
-include('../includes/header.php');
-include('../includes/navbar.php');
-require '../config/db.php';
-require_once '../config/api.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+\Anderson\XboxLive\Core\Bootstrap::run();
 
-if (!isset($_SESSION['user_id'])) {
-    echo "Erro: Usuário não está logado.";
-    exit;
+use Anderson\XboxLive\Services\AuthService;
+use Anderson\XboxLive\Services\OpenXBLService;
+use Anderson\XboxLive\Core\Database;
+
+if (!AuthService::check()) {
+    header('Location: login.php');
+    exit();
 }
 
-$stmt = $pdo->prepare("SELECT game_id FROM gamepass_games");
+$db = Database::getInstance();
+$stmt = $db->prepare("SELECT game_id FROM gamepass_games");
 $stmt->execute();
 $game_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 if (empty($game_ids)) {
-    echo "Nenhum jogo encontrado no banco de dados.";
-    exit;
+    $game_ids = []; // Fallback
 }
 
 $items_per_page = 12;
@@ -26,155 +27,91 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $items_per_page;
 $current_page_ids = array_slice($game_ids, $offset, $items_per_page);
 
-$endpoint = "marketplace/details";
-$body = [
-    "products" => implode(',', $current_page_ids)
-];
+$products = [];
+if (!empty($current_page_ids)) {
+    $api = new OpenXBLService();
+    $response = $api->post("marketplace/details", ["products" => implode(',', $current_page_ids)]);
+    $products = $response['Products'] ?? [];
+}
 
-$response = openXBLPostRequest($endpoint, $body);
+include('../includes/header.php');
+include('../includes/navbar.php');
 ?>
-<main class="xbox-content">
-    <div class="xbox-page space-y-6">
-        <section class="xbox-hero">
-            <span class="xbox-hero-eyebrow">Game Pass</span>
-            <h1 class="xbox-hero-title">Todos os Jogos do Game Pass</h1>
-        </section>
 
-        <div class="xbox-panel space-y-4">
-            <div class="friends-search">
-                <i class="fas fa-search text-green-200/80"></i>
-                <input
-                    type="text"
-                    id="gamesSearch"
-                    placeholder="Buscar por título..."
-                    class="friends-search-input" />
-                <button id="gamesSearchButton" class="friends-search-btn" aria-label="Buscar">
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
+<main class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in">
+    <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <span class="text-xs font-black uppercase tracking-[0.3em] text-xbox-green mb-3 block">Catálogo Completo</span>
+            <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white">Game Pass</h1>
+        </div>
+        
+        <div class="relative w-full md:w-80 group">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-xbox-green transition-colors"></i>
+            <input type="text" id="gamesSearch" placeholder="Buscar título..." 
+                class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-sm text-white outline-none focus:border-xbox-green transition-all">
+        </div>
+    </header>
+
+    <?php if (!empty($products)) : ?>
+        <div id="gamesList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <?php foreach ($products as $product) : ?>
+                <?php
+                $props = $product['LocalizedProperties'][0] ?? [];
+                $images = $props['Images'] ?? [];
+                $boxArt = null;
+                foreach ($images as $img) {
+                    if ($img['ImagePurpose'] === 'BoxArt') {
+                        $boxArt = 'https:' . $img['Uri'];
+                        break;
+                    }
+                }
+                $title = $props['ProductTitle'] ?? 'Sem Título';
+                $dev = $props['DeveloperName'] ?? 'Estúdio Indie';
+                ?>
+                <article class="glass-card group rounded-2xl overflow-hidden hover:border-xbox-green/50 transition-all game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>">
+                    <div class="aspect-[2/3] relative overflow-hidden bg-xbox-surface">
+                        <img src="<?php echo $boxArt ?: '../img/placeholder.png'; ?>" alt="<?php echo htmlspecialchars($title); ?>" 
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-xbox-dark via-transparent to-transparent opacity-80"></div>
+                        
+                        <div class="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform">
+                            <h3 class="font-bold text-white text-lg leading-tight mb-1 truncate"><?php echo htmlspecialchars($title); ?></h3>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-xbox-green"><?php echo htmlspecialchars($dev); ?></p>
+                        </div>
+                    </div>
+                </article>
+            <?php endforeach; ?>
         </div>
 
-        <?php if (!empty($response['Products'])) : ?>
-            <div id="gamesList" class="friend-grid single-column">
-                <?php foreach ($response['Products'] as $product) : ?>
-                    <?php
-                    $boxArtImage = null;
-                    $heroArtImage = null;
-                    if (isset($product['LocalizedProperties'][0]['Images']) && is_array($product['LocalizedProperties'][0]['Images'])) {
-                        foreach ($product['LocalizedProperties'][0]['Images'] as $image) {
-                            if ($image['ImagePurpose'] === 'BoxArt' && !$boxArtImage) {
-                                $boxArtImage = $image['Uri'];
-                            }
-                            if ($image['ImagePurpose'] === 'SuperHeroArt' && !$heroArtImage) {
-                                $heroArtImage = $image['Uri'];
-                            }
-                            if ($boxArtImage && $heroArtImage) {
-                                break;
-                            }
-                        }
-                    }
-
-                    $title = $product['LocalizedProperties'][0]['ProductTitle'] ?? 'Título não disponível';
-                    $description = $product['LocalizedProperties'][0]['ProductDescription'] ?? 'Descrição não disponível';
-                    $developer = $product['LocalizedProperties'][0]['DeveloperName'] ?? 'Desconhecida';
-                    $publisher = $product['LocalizedProperties'][0]['PublisherName'] ?? 'Desconhecida';
-                    $franchise = $product['LocalizedProperties'][0]['Franchises'][0] ?? 'Não disponível';
-                    $category = $product['Properties']['Category'] ?? 'Não disponível';
-
-                    $price = 'Não disponível';
-                    if (isset($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'])) {
-                        $priceValue = $product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'];
-                        $price = '$' . number_format($priceValue, 2);
-                    }
-                    ?>
-                    <article class="friend-card xbox-glass-card game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>" data-hero-art="<?php echo htmlspecialchars($heroArtImage ? 'https:' . $heroArtImage : ''); ?>">
-                        <div class="game-card-body">
-                            <div class="game-cover">
-                                <?php if ($boxArtImage) : ?>
-                                    <img src="<?php echo 'https:' . $boxArtImage; ?>" alt="Capa de <?php echo htmlspecialchars($title); ?>">
-                                <?php else : ?>
-                                    <img src="../img/placeholder.png" alt="Imagem não disponível">
-                                <?php endif; ?>
-                            </div>
-                            <div class="game-details">
-                                <div class="game-title"><?php echo htmlspecialchars($title); ?></div>
-                                <div class="game-meta">
-                                    <span class="game-badge">Desenvolvedora: <?php echo htmlspecialchars($developer); ?></span>
-                                    <span class="game-badge">Publisher: <?php echo htmlspecialchars($publisher); ?></span>
-                                    <span class="game-badge">Franquia: <?php echo htmlspecialchars($franchise); ?></span>
-                                    <span class="game-badge">Categoria: <?php echo htmlspecialchars($category); ?></span>
-                                </div>
-                                <p class="game-description"><?php echo htmlspecialchars($description); ?></p>
-                            </div>
-                        </div>
-                    </article>
-                <?php endforeach; ?>
-            </div>
-            <div class="friends-pagination">
-                <?php
-                $maxVisible = 5;
-                $halfWindow = floor($maxVisible / 2);
-                $startPage = max(1, $page - $halfWindow);
-                $endPage = min($total_pages, $startPage + $maxVisible - 1);
-
-                if (($endPage - $startPage + 1) < $maxVisible) {
-                    $startPage = max(1, $endPage - $maxVisible + 1);
-                }
-
-                $hasPrev = $page > 1;
-                $hasNext = $page < $total_pages;
-                ?>
-                <a class="pagination-btn <?php echo $hasPrev ? '' : 'disabled'; ?>" href="<?php echo $hasPrev ? '?page=' . ($page - 1) : 'javascript:void(0);'; ?>">Anterior</a>
-                <span class="pagination-separator"></span>
-                <?php for ($p = $startPage; $p <= $endPage; $p++) : ?>
-                    <a class="pagination-btn <?php echo $p === $page ? 'active' : ''; ?>" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
-                    <?php if ($p < $endPage) : ?>
-                        <span class="pagination-separator"></span>
-                    <?php endif; ?>
+        <!-- Pagination -->
+        <?php if ($total_pages > 1): ?>
+            <div class="mt-16 flex items-center justify-center gap-2">
+                <?php for ($p = 1; $p <= $total_pages; $p++): ?>
+                    <a href="?page=<?php echo $p; ?>" 
+                        class="w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all <?php echo ($p == $page) ? 'bg-xbox-green text-white shadow-[0_0_15px_rgba(16,124,16,0.5)]' : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white'; ?>">
+                        <?php echo $p; ?>
+                    </a>
                 <?php endfor; ?>
-                <span class="pagination-separator"></span>
-                <a class="pagination-btn <?php echo $hasNext ? '' : 'disabled'; ?>" href="<?php echo $hasNext ? '?page=' . ($page + 1) : 'javascript:void(0);'; ?>">Próximo</a>
             </div>
-        <?php else : ?>
-            <p class="text-green-50">Nenhum detalhe de jogo encontrado.</p>
         <?php endif; ?>
-    </div>
+
+    <?php else : ?>
+        <div class="py-24 text-center glass-card rounded-3xl border-dashed">
+            <i class="fas fa-gamepad text-6xl text-gray-800 mb-6"></i>
+            <p class="text-xl font-bold text-gray-600 uppercase tracking-widest">Nenhum título encontrado</p>
+            <p class="text-sm text-gray-700 mt-2">Tente atualizar o banco de dados ou verifique sua conexão.</p>
+        </div>
+    <?php endif; ?>
 </main>
+
 <script>
-    const gamesSearchInput = document.getElementById('gamesSearch');
-    const gamesSearchButton = document.getElementById('gamesSearchButton');
-    const gamesList = document.getElementById('gamesList');
-    const gameCards = gamesList ? Array.from(gamesList.querySelectorAll('.game-card')) : [];
-    const xboxContentAll = document.querySelector('.xbox-content');
-    const defaultBgAll = xboxContentAll ? window.getComputedStyle(xboxContentAll).backgroundImage : '';
-
-    function filterGames() {
-        const term = gamesSearchInput.value.toLowerCase();
-        gameCards.forEach((card) => {
-            const title = card.getAttribute('data-title') || '';
-            card.style.display = title.includes(term) ? '' : 'none';
+    document.getElementById('gamesSearch').addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase();
+        document.querySelectorAll('.game-card').forEach(card => {
+            const title = card.getAttribute('data-title');
+            card.style.display = title.includes(term) ? 'block' : 'none';
         });
-    }
-
-    if (gamesList) {
-        gamesSearchInput.addEventListener('input', filterGames);
-        gamesSearchButton.addEventListener('click', filterGames);
-
-        // Dynamic background hover (SuperHeroArt)
-        gameCards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                const hero = card.getAttribute('data-hero-art');
-                if (hero && xboxContentAll) {
-                    xboxContentAll.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.65), rgba(0,20,10,0.9)), url('${hero}')`;
-                    xboxContentAll.style.backgroundSize = 'cover';
-                    xboxContentAll.style.backgroundPosition = 'center';
-                    xboxContentAll.style.transition = 'background-image 0.45s ease';
-                }
-            });
-            card.addEventListener('mouseleave', () => {
-                if (xboxContentAll) xboxContentAll.style.backgroundImage = defaultBgAll;
-            });
-        });
-    }
+    });
 </script>
+
 <?php include('../includes/footer.php'); ?>
