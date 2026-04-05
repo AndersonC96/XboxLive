@@ -1,5 +1,7 @@
 <?php
-    session_start();
+require_once __DIR__ . '/../vendor/autoload.php';
+\Anderson\XboxLive\Core\Bootstrap::run();
+
     include('../includes/header.php');
     include('../includes/navbar.php');
     require '../config/db.php';

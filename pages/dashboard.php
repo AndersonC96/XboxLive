@@ -139,7 +139,7 @@ include('../includes/navbar.php');
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <?php if (!empty($recentTitles)): ?>
                         <?php foreach ($recentTitles as $title): ?>
-                            <div class="glass-card group p-4 rounded-2xl flex items-center gap-4 hover:border-xbox-green/40">
+                            <a href="jogo.php?id=<?php echo $title['titleId']; ?>" class="glass-card group p-4 rounded-2xl flex items-center gap-4 hover:border-xbox-green/40 transition-all">
                                 <div class="w-16 h-16 rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform">
                                     <img src="<?php echo $title['imageUri'] ?? '../img/default_game.jpg'; ?>" class="w-full h-full object-cover" alt="Game">
                                 </div>
@@ -147,13 +147,13 @@ include('../includes/navbar.php');
                                     <h4 class="font-bold text-white truncate mb-1"><?php echo htmlspecialchars($title['name']); ?></h4>
                                     <div class="flex items-center gap-2">
                                         <div class="h-1.5 flex-1 bg-white/5 rounded-full overflow-hidden">
-                                            <div class="h-full bg-xbox-green w-[65%]"></div>
+                                            <div class="h-full bg-xbox-green w-[<?php echo $title['achievement']['progressPercentage'] ?? 0; ?>%]"></div>
                                         </div>
-                                        <span class="text-[10px] font-bold text-gray-500">65%</span>
+                                        <span class="text-[10px] font-bold text-gray-500"><?php echo $title['achievement']['progressPercentage'] ?? 0; ?>%</span>
                                     </div>
                                 </div>
                                 <i class="fas fa-chevron-right text-gray-700 group-hover:text-xbox-green group-hover:translate-x-1 transition-all"></i>
-                            </div>
+                            </a>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <div class="col-span-full py-12 text-center glass-card rounded-2xl border-dashed opacity-50">

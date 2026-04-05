@@ -66,16 +66,19 @@ include('../includes/navbar.php');
                     }
                 }
                 $title = $props['ProductTitle'] ?? 'Sem Título';
+                $productId = $product['ProductId'] ?? '';
                 ?>
                 <article class="glass-card group rounded-2xl overflow-hidden hover:border-xbox-green/50 transition-all game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>">
-                    <div class="aspect-[2/3] relative overflow-hidden bg-xbox-surface">
-                        <img src="<?php echo $boxArt ?: '../img/placeholder.png'; ?>" alt="<?php echo htmlspecialchars($title); ?>" 
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-xbox-dark/80 via-transparent to-transparent"></div>
-                        <div class="absolute bottom-4 left-4 right-4">
-                            <h3 class="font-bold text-white text-sm leading-tight truncate"><?php echo htmlspecialchars($title); ?></h3>
+                    <a href="jogo.php?id=<?php echo htmlspecialchars($productId); ?>" class="block">
+                        <div class="aspect-[2/3] relative overflow-hidden bg-xbox-surface">
+                            <img src="<?php echo $boxArt ?: '../img/placeholder.png'; ?>" alt="<?php echo htmlspecialchars($title); ?>" 
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-xbox-dark/80 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <h3 class="font-bold text-white text-sm leading-tight truncate"><?php echo htmlspecialchars($title); ?></h3>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </article>
             <?php endforeach; ?>
         </div>

@@ -69,16 +69,18 @@ include('../includes/navbar.php');
                 $dev = $props['DeveloperName'] ?? 'Estúdio Indie';
                 ?>
                 <article class="glass-card group rounded-2xl overflow-hidden hover:border-xbox-green/50 transition-all game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>">
-                    <div class="aspect-[2/3] relative overflow-hidden bg-xbox-surface">
-                        <img src="<?php echo $boxArt ?: '../img/placeholder.png'; ?>" alt="<?php echo htmlspecialchars($title); ?>" 
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-xbox-dark via-transparent to-transparent opacity-80"></div>
-                        
-                        <div class="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform">
-                            <h3 class="font-bold text-white text-lg leading-tight mb-1 truncate"><?php echo htmlspecialchars($title); ?></h3>
-                            <p class="text-[10px] font-black uppercase tracking-widest text-xbox-green"><?php echo htmlspecialchars($dev); ?></p>
+                    <a href="jogo.php?id=<?php echo htmlspecialchars($productId); ?>" class="block">
+                        <div class="aspect-[2/3] relative overflow-hidden bg-xbox-surface">
+                            <img src="<?php echo $boxArt ?: '../img/placeholder.png'; ?>" alt="<?php echo htmlspecialchars($title); ?>" 
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-xbox-dark via-transparent to-transparent opacity-80"></div>
+                            
+                            <div class="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform">
+                                <h3 class="font-bold text-white text-lg leading-tight mb-1 truncate"><?php echo htmlspecialchars($title); ?></h3>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-xbox-green"><?php echo htmlspecialchars($dev); ?></p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </article>
             <?php endforeach; ?>
         </div>

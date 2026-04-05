@@ -28,14 +28,22 @@ function getBoxArtUrl($game) {
 ?>
 
 <main class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in">
-    <header class="mb-12">
-        <span class="text-xs font-black uppercase tracking-[0.3em] text-xbox-green mb-3 block">Seu Progresso</span>
-        <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white mb-4">Conquistas</h1>
-        <p class="text-gray-500 font-medium">Acompanhe sua jornada em todos os títulos do ecossistema Xbox.</p>
+    <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <span class="text-xs font-black uppercase tracking-[0.3em] text-xbox-green mb-3 block">Seu Progresso</span>
+            <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white mb-4">Conquistas</h1>
+            <p class="text-gray-500 font-medium">Acompanhe sua jornada em todos os títulos do ecossistema Xbox.</p>
+        </div>
+
+        <div class="relative w-full md:w-80 group">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-xbox-green transition-colors"></i>
+            <input type="text" id="achievementSearch" placeholder="Buscar por jogo..." 
+                class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-sm text-white outline-none focus:border-xbox-green transition-all">
+        </div>
     </header>
 
     <?php if (!empty($games)) : ?>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div id="achievementsList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             <?php foreach ($games as $game) : ?>
                 <?php
                     $name = $game['name'] ?? 'Título Desconhecido';
@@ -44,7 +52,7 @@ function getBoxArtUrl($game) {
                     $progress = $game['achievement']['progressPercentage'] ?? 0;
                     $boxArt = getBoxArtUrl($game);
                 ?>
-                <article class="glass-card group rounded-3xl p-6 hover:border-xbox-green/40 transition-all">
+                <article class="glass-card group rounded-3xl p-6 hover:border-xbox-green/40 transition-all achievement-card" data-name="<?php echo htmlspecialchars(strtolower($name)); ?>">
                     <div class="flex gap-6 mb-6">
                         <div class="w-24 h-24 rounded-2xl overflow-hidden shadow-2xl flex-shrink-0">
                             <img src="<?php echo htmlspecialchars($boxArt); ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Game">
@@ -79,6 +87,8 @@ function getBoxArtUrl($game) {
                 </article>
             <?php endforeach; ?>
         </div>
+
+        <div id="paginationContainer" class="mt-16 flex items-center justify-center gap-2"></div>
     <?php else : ?>
         <div class="py-32 text-center glass-card rounded-3xl border-dashed">
             <i class="fas fa-trophy text-6xl text-gray-800 mb-6"></i>
@@ -86,5 +96,53 @@ function getBoxArtUrl($game) {
         </div>
     <?php endif; ?>
 </main>
+
+<script>
+    const searchInput = document.getElementById('achievementSearch');
+    const achievementsList = document.getElementById('achievementsList');
+    const paginationContainer = document.getElementById('paginationContainer');
+    const cards = Array.from(document.querySelectorAll('.achievement-card'));
+    const itemsPerPage = 12;
+    let currentPage = 1;
+
+    function render() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredCards = cards.filter(card => card.getAttribute('data-name').includes(searchTerm));
+        const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+
+        // Hide all
+        cards.forEach(card => card.style.display = 'none');
+
+        // Show current page
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = filteredCards.slice(start, end);
+        pageItems.forEach(card => card.style.display = 'block');
+
+        // Render Pagination
+        paginationContainer.innerHTML = '';
+        if (totalPages > 1) {
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = `w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all ${i === currentPage ? 'bg-xbox-green text-white shadow-[0_0_15px_rgba(16,124,16,0.5)]' : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white'}`;
+                btn.onclick = () => {
+                    currentPage = i;
+                    render();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginationContainer.appendChild(btn);
+            }
+        }
+    }
+
+    searchInput.addEventListener('input', () => {
+        currentPage = 1;
+        render();
+    });
+
+    // Initial render
+    render();
+</script>
 
 <?php include('../includes/footer.php'); ?>

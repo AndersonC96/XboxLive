@@ -1,65 +1,61 @@
-# 🎮 Xbox Live Gamepass Dashboard
+# Xbox Live Dashboard Case (V2 - Premium Refactor)
 
-Dashboard interativo em PHP que integra a API do OpenXBL para exibir perfil, presença, conquistas e catálogos do Game Pass em uma interface inspirada no ecossistema Xbox.
+Este projeto é uma refatoração profissional de um sistema legado de Dashboard Xbox Live. Ele foi transformado de uma aplicação procedural simples para uma arquitetura moderna orientada a serviços (SOA), com foco em segurança, escalabilidade e design premium.
 
-## ✨ Principais funcionalidades
-- **Autenticação local**: páginas dedicadas para cadastro e login com hash seguro de senha e gerenciamento de sessão.
-- **Visão geral do jogador**: painel principal com Gamertag, gamerscore, bio, reputação, localização, estado de presença e últimos jogos acessados a partir dos endpoints `account`, `player/summary` e `player/titleHistory`.
-- **Feed da comunidade**: timeline de atividades recente com busca por Gamertag, consumindo `activity/feed`.
-- **Conquistas**: lista paginada de jogos com conquistas, imagens (BoxArt e Hero), progresso e ícones das plataformas suportadas.
-- **Catálogo Game Pass**:
-  - Listagem completa com paginação local (12 itens), busca instantânea e metadados como descrição, publisher, franquia e preço.
-  - Páginas segmentadas para lançamentos, mais jogados, promoções, gratuitos/pagos, EA Play, Game Pass para PC e títulos em nuvem.
-  - Rotas de atualização (`atualizar_jogos*.php`) que populam tabelas específicas (`gamepass_games`, `cloud_gamepass`, `ea_gamepass`, `pc_gamepass`) usadas nas consultas ao endpoint `marketplace/details`.
-- **Exploração social**: páginas para amigos, solicitações, clubes, presença, alertas, histórico, recomendações e geração de Gamertag que consomem os respectivos endpoints da API.
-- **Pesquisa rápida**: barra dedicada para buscar jogos pelo catálogo (`search.php`) e filtros adicionais nas páginas de listagem.
+## ✨ O que há de novo (Refatoração 2.0)
 
-## 🗂️ Estrutura do projeto
-- `index.php` – redireciona usuários autenticados para o dashboard ou para a tela de login.
-- `pages/` – todas as telas da aplicação (dashboard, feed, conquistas, catálogos, social, autenticação e utilitários de sincronização de jogos).
-- `actions/` – handlers de formulário (`login_action.php`, `register_action.php`) que usam PDO e `password_hash`/`password_verify`.
-- `config/` – integrações com OpenXBL (`api.php`) e banco de dados MySQL (`db.php`) via Dotenv.
-- `includes/` – cabeçalho, rodapé e barra de navegação reutilizáveis.
-- `database.sql` – script para criar o schema, tabelas de jogos e um usuário padrão para acesso inicial.
+### 🏗️ Arquitetura Técnica
+*   **PSR-4 Autoloading**: Organização completa do código fonte na pasta `src/` usando Namespaces (`Anderson\XboxLive`).
+*   **Camada de Serviços (Service Layer)**: 
+    *   `AuthService`: Centraliza login, registro e persistência de sessão.
+    *   `OpenXBLService`: Cliente de API desacoplado com tratamento de erros e normalização de dados.
+    *   `Database`: Singleton PDO para conexões seguras e eficientes.
+*   **Bootstrap Centralizado**: Ponto único de entrada para inicialização de variáveis de ambiente, sessões e configurações.
+*   **Segurança**: Senhas criptografadas com `password_hash`, proteção de rotas via middleware de serviço e uso estrito de Prepared Statements.
 
-## 🧰 Tecnologias
-- **PHP 7.4+** – backend e renderização das páginas.
-- **OpenXBL API** – fonte de dados para conta, presença, feed, conquistas e detalhes dos jogos.
-- **MySQL** – persistência de usuários e listas de títulos do Game Pass.
-- **Composer** – autoload e gerenciamento do Dotenv.
-- **Tailwind CSS + Font Awesome** – estilização e ícones.
+### 🎨 Design & UX Premium
+*   **Design System Xbox Carbon**: Nova identidade visual baseada em tons de cinza profundos, verde Xbox vibrante e tipografia tecnológica (`Outfit`).
+*   **Glassmorphism**: Efeitos de transparência avançados e profundidade visual em todos os componentes.
+*   **Responsividade**: Totalmente adaptado para dispositivos móveis usando grids modernos e flexbox.
+*   **Funcionalidades Plus**:
+    *   Busca em tempo real e paginação nas Conquistas e Amigos.
+    *   Sistema de vínculo de Gamertag dinâmico (Manual ou Automático).
+    *   Feedback visual imediato para ações do usuário.
 
-## ⚙️ Preparação do ambiente
-1. Instale as dependências do PHP e do Composer.
-2. Crie o arquivo `.env` na raiz do projeto com as variáveis:
-   ```bash
-   DB_HOST=localhost
-   DB_NAME=xboxlive_dashboard
-   DB_USER=seu_usuario
-   DB_PASSWORD=sua_senha
-   OPENXBL_API_KEY=sua_chave_openxbl
-   ```
-3. Configure a extensão MySQLi/PDO_mysql no PHP (a aplicação usa PDO).
+## 🚀 Como Executar
 
-### Banco de dados
-1. Importe o `database.sql` no MySQL para criar o schema e tabelas de catálogo.
-2. Utilize o usuário seedado (`admin`/`senha123`) ou crie novos registros na tela de cadastro.
+### 1. Pré-requisitos
+*   PHP 8.0+
+*   Composer
+*   XAMPP / MySQL
 
-## 🚀 Como executar
-1. Instale as dependências do Composer:
+### 2. Instalação
+1. Clone o repositório.
+2. Na raiz do projeto, instale as dependências:
    ```bash
    composer install
    ```
-2. Inicie o servidor de desenvolvimento do PHP na raiz do projeto:
-   ```bash
-   php -S localhost:8000
+3. Renomeie o arquivo `.env.example` para `.env` (ou crie um novo) e configure suas credenciais:
+   ```env
+   DB_HOST=localhost
+   DB_NAME=xboxlive_dashboard
+   DB_USER=root
+   DB_PASSWORD=
+   XBOX_API_KEY=sua_chave_aqui
    ```
-3. Acesse `http://localhost:8000/pages/login.php`, autentique-se e navegue pelas seções do dashboard.
 
-## 🔍 Dicas de uso
-- Sempre mantenha sua `OPENXBL_API_KEY` válida; chamadas sem chave retornam respostas vazias e impedem o carregamento dos cards.
-- Use as páginas de atualização de catálogo após criar o banco para preencher as tabelas de IDs antes de navegar pelas listagens.
-- Caso veja o erro `Class "mysqli" not found`, habilite a extensão MySQL do PHP e reinicie o servidor.
+### 3. Banco de Dados
+Importe o arquivo `database.sql` no seu PHPMyAdmin para criar as tabelas e o usuário administrativo inicial:
+*   **Usuário**: `admin`
+*   **Senha**: `senha123`
 
-## 📜 Licença
-Este projeto é fornecido no estado em que se encontra.
+---
+
+## 🛠️ Tecnologias Utilizadas
+*   **PHP** (Vanilla com PSR-4)
+*   **MySQL** (MariaDB)
+*   **Tailwind CSS** (Custom Config)
+*   **OpenXBL API** (Integração Social)
+*   **Composer** (Gerenciamento de dependências e autoload)
+
+Este projeto serve como uma demonstração sólida de habilidades em **Engenharia de Software PHP**, **Arquitetura de Sistemas** e **Desenvolvimento Frontend Refinado**.

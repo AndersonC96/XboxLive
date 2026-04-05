@@ -1,5 +1,7 @@
 <?php
-    include('../includes/header.php');
+require_once __DIR__ . '/../vendor/autoload.php';
+\Anderson\XboxLive\Core\Bootstrap::run();
+include('../includes/header.php');
     include('../includes/navbar.php');
     require_once '../config/api.php';
     if (isset($_GET['gamertag_search'])) {

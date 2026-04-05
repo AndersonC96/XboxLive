@@ -1,5 +1,7 @@
 <?php
-    require '../config/db.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+\Anderson\XboxLive\Core\Bootstrap::run();
+require '../config/db.php';
     require_once '../config/api.php';
     function adicionarJogosNoBanco() {
         global $pdo;

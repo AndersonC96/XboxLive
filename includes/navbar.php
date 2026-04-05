@@ -22,6 +22,11 @@ if ($response && isset($response['profileUsers'][0]['settings'])) {
 }
 
 $current_page = basename($_SERVER['PHP_SELF']);
+
+function isActive($page) {
+    global $current_page;
+    return $current_page === $page ? 'text-xbox-green bg-white/5' : '';
+}
 ?>
 <nav class="glass sticky top-0 z-50 py-3">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -120,6 +125,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <a href="perfil.php" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-white/5 transition-colors">
                             Meu Perfil
                             <i class="fas fa-id-card text-[10px] text-gray-700 group-hover/link:text-xbox-green transition-colors"></i>
+                        </a>
+                        <a href="capturas.php" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-white/5 transition-colors <?php echo isActive('capturas.php'); ?>">
+                            Minhas Capturas
+                            <i class="fas fa-camera text-[10px] text-gray-700 group-hover/link:text-xbox-green transition-colors"></i>
                         </a>
                         <a href="logout.php" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-red-500/20 text-red-400 transition-colors">
                             Sair
