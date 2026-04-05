@@ -30,9 +30,11 @@ $current_page_ids = array_slice($game_ids, $offset, $items_per_page);
 $products = [];
 if (!empty($current_page_ids)) {
     $api = new OpenXBLService();
-    $response = $api->post("marketplace/details", ["products" => implode(',', $current_page_ids)]);
+    $response = $api->getMarketplaceDetails($current_page_ids);
     $products = $response['Products'] ?? [];
 }
+
+$baseUrl = 'ea_play.php';
 
 include('../includes/header.php');
 include('../includes/navbar.php');
@@ -82,6 +84,9 @@ include('../includes/navbar.php');
                 </article>
             <?php endforeach; ?>
         </div>
+        
+        <!-- Pagination -->
+        <?php echo \Anderson\XboxLive\Utils\ViewHelper::renderPagination($page, $total_pages, $baseUrl); ?>
     <?php else : ?>
         <div class="py-24 text-center glass-card rounded-3xl border-dashed">
             <p class="text-xl font-bold text-gray-600 uppercase tracking-widest">Nenhum título EA Play encontrado</p>

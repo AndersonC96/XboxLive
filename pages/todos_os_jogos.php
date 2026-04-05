@@ -30,8 +30,14 @@ $current_page_ids = array_slice($game_ids, $offset, $items_per_page);
 $products = [];
 if (!empty($current_page_ids)) {
     $api = new OpenXBLService();
-    $response = $api->post("marketplace/details", ["products" => implode(',', $current_page_ids)]);
+    $response = $api->getMarketplaceDetails($current_page_ids);
     $products = $response['Products'] ?? [];
+}
+
+// Para a paginação
+$baseUrl = 'todos_os_jogos.php';
+if (!empty($_GET['q'])) {
+    $baseUrl .= '?q=' . urlencode($_GET['q']);
 }
 
 include('../includes/header.php');
@@ -86,16 +92,7 @@ include('../includes/navbar.php');
         </div>
 
         <!-- Pagination -->
-        <?php if ($total_pages > 1): ?>
-            <div class="mt-16 flex items-center justify-center gap-2">
-                <?php for ($p = 1; $p <= $total_pages; $p++): ?>
-                    <a href="?page=<?php echo $p; ?>" 
-                        class="w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all <?php echo ($p == $page) ? 'bg-xbox-green text-white shadow-[0_0_15px_rgba(16,124,16,0.5)]' : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white'; ?>">
-                        <?php echo $p; ?>
-                    </a>
-                <?php endfor; ?>
-            </div>
-        <?php endif; ?>
+        <?php echo \Anderson\XboxLive\Utils\ViewHelper::renderPagination($page, $total_pages, $baseUrl); ?>
 
     <?php else : ?>
         <div class="py-24 text-center glass-card rounded-3xl border-dashed">

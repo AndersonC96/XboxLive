@@ -21,6 +21,8 @@ if (empty($game_ids)) {
 }
 
 $items_per_page = 15;
+$total_items = count($game_ids);
+$total_pages = ceil($total_items / $items_per_page);
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $items_per_page;
 $current_page_ids = array_slice($game_ids, $offset, $items_per_page);
@@ -28,9 +30,11 @@ $current_page_ids = array_slice($game_ids, $offset, $items_per_page);
 $products = [];
 if (!empty($current_page_ids)) {
     $api = new OpenXBLService();
-    $response = $api->post("marketplace/details", ["products" => implode(',', $current_page_ids)]);
+    $response = $api->getMarketplaceDetails($current_page_ids);
     $products = $response['Products'] ?? [];
 }
+
+$baseUrl = 'gamepass_pc.php';
 
 include('../includes/header.php');
 include('../includes/navbar.php');
@@ -66,20 +70,12 @@ include('../includes/navbar.php');
                 $title = $props['ProductTitle'] ?? 'Sem Título';
                 $productId = $product['ProductId'] ?? '';
                 ?>
-                <article class="glass-card group rounded-2xl overflow-hidden hover:border-xbox-green/50 transition-all game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>">
-                    <a href="jogo.php?id=<?php echo htmlspecialchars($productId); ?>" class="block">
-                        <div class="aspect-[2/3] relative overflow-hidden bg-xbox-surface">
-                            <img src="<?php echo $boxArt ?: '../img/placeholder.png'; ?>" alt="<?php echo htmlspecialchars($title); ?>" 
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-xbox-dark/80 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 left-4 right-4">
-                                <h3 class="font-bold text-white text-sm leading-tight truncate"><?php echo htmlspecialchars($title); ?></h3>
-                            </div>
-                        </div>
-                    </a>
                 </article>
             <?php endforeach; ?>
         </div>
+        
+        <!-- Pagination -->
+        <?php echo \Anderson\XboxLive\Utils\ViewHelper::renderPagination($page, $total_pages, $baseUrl); ?>
     <?php else : ?>
         <div class="py-24 text-center glass-card rounded-3xl border-dashed">
             <p class="text-xl font-bold text-gray-600 uppercase tracking-widest">Nenhum título PC Game Pass encontrado</p>

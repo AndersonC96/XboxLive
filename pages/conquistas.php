@@ -119,21 +119,91 @@ function getBoxArtUrl($game) {
         const pageItems = filteredCards.slice(start, end);
         pageItems.forEach(card => card.style.display = 'block');
 
-        // Render Pagination
+    function renderPagination(totalPages) {
         paginationContainer.innerHTML = '';
-        if (totalPages > 1) {
-            for (let i = 1; i <= totalPages; i++) {
-                const btn = document.createElement('button');
-                btn.textContent = i;
-                btn.className = `w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all ${i === currentPage ? 'bg-xbox-green text-white shadow-[0_0_15px_rgba(16,124,16,0.5)]' : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white'}`;
+        if (totalPages <= 1) return;
+
+        // Helper: Create button
+        const createBtn = (content, page, isActive = false, isDisabled = false) => {
+            const btn = document.createElement('button');
+            btn.innerHTML = content;
+            btn.disabled = isDisabled;
+            btn.className = `w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all ${
+                isActive 
+                ? 'bg-xbox-green text-white shadow-[0_0_15px_rgba(16,124,16,0.5)] z-10' 
+                : isDisabled 
+                    ? 'bg-white/5 text-gray-800 cursor-not-allowed' 
+                    : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white'
+            }`;
+            if (!isDisabled) {
                 btn.onclick = () => {
-                    currentPage = i;
+                    currentPage = page;
                     render();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 };
-                paginationContainer.appendChild(btn);
+            }
+            return btn;
+        };
+
+        // Previous
+        paginationContainer.appendChild(createBtn('<i class="fas fa-chevron-left"></i>', currentPage - 1, false, currentPage === 1));
+
+        // Smart Numbers Logic
+        const range = 1; // Numbers around current
+        const showEllipsesAt = 3;
+
+        for (let i = 1; i <= totalPages; i++) {
+            if (
+                i === 1 || // Always first
+                i === totalPages || // Always last
+                (i >= currentPage - range && i <= currentPage + range) // Range around current
+            ) {
+                paginationContainer.appendChild(createBtn(i, i, i === currentPage));
+            } else if (
+                (i === currentPage - range - 1 && i > 1) || 
+                (i === currentPage + range + 1 && i < totalPages)
+            ) {
+                const dot = document.createElement('span');
+                dot.textContent = '...';
+                dot.className = 'w-8 text-center text-gray-700 font-black';
+                paginationContainer.appendChild(dot);
             }
         }
+
+        // Next
+        paginationContainer.appendChild(createBtn('<i class="fas fa-chevron-right"></i>', currentPage + 1, false, currentPage === totalPages));
+    }
+
+    function render() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredCards = cards.filter(card => card.getAttribute('data-name').includes(searchTerm));
+        const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+
+        // UI Feedback: Zero results
+        if (filteredCards.length === 0) {
+            achievementsList.innerHTML = `
+                <div class="col-span-full py-32 text-center glass-card rounded-3xl border-dashed animate-fade-in">
+                    <i class="fas fa-ghost text-6xl text-gray-800 mb-6"></i>
+                    <p class="text-xl font-bold text-gray-600 uppercase tracking-widest">Título não encontrado</p>
+                </div>
+            `;
+        } else {
+            // Restore original container if it was emptied for ghost state
+            // In our case, cards are just hidden, so we just manage visibility
+            achievementsList.querySelectorAll('.zero-state').forEach(el => el.remove());
+        }
+
+        // Hide all
+        cards.forEach(card => card.style.display = 'none');
+
+        // Show current page
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = filteredCards.slice(start, end);
+        pageItems.forEach(card => card.style.display = 'block');
+
+        // Render Pagination
+        renderPagination(totalPages);
     }
 
     searchInput.addEventListener('input', () => {
