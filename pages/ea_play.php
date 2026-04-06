@@ -43,19 +43,19 @@ include('../includes/navbar.php');
 <main class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in">
     <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-            <span class="text-xs font-black uppercase tracking-[0.3em] text-xbox-green mb-3 block">Parceiros</span>
+            <span class="text-[10px] font-black uppercase tracking-[0.4em] text-xbox-green mb-3 block">Parceiros</span>
             <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white italic">EA PLAY</h1>
         </div>
         
         <div class="relative w-full md:w-80 group">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-xbox-green transition-colors"></i>
-            <input type="text" id="gamesSearch" placeholder="Buscar no EA Play..." 
-                class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-sm text-white outline-none focus:border-xbox-green transition-all">
+            <input type="text" id="gamesSearch" placeholder="Buscar no catálogo EA..." 
+                class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-sm text-white outline-none focus:border-xbox-green transition-all shadow-inner">
         </div>
     </header>
 
     <?php if (!empty($products)) : ?>
-        <div id="gamesList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div id="gamesList" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             <?php foreach ($products as $product) : ?>
                 <?php
                 $props = $product['LocalizedProperties'][0] ?? [];
@@ -68,16 +68,25 @@ include('../includes/navbar.php');
                     }
                 }
                 $title = $props['ProductTitle'] ?? 'Sem Título';
+                $dev = $props['DeveloperName'] ?? 'EA Sports';
                 $productId = $product['ProductId'] ?? '';
                 ?>
-                <article class="glass-card group rounded-2xl overflow-hidden hover:border-xbox-green/50 transition-all game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>">
+                <article class="glass-card group rounded-2xl overflow-hidden hover:border-white/20 transition-all game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>">
                     <a href="jogo.php?id=<?php echo htmlspecialchars($productId); ?>" class="block">
                         <div class="aspect-[2/3] relative overflow-hidden bg-xbox-surface">
                             <img src="<?php echo $boxArt ?: '../img/placeholder.png'; ?>" alt="<?php echo htmlspecialchars($title); ?>" 
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-xbox-dark/80 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 left-4 right-4">
-                                <h3 class="font-bold text-white text-sm leading-tight truncate"><?php echo htmlspecialchars($title); ?></h3>
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
+                            
+                            <!-- EA Badge Overlay -->
+                            <div class="absolute top-3 left-3">
+                                <span class="bg-white text-[#ef4444] text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest shadow-lg border border-red-500/10">EA Play</span>
+                            </div>
+
+                            <div class="absolute inset-0 bg-gradient-to-t from-xbox-dark/95 via-xbox-dark/20 to-transparent"></div>
+                            
+                            <div class="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                <h3 class="font-bold text-white text-[13px] leading-tight mb-1 truncate"><?php echo htmlspecialchars($title); ?></h3>
+                                <p class="text-[9px] font-black uppercase tracking-widest text-[#ef4444] truncate"><?php echo htmlspecialchars($dev); ?></p>
                             </div>
                         </div>
                     </a>
@@ -86,10 +95,14 @@ include('../includes/navbar.php');
         </div>
         
         <!-- Pagination -->
-        <?php echo \Anderson\XboxLive\Utils\ViewHelper::renderPagination($page, $total_pages, $baseUrl); ?>
+        <div class="mt-16">
+            <?php echo \Anderson\XboxLive\Utils\ViewHelper::renderPagination($page, $total_pages, $baseUrl); ?>
+        </div>
     <?php else : ?>
         <div class="py-24 text-center glass-card rounded-3xl border-dashed">
-            <p class="text-xl font-bold text-gray-600 uppercase tracking-widest">Nenhum título EA Play encontrado</p>
+            <i class="fas fa-gamepad text-6xl text-gray-800 mb-6"></i>
+            <p class="text-base font-bold text-gray-600 uppercase tracking-widest">Nenhum título EA Play encontrado</p>
+            <p class="text-xs text-gray-700 mt-2">Tente atualizar o banco de dados de parceiros.</p>
         </div>
     <?php endif; ?>
 </main>

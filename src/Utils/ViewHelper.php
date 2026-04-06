@@ -10,25 +10,27 @@ class ViewHelper
      * @param int $currentPage Página atual
      * @param int $totalPages Total de páginas
      * @param string $baseUrl URL base (com parâmetros existentes)
+     * @param string $paramName Nome do parâmetro de página na URL (default: page)
      * @return string HTML da paginação
      */
-    public static function renderPagination($currentPage, $totalPages, $baseUrl = '?')
+    public static function renderPagination($currentPage, $totalPages, $baseUrl = '?', $paramName = 'page')
     {
         if ($totalPages <= 1) return '';
 
-        // Garantir que o baseUrl termine corretamente para concatenar ?page= ou &page=
+        // Garantir que o baseUrl termine corretamente para concatenar ?param= ou &param=
         $separator = (strpos($baseUrl, '?') === false) ? '?' : '&';
-        // Remover parâmetro 'page' se ele já existir no baseUrl para evitar duplicidade
-        $baseUrl = preg_replace('/([?&])page=[^&]*(&|$)/', '$1', $baseUrl);
+        
+        // Remover o parâmetro específico para evitar duplicidade
+        $baseUrl = preg_replace('/([?&])' . preg_quote($paramName) . '=[^&]*(&|$)/', '$1', $baseUrl);
         $baseUrl = rtrim($baseUrl, '?&');
         $urlWithParam = $baseUrl . (strpos($baseUrl, '?') === false ? '?' : '&');
 
         $range = 2; // Quantos números mostrar ao redor da página atual
-        $html = '<div class="mt-16 flex flex-wrap items-center justify-center gap-2 animate-fade-in">';
+        $html = '<div class="mt-8 flex flex-wrap items-center justify-center gap-2 animate-fade-in">';
 
         // Botão Anterior
         $prevDisabled = $currentPage <= 1;
-        $prevUrl = $urlWithParam . 'page=' . ($currentPage - 1);
+        $prevUrl = $urlWithParam . $paramName . '=' . ($currentPage - 1);
         $html .= sprintf(
             '<a href="%s" class="w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all %s shadow-lg shadow-black/20"><i class="fas fa-chevron-left"></i></a>',
             $prevDisabled ? 'javascript:void(0)' : $prevUrl,
@@ -36,7 +38,6 @@ class ViewHelper
         );
 
         for ($i = 1; $i <= $totalPages; $i++) {
-            // Lógica para mostrar: Primeira, Última e o Range ao redor da atual
             if ($i == 1 || $i == $totalPages || ($i >= $currentPage - $range && $i <= $currentPage + $range)) {
                 $isActive = ($i == $currentPage);
                 $activeClass = $isActive 
@@ -44,14 +45,14 @@ class ViewHelper
                     : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white border-transparent hover:border-xbox-green/30';
                 
                 $html .= sprintf(
-                    '<a href="%spage=%d" class="w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all border %s">%d</a>',
+                    '<a href="%s%s=%d" class="w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all border %s">%d</a>',
                     $urlWithParam,
+                    $paramName,
                     $i,
                     $activeClass,
                     $i
                 );
             } 
-            // Lógica para Elipses
             elseif ($i == $currentPage - $range - 1 || $i == $currentPage + $range + 1) {
                 $html .= '<span class="w-8 text-center text-gray-700 font-black tracking-widest">...</span>';
             }
@@ -59,7 +60,7 @@ class ViewHelper
 
         // Botão Próximo
         $nextDisabled = $currentPage >= $totalPages;
-        $nextUrl = $urlWithParam . 'page=' . ($currentPage + 1);
+        $nextUrl = $urlWithParam . $paramName . '=' . ($currentPage + 1);
         $html .= sprintf(
             '<a href="%s" class="w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all %s shadow-lg shadow-black/20"><i class="fas fa-chevron-right"></i></a>',
             $nextDisabled ? 'javascript:void(0)' : $nextUrl,

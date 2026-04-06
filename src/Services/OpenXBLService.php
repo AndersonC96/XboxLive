@@ -44,6 +44,24 @@ class OpenXBLService
         return $this->get("friends/search?gt=" . urlencode($gamertag));
     }
 
+    public function getPlayerSummary($xuids = null)
+    {
+        // For multiple xuids, use comma separated string, for self leave null
+        return $xuids ? $this->get("player/summary/$xuids") : $this->get("player/summary");
+    }
+
+    public function getPlayerStats($productId, $xuids = null)
+    {
+        $body = ['productId' => $productId];
+        if ($xuids) $body['xuids'] = is_array($xuids) ? implode(',', $xuids) : $xuids;
+        return $this->post("player/stats", $body);
+    }
+
+    public function getTitleHistoryLegacy($xuid = null)
+    {
+        return $xuid ? $this->get("player/$xuid/titles") : $this->get("player/titles");
+    }
+
     // --- Social & Friends ---
 
     public function getFriends($xuid = null)
@@ -75,6 +93,11 @@ class OpenXBLService
         return $xuid ? $this->get("achievements/player/$xuid") : $this->get("achievements");
     }
 
+    public function getAchievementsV3($xuid)
+    {
+        return $this->get("achievements/player/$xuid/history");
+    }
+
     // --- DVR (Media) ---
 
     public function getScreenshots($xuid = null)
@@ -92,6 +115,26 @@ class OpenXBLService
     public function getActivityFeed()
     {
         return $this->get("activity/feed");
+    }
+
+    public function getActivityHistory($xuid = null)
+    {
+        return $xuid ? $this->get("activity/history/$xuid") : $this->get("activity/history");
+    }
+
+    public function postToActivityFeed($message)
+    {
+        return $this->post("activity/feed", ['message' => $message]);
+    }
+
+    public function getRecentPlayers()
+    {
+        return $this->get("activity/recent-players");
+    }
+
+    public function createShareableLink($contentId)
+    {
+        return $this->post("activity/share", ['contentId' => $contentId]);
     }
 
     // --- Private Request Logic ---

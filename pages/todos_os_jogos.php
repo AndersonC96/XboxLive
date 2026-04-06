@@ -73,6 +73,7 @@ include('../includes/navbar.php');
                 }
                 $title = $props['ProductTitle'] ?? 'Sem Título';
                 $dev = $props['DeveloperName'] ?? 'Estúdio Indie';
+                $productId = $product['ProductId'] ?? '';
                 ?>
                 <article class="glass-card group rounded-2xl overflow-hidden hover:border-xbox-green/50 transition-all game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>">
                     <a href="jogo.php?id=<?php echo htmlspecialchars($productId); ?>" class="block">

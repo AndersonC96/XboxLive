@@ -2,161 +2,135 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 \Anderson\XboxLive\Core\Bootstrap::run();
 
-    include('../includes/header.php');
-    include('../includes/navbar.php');
-    require '../config/db.php';
-    require_once '../config/api.php';
+$db = \Anderson\XboxLive\Core\Database::getInstance();
+$stmt = $db->prepare("SELECT game_id FROM coming_soon");
+$stmt->execute();
+$game_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    if (!isset($_SESSION['user_id'])) {
-        echo "Erro: Usuário não está logado.";
-        exit;
-    }
+// Search Logic (Server-side)
+$search = $_GET['q'] ?? '';
+$filtered_ids = $game_ids;
 
-    $endpoint = "marketplace/coming-soon";
-    $response = openXBLRequest($endpoint);
-    $products = isset($response['Products']) ? $response['Products'] : [];
+$items_per_page = 15;
+$total_items = count($game_ids);
+$total_pages = ceil($total_items / $items_per_page);
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
 
-    if (empty($products)) {
-        echo "Nenhum jogo em breve encontrado.";
-        exit;
-    }
+$offset = ($page - 1) * $items_per_page;
+$current_page_ids = array_slice($game_ids, $offset, $items_per_page);
 
-    $items_per_page = 12;
-    $total_items = count($products);
-    $total_pages = ceil($total_items / $items_per_page);
-    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $offset = ($page - 1) * $items_per_page;
-    $current_page_products = array_slice($products, $offset, $items_per_page);
+$products = [];
+if (!empty($current_page_ids)) {
+    $api = new \Anderson\XboxLive\Services\OpenXBLService();
+    $response = $api->getMarketplaceDetails($current_page_ids);
+    $products = $response['Products'] ?? [];
+}
 
-    function formatarDataLancamento($data)
-    {
-        $date = new DateTime($data);
-        return $date->format('d/m/Y');
-    }
+$baseUrl = 'em_breve.php';
+if (!empty($search)) {
+    $baseUrl .= '?q=' . urlencode($search);
+}
 
-    function getBoxArtImage($images)
-    {
-        foreach ($images as $image) {
-            if ($image['ImagePurpose'] === 'BoxArt') {
-                return $image['Uri'];
-            }
-        }
-
-        return '';
-    }
+include('../includes/header.php');
+include('../includes/navbar.php');
 ?>
-<main class="xbox-content">
-    <div class="xbox-page space-y-6">
-        <section class="xbox-hero">
-            <span class="xbox-hero-eyebrow">Game Pass</span>
-            <h1 class="xbox-hero-title">Em Breve</h1>
-            <p class="xbox-hero-subtitle">Veja os próximos lançamentos com cartões em vidro líquido e a navegação temática do Xbox.</p>
-        </section>
 
-        <div class="xbox-panel space-y-4">
-            <div class="friends-search">
-                <i class="fas fa-search text-green-200/80"></i>
-                <input
-                    type="text"
-                    id="gamesSearch"
-                    placeholder="Buscar por título..."
-                    class="friends-search-input"
-                />
-                <button id="gamesSearchButton" class="friends-search-btn" aria-label="Buscar">
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
+<main class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in">
+    <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <span class="text-[10px] font-black uppercase tracking-[0.4em] text-xbox-green mb-3 block">Futuro</span>
+            <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white italic">EM BREVE</h1>
         </div>
+        
+        <form action="" method="GET" class="relative w-full md:w-80 group">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-xbox-green transition-colors"></i>
+            <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Buscar no catálogo..." 
+                class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-sm text-white outline-none focus:border-xbox-green transition-all"
+                onchange="this.form.submit()">
+        </form>
+    </header>
 
-        <?php if (!empty($current_page_products)) : ?>
-            <div id="gamesList" class="friend-grid">
-                <?php foreach ($current_page_products as $product) : ?>
-                    <?php
-                        $boxArtImage = getBoxArtImage($product['LocalizedProperties'][0]['Images'] ?? []);
-                        $title = $product['LocalizedProperties'][0]['ProductTitle'] ?? 'Título não disponível';
-                        $description = $product['LocalizedProperties'][0]['ProductDescription'] ?? 'Descrição não disponível';
-                        $developer = $product['LocalizedProperties'][0]['DeveloperName'] ?? 'Desconhecida';
-                        $publisher = $product['LocalizedProperties'][0]['PublisherName'] ?? 'Desconhecida';
-                        $releaseDate = $product['MarketProperties'][0]['OriginalReleaseDate'] ?? null;
-                        $price = 'Não disponível';
-
-                        if (isset($product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'])) {
-                            $priceValue = $product['DisplaySkuAvailabilities'][0]['OrderManagementData']['Price']['ListPrice'];
-                            $price = '$' . number_format($priceValue, 2);
-                        }
-                    ?>
-                    <article class="friend-card xbox-glass-card game-card" data-title="<?php echo htmlspecialchars(strtolower($title)); ?>">
-                        <div class="game-card-body">
-                            <div class="game-cover">
-                                <?php if (!empty($boxArtImage)) : ?>
-                                    <img src="<?php echo 'https:' . $boxArtImage; ?>" alt="Capa de <?php echo htmlspecialchars($title); ?>">
-                                <?php else : ?>
-                                    <img src="../img/placeholder.png" alt="Imagem não disponível">
-                                <?php endif; ?>
+    <?php if (!empty($products)) : ?>
+        <div id="gamesList" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <?php foreach ($products as $product) : ?>
+                <?php
+                $props = $product['LocalizedProperties'][0] ?? [];
+                $images = $props['Images'] ?? [];
+                $boxArt = null;
+                foreach ($images as $img) {
+                    if ($img['ImagePurpose'] === 'BoxArt') {
+                        $boxArt = $img['Uri'];
+                        break;
+                    }
+                }
+                $title = $props['ProductTitle'] ?? 'Sem Título';
+                $dev = $props['DeveloperName'] ?? 'Coming Soon';
+                $productId = $product['ProductId'] ?? '';
+                $releaseDateRaw = $product['MarketProperties'][0]['OriginalReleaseDate'] ?? null;
+                $releaseDate = $releaseDateRaw ? date('d/m/Y', strtotime($releaseDateRaw)) : 'Em breve';
+                ?>
+                <article class="glass-card group rounded-2xl overflow-hidden hover:border-xbox-green/50 transition-all game-card">
+                    <a href="jogo.php?id=<?php echo htmlspecialchars($productId); ?>" class="block">
+                        <div class="aspect-[2/3] relative overflow-hidden bg-xbox-surface">
+                            <img src="<?php echo $boxArt ?: '../img/placeholder.png'; ?>" alt="<?php echo htmlspecialchars($title); ?>" 
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
+                            
+                            <!-- Badges Overlay -->
+                            <div class="absolute top-3 left-3 flex flex-wrap gap-2">
+                                <span class="bg-xbox-green text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest shadow-lg italic">Próximo</span>
                             </div>
-                            <div class="game-details">
-                                <div class="game-title"><?php echo htmlspecialchars($title); ?></div>
-                                <div class="game-meta">
-                                    <?php if ($releaseDate) : ?>
-                                        <span class="game-badge">Lançamento: <?php echo formatarDataLancamento($releaseDate); ?></span>
-                                    <?php endif; ?>
-                                    <span class="game-badge">Desenvolvedora: <?php echo htmlspecialchars($developer); ?></span>
-                                    <span class="game-badge">Publisher: <?php echo htmlspecialchars($publisher); ?></span>
-                                </div>
-                                <p class="game-description"><?php echo htmlspecialchars($description); ?></p>
-                                <div class="game-price">Preço: <strong><?php echo htmlspecialchars($price); ?></strong></div>
+
+                            <div class="absolute inset-0 bg-gradient-to-t from-xbox-dark via-transparent to-transparent opacity-80"></div>
+                            
+                            <div class="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform">
+                                <h3 class="font-bold text-white text-[13px] leading-tight mb-1 truncate"><?php echo htmlspecialchars($title); ?></h3>
+                                <p class="text-[9px] font-black uppercase tracking-widest text-xbox-green truncate"><?php echo $releaseDate; ?></p>
                             </div>
                         </div>
-                    </article>
-                <?php endforeach; ?>
-            </div>
-            <div class="friends-pagination">
-                <?php
-                    $maxVisible = 5;
-                    $halfWindow = floor($maxVisible / 2);
-                    $startPage = max(1, $page - $halfWindow);
-                    $endPage = min($total_pages, $startPage + $maxVisible - 1);
+                    </a>
+                </article>
+            <?php endforeach; ?>
+        </div>
 
-                    if (($endPage - $startPage + 1) < $maxVisible) {
-                        $startPage = max(1, $endPage - $maxVisible + 1);
-                    }
+        <!-- Pagination -->
+        <div class="mt-16">
+            <?php echo \Anderson\XboxLive\Utils\ViewHelper::renderPagination($page, $total_pages, $baseUrl); ?>
+        </div>
 
-                    $hasPrev = $page > 1;
-                    $hasNext = $page < $total_pages;
-                ?>
-                <a class="pagination-btn <?php echo $hasPrev ? '' : 'disabled'; ?>" href="<?php echo $hasPrev ? '?page=' . ($page - 1) : 'javascript:void(0);'; ?>">Anterior</a>
-                <span class="pagination-separator">|</span>
-                <?php for ($p = $startPage; $p <= $endPage; $p++) : ?>
-                    <a class="pagination-btn <?php echo $p === $page ? 'active' : ''; ?>" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
-                    <?php if ($p < $endPage) : ?>
-                        <span class="pagination-separator">|</span>
-                    <?php endif; ?>
-                <?php endfor; ?>
-                <span class="pagination-separator">|</span>
-                <a class="pagination-btn <?php echo $hasNext ? '' : 'disabled'; ?>" href="<?php echo $hasNext ? '?page=' . ($page + 1) : 'javascript:void(0);'; ?>">Próximo</a>
+    <?php else : ?>
+        <!-- Premium Empty State -->
+        <div class="py-32 text-center glass-card rounded-[3rem] border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent relative overflow-hidden">
+            <div class="absolute inset-0 opacity-5 pointer-events-none">
+                <i class="fas fa-clock text-[20rem] -top-10 -right-10 absolute rotate-12"></i>
             </div>
-        <?php else : ?>
-            <p class="text-green-50">Nenhum detalhe de jogo encontrado.</p>
-        <?php endif; ?>
-    </div>
+            
+            <div class="relative z-10 flex flex-col items-center">
+                <div class="w-24 h-24 rounded-3xl bg-xbox-green/10 flex items-center justify-center text-xbox-green mb-8 shadow-inner">
+                    <i class="fas fa-calendar-alt text-4xl animate-pulse"></i>
+                </div>
+                <h3 class="text-2xl font-black text-white mb-3 italic tracking-tight underline decoration-xbox-green decoration-4 underline-offset-8">SILÊNCIO POR ENQUANTO...</h3>
+                <p class="text-gray-500 font-medium max-w-sm mx-auto leading-relaxed">
+                    Estamos preparando o calendário de lançamentos mais incrível da temporada. Volte em breve para descobrir novos mundos!
+                </p>
+                
+                <div class="mt-12 flex gap-4">
+                    <a href="dashboard.php" class="px-8 py-3 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-[10px] hover:bg-xbox-green hover:text-white transition-all shadow-xl">
+                        Voltar ao Início
+                    </a>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 </main>
-<script>
-    const gamesSearchInput = document.getElementById('gamesSearch');
-    const gamesSearchButton = document.getElementById('gamesSearchButton');
-    const gamesList = document.getElementById('gamesList');
-    const gameCards = gamesList ? Array.from(gamesList.querySelectorAll('.game-card')) : [];
 
-    function filterGames() {
-        const term = gamesSearchInput.value.toLowerCase();
-        gameCards.forEach((card) => {
-            const title = card.getAttribute('data-title') || '';
+<script>
+    document.querySelector('input[name="q"]').addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase();
+        document.querySelectorAll('.game-card').forEach(card => {
+            const title = card.querySelector('h3').textContent.toLowerCase();
             card.style.display = title.includes(term) ? '' : 'none';
         });
-    }
-
-    if (gamesList) {
-        gamesSearchInput.addEventListener('input', filterGames);
-        gamesSearchButton.addEventListener('click', filterGames);
-    }
+    });
 </script>
 <?php include('../includes/footer.php'); ?>
