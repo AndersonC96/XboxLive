@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Anderson\XboxLive\Controllers;
+
+use Anderson\XboxLive\Services\AuthService;
 
 class BaseController
 {
@@ -8,15 +11,19 @@ class BaseController
     {
         extract($data);
         
-        // Caminho absoluto para a raiz das views
+        $baseUrl = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
+        if ($baseUrl === '/') $baseUrl = '';
+
         $viewPath = __DIR__ . '/../../views/' . $view . '.php';
         $layoutPath = __DIR__ . '/../../views/layouts/' . $layout . '.php';
 
         if (!file_exists($viewPath)) {
-            die("Erro: View '{$view}' não encontrada em {$viewPath}.");
+            throw new \Exception("View '{$view}' não encontrada.");
         }
 
-        // Buffer do conteúdo da página
+        // CSRF Token para formulários
+        $csrfToken = $this->generateCsrfToken();
+
         ob_start();
         include $viewPath;
         $content = ob_get_clean();
@@ -35,9 +42,23 @@ class BaseController
         exit();
     }
 
+    protected function generateCsrfToken(): string
+    {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
+    }
+
+    protected function validateCsrfToken(): bool
+    {
+        $token = $_POST['csrf_token'] ?? '';
+        return !empty($token) && hash_equals($_SESSION['csrf_token'] ?? '', $token);
+    }
+
     protected function getUserProfileStats(?array $profileData): array
     {
-        $sessionUser = \Anderson\XboxLive\Services\AuthService::user();
+        $sessionUser = AuthService::user();
         
         $stats = [
             'gamertag'   => $sessionUser['username'] ?? 'Usuário',
@@ -54,7 +75,7 @@ class BaseController
                 switch ($setting['id']) {
                     case 'Gamertag': $stats['gamertag'] = $setting['value']; break;
                     case 'GameDisplayPicRaw': $stats['gamerpic'] = $setting['value']; break;
-                    case 'Gamerscore': $stats['gamerscore'] = number_format($setting['value'], 0, ',', '.'); break;
+                    case 'Gamerscore': $stats['gamerscore'] = number_format((float)$setting['value'], 0, ',', '.'); break;
                     case 'AccountTier': $stats['tier'] = $setting['value']; break;
                     case 'XboxOneRep': $stats['reputation'] = $setting['value']; break;
                     case 'Bio': $stats['bio'] = $setting['value']; break;

@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Anderson\XboxLive\Services;
 
 use Anderson\XboxLive\Core\Config;
+use Anderson\XboxLive\Core\Cache;
+use Anderson\XboxLive\Exceptions\XblApiException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -15,7 +18,7 @@ class OpenXBLService
 
     public function __construct()
     {
-        $this->apiKey = Config::get('OPENXBL_API_KEY') ?: Config::get('XBOX_API_KEY') ?: '';
+        $this->apiKey = (string)(Config::get('OPENXBL_API_KEY') ?: Config::get('XBOX_API_KEY') ?: '');
         
         $this->client = new Client([
             'base_uri' => $this->baseUrl,
@@ -24,20 +27,25 @@ class OpenXBLService
                 'Content-Type'    => 'application/json',
                 'Accept-Language' => $this->language
             ],
-            'http_errors' => false // Para tratarmos os erros manualmente
+            'http_errors' => false,
+            'timeout' => 10.0
         ]);
     }
 
-    private function request(string $method, string $endpoint, array $options = [])
+    private function request(string $method, string $endpoint, array $options = []): mixed
     {
         if (empty($this->apiKey)) {
-            return null;
+            throw new XblApiException("API Key não configurada no arquivo .env");
         }
 
         try {
             $response = $this->client->request($method, ltrim($endpoint, '/'), $options);
             $statusCode = $response->getStatusCode();
             
+            if ($statusCode === 429) {
+                throw new XblApiException("Limite de requisições à API atingido (Rate Limit).");
+            }
+
             if ($statusCode >= 400) {
                 return null;
             }
@@ -49,212 +57,104 @@ class OpenXBLService
                 return null;
             }
 
-            // Auto-unwrap 'content' if it's a JSON string
-            if (isset($decoded['content'])) {
-                $content = $decoded['content'];
-                if (is_string($content)) {
-                    $unwrapped = json_decode($content, true);
-                    if (json_last_error() === JSON_ERROR_NONE) {
-                        return $unwrapped;
-                    }
-                }
-                return $content;
-            }
-
-            return $decoded;
+            return $decoded['content'] ?? $decoded;
         } catch (GuzzleException $e) {
-            return null;
+            throw new XblApiException("Erro de conexão com a Xbox Live: " . $e->getMessage());
         }
     }
 
-    public function get(string $endpoint)
+    public function get(string $endpoint, bool $useCache = false): mixed
     {
-        return $this->request('GET', $endpoint);
+        if ($useCache) {
+            $cached = Cache::get($endpoint);
+            if ($cached) return $cached;
+        }
+
+        $response = $this->request('GET', $endpoint);
+        
+        if ($useCache && $response) {
+            Cache::set($endpoint, $response, 3600); // 1h cache por padrão para GETs comuns
+        }
+
+        return $response;
     }
 
-    public function post(string $endpoint, array $body)
+    public function post(string $endpoint, array $body): mixed
     {
         return $this->request('POST', $endpoint, ['json' => $body]);
     }
 
-    // --- Account & Profile (API v2) ---
+    // --- Mapeamento de Endpoints ---
 
-    public function getAccount()
-    {
-        return $this->get("account");
+    public function getAccount(): ?array { return $this->get("account", true); }
+    
+    public function getProfile(?string $xuid = null): ?array { 
+        return $xuid ? $this->get("account/$xuid", true) : $this->getAccount(); 
     }
 
-    public function getProfile(string $xuid = null)
-    {
-        return $xuid ? $this->get("account/$xuid") : $this->getAccount();
+    public function getFriends(?string $xuid = null): ?array { 
+        return $xuid ? $this->get("friends/$xuid", true) : $this->get("friends", true); 
     }
 
-    public function getAlerts()
-    {
-        return $this->get("alerts");
+    public function getFollowers(): ?array { return $this->get("followers", true); }
+
+    public function getPresence(?string $xuid = null): ?array { 
+        return $xuid ? $this->get("presence/$xuid") : $this->get("presence"); 
     }
 
-    public function searchGamertag(string $gamertag)
-    {
-        return $this->get("friends/search?gt=" . urlencode($gamertag));
+    public function getAchievementsHistory(?string $xuid = null): ?array {
+        $endpoint = $xuid ? "achievements/player/$xuid/history" : "achievements/history";
+        return $this->get($endpoint, true);
     }
 
-    public function getPlayerSummary($xuids = null)
-    {
-        return $xuids ? $this->get("player/summary/$xuids") : $this->get("player/summary");
+    public function getTitleHistory(?string $xuid = null): ?array {
+        $endpoint = $xuid ? "player/titleHistory/$xuid" : "player/titleHistory";
+        return $this->get($endpoint, true);
     }
 
-    // --- Social & Friends ---
-
-    public function getFriends(string $xuid = null)
-    {
-        return $xuid ? $this->get("friends/$xuid") : $this->get("friends");
-    }
-
-    public function getFollowers()
-    {
-        return $this->get("followers");
-    }
-
-    public function getPresence(string $xuid = null)
-    {
-        return $xuid ? $this->get("presence/$xuid") : $this->get("presence");
-    }
-
-    // --- Achievements ---
-
-    public function getAchievements(string $xuid = null)
-    {
-        return $xuid ? $this->get("achievements/player/$xuid") : $this->get("achievements");
-    }
-
-    public function getAchievementsForTitle(string $titleId, ?string $xuid = null)
-    {
-        // Primeiro tentamos com o XUID (Geralmente necessário para Xbox 360)
-        $response = $xuid ? $this->get("achievements/player/$xuid/title/$titleId") : $this->get("achievements/title/$titleId");
-        
-        // Se retornar vazio, tentamos sem o XUID (Muitos títulos modernos no v2 só retornam assim com o contexto do usuário autenticado)
-        if ($xuid && (empty($response['achievements']) || count($response['achievements']) === 0)) {
-            $fallback = $this->get("achievements/title/$titleId");
-            if (!empty($fallback['achievements'])) {
-                return $fallback;
-            }
-        }
-
-        return $response;
-    }
-
-    public function getAchievementsHistory(?string $xuid = null)
-    {
-        // Retorna o histórico de títulos com resumo de conquistas (V3)
-        return $xuid ? $this->get("achievements/player/$xuid/history") : $this->get("achievements/history");
-    }
-
-    public function getAchievementsV3(?string $xuid)
-    {
-        return $this->getAchievementsHistory($xuid);
-    }
-
-    public function getTitleHistory(?string $xuid = null)
-    {
-        return $xuid ? $this->get("player/titleHistory/$xuid") : $this->get("player/titleHistory");
-    }
-
-    // --- DVR (Media) ---
-
-    public function getScreenshots(string $xuid = null)
-    {
-        return $xuid ? $this->get("dvr/screenshots/$xuid") : $this->get("dvr/screenshots");
-    }
-
-    public function getGameClips(string $xuid = null)
-    {
-        return $xuid ? $this->get("dvr/gameclips/$xuid") : $this->get("dvr/gameclips");
-    }
-
-    // --- Marketplace ---
-
-    public function getStoreHome()
-    {
-        return $this->get("marketplace/store-home");
-    }
-
-    public function getMarketplaceNew()
-    {
-        return $this->get("marketplace/new");
-    }
-
-    public function getTopPaid()
-    {
-        return $this->get("marketplace/top-paid");
-    }
-
-    public function getTopFree()
-    {
-        return $this->get("marketplace/top-free");
-    }
-
-    public function getBestRated()
-    {
-        return $this->get("marketplace/best-rated");
-    }
-
-    public function getMarketplaceComingSoon()
-    {
-        return $this->get("marketplace/coming-soon");
-    }
-
-    public function getDeals()
-    {
-        return $this->get("marketplace/deals");
-    }
-
-    public function getMostPlayed()
-    {
-        return $this->get("marketplace/most-played");
-    }
-
-    public function getMarketplaceTitle(string $titleId)
-    {
-        return $this->get("marketplace/title/$titleId");
-    }
-
-    public function searchMarketplace(string $query)
-    {
-        return $this->get("marketplace/search?q=" . urlencode($query));
-    }
-
-    public function getProductDetails($productIds)
-    {
+    public function getProductDetails(array|string $productIds): ?array {
         $ids = is_array($productIds) ? $productIds : explode(',', $productIds);
-        $cacheKey = 'products_' . implode('_', $ids);
+        $cacheKey = 'products_v2_' . implode('_', $ids);
         
-        $cached = \Anderson\XboxLive\Core\Cache::get($cacheKey);
+        $cached = Cache::get($cacheKey);
         if ($cached) return $cached;
 
         $response = $this->post("marketplace/details", ['products' => implode(',', $ids)]);
-        
-        if ($response) {
-            \Anderson\XboxLive\Core\Cache::set($cacheKey, $response, 86400); // 24h cache
-        }
-
+        if ($response) Cache::set($cacheKey, $response, 86400); // 24h
         return $response;
     }
 
-    // --- Activity Feed ---
+    public function getGamePassAll(): ?array { return $this->get("gamepass/all", true); }
+    public function getEAPlayAll(): ?array { return $this->get("gamepass/ea-play", true); }
+    public function getPCGamePassAll(): ?array { return $this->get("gamepass/pc", true); }
+    public function getNoControllerGames(): ?array { return $this->get("gamepass/no-controller", true); }
+    public function getNewGamePass(): ?array { return $this->get("gamepass/new", true); }
+    public function getComingSoon(): ?array { return $this->get("gamepass/coming", true); }
+    public function getLeavingSoon(): ?array { return $this->get("gamepass/leaving", true); }
 
-    public function getActivityFeed()
-    {
-        return $this->get("activity/feed");
+    public function getMostPlayed(): ?array { return $this->get("marketplace/most-played", true); }
+    public function getDeals(): ?array { return $this->get("marketplace/deals", true); }
+    public function getMarketplaceNew(): ?array { return $this->get("marketplace/new", true); }
+    public function getTopPaid(): ?array { return $this->get("marketplace/top-paid", true); }
+    public function getTopFree(): ?array { return $this->get("marketplace/top-free", true); }
+    public function getBestRated(): ?array { return $this->get("marketplace/best-rated", true); }
+    public function getMarketplaceComingSoon(): ?array { return $this->get("marketplace/coming-soon", true); }
+    public function getStoreHome(): ?array { return $this->get("marketplace/store-home", true); }
+
+    public function getActivityFeed(): ?array { return $this->get("activity/feed"); }
+    public function getRecentPlayers(): ?array { return $this->get("activity/recent-players"); }
+    public function searchGamertag(string $gt): ?array { return $this->get("friends/search?gt=" . urlencode($gt)); }
+    
+    public function getScreenshots(?string $xuid = null): ?array {
+        return $xuid ? $this->get("dvr/screenshots/$xuid", true) : $this->get("dvr/screenshots", true);
     }
 
-    public function getRecentPlayers()
-    {
-        return $this->get("activity/recent-players");
+    public function getGameClips(?string $xuid = null): ?array {
+        return $xuid ? $this->get("dvr/gameclips/$xuid", true) : $this->get("dvr/gameclips", true);
     }
 
-    public function getActivityHistory(string $xuid = null)
-    {
-        return $xuid ? $this->get("activity/history/$xuid") : $this->get("activity/history");
+    public function getAchievementsForTitle(string $titleId, ?string $xuid = null): ?array {
+        $endpoint = $xuid ? "achievements/player/$xuid/title/$titleId" : "achievements/title/$titleId";
+        return $this->get($endpoint, true);
     }
 }

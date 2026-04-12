@@ -31,6 +31,7 @@
             <?php endif; ?>
 
             <form action="login" method="POST" class="space-y-6 relative z-10">
+                <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-secondary ml-1">Usuário / Gamertag</label>
                     <div class="relative group">

@@ -21,6 +21,10 @@ class AuthController extends BaseController
 
     public function login(): void
     {
+        if (!$this->validateCsrfToken()) {
+            $this->redirect('/login?error=invalid_token');
+        }
+
         $username = trim($_POST['username'] ?? '');
         $password = trim($_POST['password'] ?? '');
 

@@ -207,6 +207,21 @@
 </nav>
 <?php endif; ?>
 
+<!-- Flash Messages -->
+<?php if (\Anderson\XboxLive\Helpers\FlashMessage::has('error')): ?>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="bg-red-500/10 border border-red-500/20 text-red-400 px-6 py-4 rounded-2xl text-sm font-bold flex items-center justify-between animate-fade-in">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-exclamation-circle text-lg"></i>
+            <span><?= \Anderson\XboxLive\Helpers\FlashMessage::get('error') ?></span>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-white/20 hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+<?php endif; ?>
+
 <?= $content ?>
 
 <footer class="mt-auto py-8 border-t border-white/5 bg-xbox-dark/50 backdrop-blur-md">

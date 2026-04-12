@@ -54,11 +54,18 @@ $router->get('/jogo', [GamePassController::class, 'gameDetails'], true);
 
 $router->get('/store', [StoreController::class, 'storeHome'], true);
 $router->get('/mais_jogados', [StoreController::class, 'mostPlayed'], true);
+$router->get('/mais_jogados/sync', [StoreController::class, 'syncMostPlayed'], true);
 $router->get('/promocao', [StoreController::class, 'deals'], true);
+$router->get('/promocao/sync', [StoreController::class, 'syncDeals'], true);
 $router->get('/novos_jogos', [StoreController::class, 'newGames'], true);
+$router->get('/novos_jogos/sync', [StoreController::class, 'syncNew'], true);
 $router->get('/top_pagos', [StoreController::class, 'topPaid'], true);
+$router->get('/top_pagos/sync', [StoreController::class, 'syncTopPaid'], true);
 $router->get('/top_gratis', [StoreController::class, 'topFree'], true);
+$router->get('/top_gratis/sync', [StoreController::class, 'syncTopFree'], true);
 $router->get('/melhores_avaliados', [StoreController::class, 'bestRated'], true);
+$router->get('/melhores_avaliados/sync', [StoreController::class, 'syncBestRated'], true);
 $router->get('/chegando_em_breve', [StoreController::class, 'comingSoon'], true);
+$router->get('/chegando_em_breve/sync', [StoreController::class, 'syncComingSoon'], true);
 
 $router->resolve();
