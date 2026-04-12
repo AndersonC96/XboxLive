@@ -11,9 +11,6 @@ class StoreController extends BaseController
 
     public function __construct()
     {
-        if (!AuthService::check()) {
-            $this->redirect('/login');
-        }
         $this->api = new OpenXBLService();
     }
 

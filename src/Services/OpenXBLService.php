@@ -227,7 +227,18 @@ class OpenXBLService
     public function getProductDetails($productIds)
     {
         $ids = is_array($productIds) ? $productIds : explode(',', $productIds);
-        return $this->post("marketplace/details", ['products' => implode(',', $ids)]);
+        $cacheKey = 'products_' . implode('_', $ids);
+        
+        $cached = \Anderson\XboxLive\Core\Cache::get($cacheKey);
+        if ($cached) return $cached;
+
+        $response = $this->post("marketplace/details", ['products' => implode(',', $ids)]);
+        
+        if ($response) {
+            \Anderson\XboxLive\Core\Cache::set($cacheKey, $response, 86400); // 24h cache
+        }
+
+        return $response;
     }
 
     // --- Activity Feed ---
