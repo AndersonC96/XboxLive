@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -11,6 +12,12 @@ use Anderson\XboxLive\Controllers\ProfileController;
 use Anderson\XboxLive\Controllers\StoreController;
 
 Bootstrap::run();
+
+// Security Headers
+header("X-Frame-Options: DENY");
+header("X-Content-Type-Options: nosniff");
+header("X-XSS-Protection: 1; mode=block");
+header("Referrer-Policy: strict-origin-when-cross-origin");
 
 $router = new Router();
 

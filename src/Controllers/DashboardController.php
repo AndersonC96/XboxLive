@@ -1,8 +1,8 @@
 <?php
+declare(strict_types=1);
 
 namespace Anderson\XboxLive\Controllers;
 
-use Anderson\XboxLive\Services\AuthService;
 use Anderson\XboxLive\Services\OpenXBLService;
 
 class DashboardController extends BaseController
@@ -16,26 +16,19 @@ class DashboardController extends BaseController
 
     public function index(): void
     {
-        // Fetch Profile
-        $profile = $this->api->getAccount();
-        $profileData = $profile['profileUsers'][0] ?? null;
-
-        // Fetch Presence
-        $presence = $this->api->getPlayerSummary();
+        $userProfile = $this->api->getProfileDTO();
+        
+        $presence = $this->api->getPresence($userProfile->xuid);
         $presenceState = $presence['people'][0]['presenceState'] ?? 'Offline';
         $presenceText = $presence['people'][0]['presenceText'] ?? 'N/A';
 
-        // Fetch History
-        $history = $this->api->get("player/titleHistory");
+        $history = $this->api->getTitleHistory($userProfile->xuid);
         $recentTitles = isset($history['titles']) ? array_slice($history['titles'], 0, 4) : [];
-
-        // Use centralized method for profile stats
-        $stats = $this->getUserProfileStats($profileData);
 
         $this->render('dashboard', [
             'title' => 'Dashboard - Xbox Live',
             'showNavbar' => true,
-            'userProfile' => $stats,
+            'userProfile' => (array)$userProfile,
             'presenceState' => $presenceState,
             'presenceText' => $presenceText,
             'recentTitles' => $recentTitles
@@ -44,23 +37,19 @@ class DashboardController extends BaseController
 
     public function friends(): void
     {
-        $profile = $this->api->getAccount();
-        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
-
+        $userProfile = $this->api->getProfileDTO();
         $friendsData = $this->api->getFriends();
         $allFriends = $friendsData['people'] ?? [];
         
-        // Paginação
         $page = (int)($_GET['page'] ?? 1);
         $perPage = 12;
-        $totalItems = count($allFriends);
-        $totalPages = ceil($totalItems / $perPage);
+        $totalPages = (int)ceil(count($allFriends) / $perPage);
         $friends = array_slice($allFriends, ($page - 1) * $perPage, $perPage);
 
         $this->render('amigos', [
             'title' => 'Meus Amigos - Xbox Live',
             'showNavbar' => true,
-            'userProfile' => $userProfile,
+            'userProfile' => (array)$userProfile,
             'friends' => $friends,
             'currentPage' => $page,
             'totalPages' => $totalPages
@@ -69,23 +58,19 @@ class DashboardController extends BaseController
 
     public function followers(): void
     {
-        $profile = $this->api->getAccount();
-        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
-
+        $userProfile = $this->api->getProfileDTO();
         $followersData = $this->api->getFollowers();
         $allFollowers = $followersData['people'] ?? [];
 
-        // Paginação
         $page = (int)($_GET['page'] ?? 1);
         $perPage = 12;
-        $totalItems = count($allFollowers);
-        $totalPages = ceil($totalItems / $perPage);
+        $totalPages = (int)ceil(count($allFollowers) / $perPage);
         $followers = array_slice($allFollowers, ($page - 1) * $perPage, $perPage);
 
         $this->render('seguidores', [
             'title' => 'Meus Seguidores - Xbox Live',
             'showNavbar' => true,
-            'userProfile' => $userProfile,
+            'userProfile' => (array)$userProfile,
             'followers' => $followers,
             'currentPage' => $page,
             'totalPages' => $totalPages
@@ -94,24 +79,19 @@ class DashboardController extends BaseController
 
     public function activityFeed(): void
     {
-        $profile = $this->api->getAccount();
-        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
-
-        // Fetch Social Feed
+        $userProfile = $this->api->getProfileDTO();
         $feedData = $this->api->getActivityFeed();
         $allActivities = $feedData['activityItems'] ?? [];
 
-        // Paginação
         $page = (int)($_GET['page'] ?? 1);
         $perPage = 12;
-        $totalItems = count($allActivities);
-        $totalPages = ceil($totalItems / $perPage);
+        $totalPages = (int)ceil(count($allActivities) / $perPage);
         $activities = array_slice($allActivities, ($page - 1) * $perPage, $perPage);
 
         $this->render('feed', [
-            'title' => 'Feed de Atividade - Xbox Live',
+            'title' => 'Feed Social - Xbox Live',
             'showNavbar' => true,
-            'userProfile' => $userProfile,
+            'userProfile' => (array)$userProfile,
             'activities' => $activities,
             'currentPage' => $page,
             'totalPages' => $totalPages
@@ -120,65 +100,40 @@ class DashboardController extends BaseController
 
     public function recentPlayers(): void
     {
-        $profile = $this->api->getAccount();
-        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
-
+        $userProfile = $this->api->getProfileDTO();
         $recentData = $this->api->getRecentPlayers();
         $allPlayers = $recentData['people'] ?? [];
 
-        // Process and enrich player data
-        $processedPlayers = array_map(function($player) {
-            $recentInfo = $player['recentPlayer'] ?? null;
-            $lastTitle = $recentInfo['titles'][0] ?? null;
-            
-            return [
-                'xuid' => $player['xuid'] ?? '',
-                'gamertag' => $player['gamertag'] ?? 'Unknown',
-                'displayPicRaw' => $player['displayPicRaw'] ?? 'img/default_avatar.jpg',
-                'presenceState' => $player['presenceState'] ?? 'Offline',
-                'encounterGame' => $lastTitle['titleName'] ?? 'Jogo Desconhecido',
-                'encounterText' => $recentInfo['text'] ?? 'Sem detalhes do encontro',
-                'isCodHq' => ($lastTitle['titleId'] ?? '') === '2001700854'
-            ];
-        }, $allPlayers);
-
-        // Paginação
         $page = (int)($_GET['page'] ?? 1);
         $perPage = 12;
-        $totalItems = count($processedPlayers);
-        $totalPages = ceil($totalItems / $perPage);
-        $players = array_slice($processedPlayers, ($page - 1) * $perPage, $perPage);
+        $totalPages = (int)ceil(count($allPlayers) / $perPage);
+        $players = array_slice($allPlayers, ($page - 1) * $perPage, $perPage);
 
         $this->render('recentes', [
             'title' => 'Jogadores Recentes - Xbox Live',
             'showNavbar' => true,
-            'userProfile' => $userProfile,
+            'userProfile' => (array)$userProfile,
             'players' => $players,
             'currentPage' => $page,
-            'totalPages' => $totalPages,
-            'activePage' => 'recentes'
+            'totalPages' => $totalPages
         ], 'main');
     }
 
     public function blocks(): void
     {
-        $profile = $this->api->getAccount();
-        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
-
+        $userProfile = $this->api->getProfileDTO();
         $blocksData = $this->api->get("friends/mute"); 
         $allBlocks = $blocksData['people'] ?? [];
 
-        // Paginação
         $page = (int)($_GET['page'] ?? 1);
         $perPage = 12;
-        $totalItems = count($allBlocks);
-        $totalPages = ceil($totalItems / $perPage);
+        $totalPages = (int)ceil(count($allBlocks) / $perPage);
         $blocks = array_slice($allBlocks, ($page - 1) * $perPage, $perPage);
 
         $this->render('bloqueados', [
-            'title' => 'Jogadores Bloqueados - Xbox Live',
+            'title' => 'Bloqueados - Xbox Live',
             'showNavbar' => true,
-            'userProfile' => $userProfile,
+            'userProfile' => (array)$userProfile,
             'blocks' => $blocks,
             'currentPage' => $page,
             'totalPages' => $totalPages
