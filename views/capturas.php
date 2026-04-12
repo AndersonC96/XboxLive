@@ -24,11 +24,14 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 <?php if (!empty($screenshots)): ?>
                     <?php foreach ($screenshots as $ss): ?>
+                        <?php 
+                            $ssUri = $ss['screenshotUris'][0]['uri'] ?? ($ss['uri'] ?? '');
+                        ?>
                         <div class="glass-card rounded-[2.5rem] overflow-hidden border-white/5 group relative cursor-pointer shadow-2xl">
-                            <img src="<?= $ss['uri'] ?>" class="w-full h-auto aspect-video object-cover group-hover:scale-105 transition-transform duration-1000">
+                            <img src="<?= $ssUri ?>" class="w-full h-auto aspect-video object-cover group-hover:scale-105 transition-transform duration-1000">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-8 flex flex-col justify-end">
                                 <p class="text-white font-black italic uppercase text-lg"><?= htmlspecialchars($ss['titleName'] ?? 'Xbox Gameplay') ?></p>
-                                <p class="text-secondary text-[10px] font-black uppercase tracking-widest mt-1"><?= date('d/m/Y', strtotime($ss['dateTaken'])) ?></p>
+                                <p class="text-secondary text-[10px] font-black uppercase tracking-widest mt-1"><?= date('d/m/Y', strtotime($ss['dateTaken'] ?? 'now')) ?></p>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -51,7 +54,7 @@
                     <?php foreach ($clips as $clip): ?>
                         <div class="glass-card rounded-[2.5rem] overflow-hidden border-white/5 group relative cursor-pointer shadow-2xl">
                             <div class="aspect-video relative">
-                                <img src="<?= $clip['thumbnails'][0]['uri'] ?? '' ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000">
+                                <img src="<?= $clip['thumbnails'][0]['uri'] ?? ($clip['uri'] ?? '') ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000">
                                 <div class="absolute inset-0 flex items-center justify-center">
                                     <div class="w-20 h-20 rounded-full bg-xbox-green/80 flex items-center justify-center text-white text-3xl shadow-[0_0_30px_rgba(16,124,16,0.6)] group-hover:scale-110 transition-transform duration-500">
                                         <i class="fas fa-play ml-1"></i>
@@ -59,10 +62,10 @@
                                 </div>
                             </div>
                             <div class="p-8">
-                                <h4 class="text-xl font-black text-white italic uppercase tracking-tighter"><?= htmlspecialchars($clip['titleName']) ?></h4>
+                                <h4 class="text-xl font-black text-white italic uppercase tracking-tighter"><?= htmlspecialchars($clip['titleName'] ?? 'Xbox Video') ?></h4>
                                 <div class="flex justify-between items-center mt-4">
-                                    <span class="text-[10px] font-black text-secondary uppercase tracking-widest"><?= date('d/m/Y', strtotime($clip['dateRecorded'])) ?></span>
-                                    <span class="text-[10px] font-black text-xbox-green uppercase tracking-widest italic"><?= gmdate("i:s", $clip['durationInSeconds']) ?></span>
+                                    <span class="text-[10px] font-black text-secondary uppercase tracking-widest"><?= date('d/m/Y', strtotime($clip['dateRecorded'] ?? 'now')) ?></span>
+                                    <span class="text-[10px] font-black text-xbox-green uppercase tracking-widest italic"><?= gmdate("i:s", $clip['durationInSeconds'] ?? 0) ?></span>
                                 </div>
                             </div>
                         </div>

@@ -37,29 +37,31 @@ $router->get('/conquistas/jogo', [ProfileController::class, 'titleAchievements']
 $router->get('/capturas', [ProfileController::class, 'captures']);
 $router->get('/search', [ProfileController::class, 'search']);
 
-// Rotas Game Pass e Loja
+// Rotas Game Pass
 $router->get('/todos_os_jogos', [GamePassController::class, 'allGames']);
 $router->get('/todos_os_jogos/sync', [GamePassController::class, 'sync']);
-$router->get('/ea_play', [GamePassController::class, 'eaPlay']);
-$router->get('/ea_play/sync', [GamePassController::class, 'syncEAPlay']);
-$router->get('/gamepass_pc', [GamePassController::class, 'pcGamePass']);
-$router->get('/gamepass_pc/sync', [GamePassController::class, 'syncPCGamePass']);
-$router->get('/jogos_sem_controle', [GamePassController::class, 'noController']);
-$router->get('/jogos_sem_controle/sync', [GamePassController::class, 'syncNoController']);
-
-// Novas coleções Game Pass
 $router->get('/adicionados_recentemente', [GamePassController::class, 'addedRecently']);
 $router->get('/adicionados_recentemente/sync', [GamePassController::class, 'syncAddedRecently']);
 $router->get('/em_breve', [GamePassController::class, 'comingSoon']);
 $router->get('/em_breve/sync', [GamePassController::class, 'syncComingSoon']);
 $router->get('/saindo_em_breve', [GamePassController::class, 'leavingSoon']);
 $router->get('/saindo_em_breve/sync', [GamePassController::class, 'syncLeavingSoon']);
-
+$router->get('/ea_play', [GamePassController::class, 'eaPlay']);
+$router->get('/ea_play/sync', [GamePassController::class, 'syncEAPlay']);
+$router->get('/gamepass_pc', [GamePassController::class, 'pcGamePass']);
+$router->get('/gamepass_pc/sync', [GamePassController::class, 'syncPCGamePass']);
+$router->get('/jogos_sem_controle', [GamePassController::class, 'noController']);
+$router->get('/jogos_sem_controle/sync', [GamePassController::class, 'syncNoController']);
 $router->get('/jogo', [GamePassController::class, 'gameDetails']);
 
 // Rotas da Loja (Marketplace)
+$router->get('/store', [StoreController::class, 'storeHome']);
 $router->get('/mais_jogados', [StoreController::class, 'mostPlayed']);
 $router->get('/promocao', [StoreController::class, 'deals']);
 $router->get('/novos_jogos', [StoreController::class, 'newGames']);
+$router->get('/top_pagos', [StoreController::class, 'topPaid']);
+$router->get('/top_gratis', [StoreController::class, 'topFree']);
+$router->get('/melhores_avaliados', [StoreController::class, 'bestRated']);
+$router->get('/chegando_em_breve', [StoreController::class, 'comingSoon']);
 
 $router->resolve();

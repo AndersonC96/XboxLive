@@ -174,44 +174,49 @@ class OpenXBLService
 
     // --- Marketplace ---
 
-    public function getGamePass()
+    public function getStoreHome()
     {
-        return $this->get("marketplace/gamepass");
+        return $this->get("marketplace/store-home");
     }
 
-    public function getGamePassAll()
+    public function getMarketplaceNew()
     {
-        return $this->get("gamepass/all");
+        return $this->get("marketplace/new");
     }
 
-    public function getEAPlayAll()
+    public function getTopPaid()
     {
-        return $this->get("gamepass/ea-play");
+        return $this->get("marketplace/top-paid");
     }
 
-    public function getPCGamePassAll()
+    public function getTopFree()
     {
-        return $this->get("gamepass/pc");
+        return $this->get("marketplace/top-free");
     }
 
-    public function getNoControllerGames()
+    public function getBestRated()
     {
-        return $this->get("gamepass/no-controller");
+        return $this->get("marketplace/best-rated");
     }
 
-    public function getNewGamePass()
+    public function getMarketplaceComingSoon()
     {
-        return $this->get("gamepass/new");
+        return $this->get("marketplace/coming-soon");
     }
 
-    public function getComingSoon()
+    public function getDeals()
     {
-        return $this->get("gamepass/coming");
+        return $this->get("marketplace/deals");
     }
 
-    public function getLeavingSoon()
+    public function getMostPlayed()
     {
-        return $this->get("gamepass/leaving");
+        return $this->get("marketplace/most-played");
+    }
+
+    public function getMarketplaceTitle(string $titleId)
+    {
+        return $this->get("marketplace/title/$titleId");
     }
 
     public function searchMarketplace(string $query)

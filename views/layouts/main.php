@@ -126,8 +126,11 @@
                             <span>Loja</span>
                             <i class="fas fa-chevron-down text-[10px] opacity-50"></i>
                         </button>
-                        <div class="absolute top-[80%] left-0 w-56 glass rounded-xl overflow-hidden invisible group-hover:visible opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 z-[100] shadow-2xl border border-white/10">
+                        <div class="absolute top-[80%] left-0 w-64 glass rounded-xl overflow-hidden invisible group-hover:visible opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 z-[100] shadow-2xl border border-white/10">
                             <div class="py-2">
+                                <a href="<?= $baseUrl ?>/store" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-store w-4 text-xbox-green"></i> Início da Loja
+                                </a>
                                 <a href="<?= $baseUrl ?>/mais_jogados" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-fire w-4 text-xbox-green"></i> Mais Jogados
                                 </a>
@@ -135,7 +138,19 @@
                                     <i class="fas fa-tags w-4 text-xbox-green"></i> Promoções
                                 </a>
                                 <a href="<?= $baseUrl ?>/novos_jogos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
-                                    <i class="fas fa-plus-circle w-4 text-xbox-green"></i> Novos Jogos
+                                    <i class="fas fa-plus-circle w-4 text-xbox-green"></i> Lançamentos
+                                </a>
+                                <a href="<?= $baseUrl ?>/top_pagos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-dollar-sign w-4 text-xbox-green"></i> Top Pagos
+                                </a>
+                                <a href="<?= $baseUrl ?>/top_gratis" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-gift w-4 text-xbox-green"></i> Top Gratuitos
+                                </a>
+                                <a href="<?= $baseUrl ?>/melhores_avaliados" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-star w-4 text-xbox-green"></i> Melhores Avaliados
+                                </a>
+                                <a href="<?= $baseUrl ?>/chegando_em_breve" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-clock w-4 text-xbox-green"></i> Chegando em Breve
                                 </a>
                             </div>
                         </div>

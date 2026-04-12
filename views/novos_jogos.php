@@ -14,29 +14,44 @@
 
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
         <?php if (!empty($games)): ?>
+            <?php 
+                $baseUrl = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
+                if ($baseUrl === '/') $baseUrl = '';
+            ?>
             <?php foreach ($games as $product): ?>
                 <?php
                     $props = $product['LocalizedProperties'][0] ?? [];
                     $images = $props['Images'] ?? [];
-                    $boxArt = 'img/default_game.jpg';
-                    foreach ($images as $img) {
-                        if ($img['ImagePurpose'] === 'BoxArt' || $img['ImagePurpose'] === 'Poster') {
-                            $boxArt = 'https:' . $img['Uri'];
-                            break;
+                    $boxArt = $baseUrl . '/img/default_game.jpg';
+                    
+                    $preferredTypes = ['BoxArt', 'Poster', 'TitledHeroArt', 'SuperHeroArt'];
+                    $foundImg = null;
+
+                    foreach ($preferredTypes as $type) {
+                        foreach ($images as $img) {
+                            if ($img['ImagePurpose'] === $type) {
+                                $foundImg = $img['Uri'];
+                                break 2;
+                            }
                         }
                     }
+
+                    if ($foundImg) {
+                        $boxArt = str_starts_with($foundImg, '//') ? 'https:' . $foundImg : $foundImg;
+                    }
+                    
                     $title = $props['ProductTitle'] ?? 'Sem Título';
                 ?>
                 <div class="group relative flex flex-col gap-3">
-                    <div class="glass-card aspect-[2/3] rounded-[1.5rem] overflow-hidden border-white/5 hover:border-xbox-green/50 transition-all duration-500 shadow-2xl">
-                        <img src="<?= $boxArt ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-5">
-                            <a href="jogo?id=<?= $product['ProductId'] ?>" class="block w-full py-3 bg-xbox-green text-center text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-xbox-green-light transition-colors">
+                    <div class="glass-card aspect-[2/3] rounded-[1.5rem] overflow-hidden border-white/5 hover:border-xbox-green/50 transition-all duration-500 shadow-2xl relative">
+                        <img src="<?= $boxArt ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="<?= htmlspecialchars($title) ?>">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-5">
+                            <a href="<?= $baseUrl ?>/jogo?id=<?= $product['ProductId'] ?>" class="block w-full py-3 bg-xbox-green text-center text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-xbox-green-light transition-colors shadow-lg">
                                 Detalhes
                             </a>
                         </div>
                     </div>
-                    <h3 class="text-sm font-black text-white truncate px-1"><?= htmlspecialchars($title) ?></h3>
+                    <h3 class="text-[11px] font-black text-white truncate px-1 uppercase tracking-tighter group-hover:text-xbox-green transition-colors"><?= htmlspecialchars($title) ?></h3>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
