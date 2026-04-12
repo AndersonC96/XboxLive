@@ -6,12 +6,15 @@ class Bootstrap
 {
     public static function run()
     {
-        // Iniciar sessão se ainda não começou
+        // Configurações de segurança de sessão
+        ini_set('session.cookie_httponly', '1');
+        ini_set('session.use_only_cookies', '1');
+        ini_set('session.cookie_samesite', 'Lax');
+
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
-        // Inicializar configurações
         Config::init();
     }
 }

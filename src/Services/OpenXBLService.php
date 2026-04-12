@@ -37,22 +37,36 @@ class OpenXBLService
     private function request(string $method, string $endpoint, array $options = []): mixed
     {
         if (empty($this->apiKey)) {
-            throw new XblApiException("API Key não configurada.");
+            throw new XblApiException("Xbox API Key is missing in .env configuration.");
         }
 
         try {
             $response = $this->client->request($method, ltrim($endpoint, '/'), $options);
             $statusCode = $response->getStatusCode();
             
-            if ($statusCode === 429) throw new XblApiException("Rate Limit atingido.");
-            if ($statusCode >= 400) return null;
+            if ($statusCode === 401) {
+                throw new XblApiException("Invalid Xbox API Key. Please check your credentials.");
+            }
+
+            if ($statusCode === 429) {
+                throw new XblApiException("Rate Limit reached. Please wait a moment before trying again.");
+            }
+
+            if ($statusCode >= 500) {
+                throw new XblApiException("Xbox Live services are currently unavailable (500).");
+            }
+
+            if ($statusCode >= 400) {
+                return null;
+            }
 
             $body = $response->getBody()->getContents();
             $decoded = json_decode($body, true);
 
             return $decoded['content'] ?? $decoded;
         } catch (GuzzleException $e) {
-            throw new XblApiException("Erro de conexão: " . $e->getMessage());
+            error_log("Guzzle Error: " . $e->getMessage());
+            throw new XblApiException("Connection failure with Xbox Live. Please check your internet.");
         }
     }
 

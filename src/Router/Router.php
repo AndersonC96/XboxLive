@@ -58,36 +58,39 @@ class Router
                         $handler();
                     }
                 } catch (XblApiException $e) {
-                    FlashMessage::set('error', $e->getMessage());
-                    // Se der erro de API na dashboard, tenta renderizar com o que tem
-                    header("Location: " . $_SERVER['HTTP_REFERER'] ?? ($basePath . '/dashboard'));
-                } catch (\Exception $e) {
-                    $this->renderError($e->getMessage());
+                    FlashMessage::set('error', "Xbox API Error: " . $e->getMessage());
+                    // Redirecionamento seguro para dashboard em caso de falha de API
+                    header("Location: " . $basePath . "/dashboard");
+                    exit();
+                } catch (\Throwable $e) {
+                    // Log do erro real (simulado aqui, poderia usar error_log)
+                    error_log($e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+                    $this->renderError(500, "Erro Interno do Servidor", $e->getMessage());
                 }
                 return;
             }
         }
 
-        $this->renderNotFound();
+        $this->renderError(404, "Página Não Encontrada", "O conteúdo que você busca não existe.");
     }
 
-    private function renderNotFound(): void
-    {
-        $this->renderCustomError("404 - Página Não Encontrada", "O conteúdo solicitado não existe.", 404);
-    }
-
-    private function renderError(string $message): void
-    {
-        $this->renderCustomError("Erro de Sistema", $message, 500);
-    }
-
-    private function renderCustomError(string $title, string $message, int $code): void
+    private function renderError(int $code, string $title, string $message): void
     {
         http_response_code($code);
+        
         $baseUrl = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
         if ($baseUrl === '/') $baseUrl = '';
 
-        $viewPath = __DIR__ . '/../../views/errors/404.php';
+        // Em produção, não expor a mensagem real se for 500
+        $displayMessage = ($code === 500 && !str_contains($_SERVER['HTTP_HOST'] ?? '', 'localhost')) 
+            ? "Ocorreu um erro inesperado. Tente novamente mais tarde." 
+            : $message;
+
+        $viewPath = __DIR__ . '/../../views/errors/' . $code . '.php';
+        if (!file_exists($viewPath)) {
+            $viewPath = __DIR__ . '/../../views/errors/404.php'; // Fallback
+        }
+
         $layoutPath = __DIR__ . '/../../views/layouts/main.php';
         
         $userProfile = null;
@@ -97,7 +100,7 @@ class Router
         if (file_exists($viewPath)) {
             include $viewPath;
         } else {
-            echo "<h1>$title</h1><p>$message</p>";
+            echo "<h1>$title</h1><p>$displayMessage</p>";
         }
         $content = ob_get_clean();
 
