@@ -20,8 +20,11 @@ class ProfileController extends BaseController
     public function index(): void
     {
         $profile = $this->api->getAccount();
-        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
-        $xuid = $profile['profileUsers'][0]['xid'] ?? null;
+        $profileData = $profile['profileUsers'][0] ?? null;
+        $userProfile = $this->getUserProfileStats($profileData);
+        
+        // No OpenXBL v2, o ID costuma ser 'id' ou 'hostId'
+        $xuid = $profileData['id'] ?? ($profileData['hostId'] ?? null);
 
         // Presence
         $presence = $this->api->getPresence($xuid);
@@ -37,34 +40,52 @@ class ProfileController extends BaseController
     public function achievements(): void
     {
         $profile = $this->api->getAccount();
-        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
-        $xuid = $profile['profileUsers'][0]['xid'] ?? null;
+        $profileData = $profile['profileUsers'][0] ?? null;
+        $userProfile = $this->getUserProfileStats($profileData);
+        
+        $xuid = $profileData['id'] ?? ($profileData['hostId'] ?? null);
 
-        $history = $this->api->getAchievementsV3($xuid);
-        $titles = $history['titles'] ?? [];
-
-        // Paginação (12 por página)
+        $titles = [];
         $page = (int)($_GET['page'] ?? 1);
         $perPage = 12;
-        $totalItems = count($titles);
-        $totalPages = ceil($totalItems / $perPage);
-        $pagedTitles = array_slice($titles, ($page - 1) * $perPage, $perPage);
+        $totalPages = 1;
+
+        // Utilizamos getTitleHistory que é mais robusto para listagem de jogos
+        $history = $this->api->getTitleHistory($xuid);
+        
+        if ($history) {
+            $titles = $history['titles'] ?? [];
+            
+            // Lógica de busca (opcional, se desejar manter)
+            $search = $_GET['q'] ?? '';
+            if (!empty($search)) {
+                $titles = array_filter($titles, function($t) use ($search) {
+                    return stripos($t['name'] ?? '', $search) !== false;
+                });
+            }
+
+            $totalItems = count($titles);
+            $totalPages = max(1, ceil($totalItems / $perPage));
+            $titles = array_slice($titles, ($page - 1) * $perPage, $perPage);
+        }
 
         $this->render('conquistas', [
             'title' => 'Minhas Conquistas - Xbox Live',
             'showNavbar' => true,
             'userProfile' => $userProfile,
-            'titles' => $pagedTitles,
+            'titles' => $titles,
             'currentPage' => $page,
-            'totalPages' => $totalPages
+            'totalPages' => $totalPages,
+            'search' => $_GET['q'] ?? ''
         ], 'main');
     }
 
     public function captures(): void
     {
         $profile = $this->api->getAccount();
-        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
-        $xuid = $profile['profileUsers'][0]['xid'] ?? null;
+        $profileData = $profile['profileUsers'][0] ?? null;
+        $userProfile = $this->getUserProfileStats($profileData);
+        $xuid = $profileData['id'] ?? ($profileData['hostId'] ?? null);
 
         $screenshots = $this->api->getScreenshots($xuid) ?? [];
         $clips = $this->api->getGameClips($xuid) ?? [];
@@ -73,8 +94,8 @@ class ProfileController extends BaseController
             'title' => 'Minhas Capturas - Xbox Live',
             'showNavbar' => true,
             'userProfile' => $userProfile,
-            'screenshots' => $screenshots,
-            'clips' => $clips
+            'screenshots' => $screenshots['screenshots'] ?? ($screenshots ?: []),
+            'clips' => $clips['gameClips'] ?? ($clips ?: [])
         ], 'main');
     }
 
@@ -95,6 +116,26 @@ class ProfileController extends BaseController
             'userProfile' => $userProfile,
             'query' => $query,
             'results' => $results['people'] ?? []
+        ], 'main');
+    }
+
+    public function titleAchievements(): void
+    {
+        $titleId = $_GET['titleId'] ?? null;
+        if (!$titleId) $this->redirect('/conquistas');
+
+        $profile = $this->api->getAccount();
+        $profileData = $profile['profileUsers'][0] ?? null;
+        $userProfile = $this->getUserProfileStats($profileData);
+        $xuid = $profileData['id'] ?? ($profileData['hostId'] ?? null);
+
+        $achievements = $this->api->getAchievementsForTitle($titleId, $xuid);
+
+        $this->render('conquistas_jogo', [
+            'title' => 'Conquistas do Jogo - Xbox Live',
+            'showNavbar' => true,
+            'userProfile' => $userProfile,
+            'achievements' => $achievements['achievements'] ?? []
         ], 'main');
     }
 }

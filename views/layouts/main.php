@@ -39,8 +39,12 @@
         }
     </script>
     
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" type="image/png" href="img/logo2.png"/>
+    <?php 
+        $baseUrl = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
+        if ($baseUrl === '/') $baseUrl = '';
+    ?>
+    <link rel="stylesheet" href="<?= $baseUrl ?>/css/style.css">
+    <link rel="icon" type="image/png" href="<?= $baseUrl ?>/img/logo2.png"/>
 </head>
 <body class="bg-xbox-dark text-gray-100 font-sans min-h-full flex flex-col">
 
@@ -50,8 +54,8 @@
         <div class="flex justify-between items-center h-16">
             <!-- Brand -->
             <div class="flex items-center gap-8">
-                <a href="dashboard" class="flex items-center gap-3 group">
-                    <img src="img/logo2.png" alt="Xbox" class="w-10 h-10 group-hover:scale-110 transition-transform duration-300">
+                <a href="<?= $baseUrl ?>/dashboard" class="flex items-center gap-3 group">
+                    <img src="<?= $baseUrl ?>/img/logo2.png" alt="Xbox" class="w-10 h-10 group-hover:scale-110 transition-transform duration-300">
                     <span class="hidden md:block font-bold text-xl tracking-tight text-white">XBOX LIVE</span>
                 </a>
 
@@ -64,19 +68,19 @@
                         </button>
                         <div class="absolute top-[80%] left-0 w-56 glass rounded-xl overflow-hidden invisible group-hover:visible opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 z-[100] shadow-2xl border border-white/10">
                             <div class="py-2">
-                                <a href="amigos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/amigos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-users w-4 text-xbox-green"></i> Amigos
                                 </a>
-                                <a href="seguidores" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/seguidores" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-user-plus w-4 text-xbox-green"></i> Seguidores
                                 </a>
-                                <a href="feed" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/feed" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-rss w-4 text-xbox-green"></i> Feed de Atividade
                                 </a>
-                                <a href="recentes" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/recentes" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-history w-4 text-xbox-green"></i> Jogadores Recentes
                                 </a>
-                                <a href="bloqueados" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/bloqueados" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-ban w-4 text-xbox-green"></i> Bloqueados
                                 </a>
                             </div>
@@ -90,32 +94,32 @@
                         </button>
                         <div class="absolute top-[80%] left-0 w-56 glass rounded-xl overflow-hidden invisible group-hover:visible opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 z-[100] shadow-2xl border border-white/10">
                             <div class="py-2">
-                                <a href="todos_os_jogos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/todos_os_jogos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-list w-4 text-xbox-green"></i> Todos os Jogos
                                 </a>
-                                <a href="adicionados_recentemente" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/adicionados_recentemente" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-sparkles w-4 text-xbox-green"></i> Adicionados Recentemente
                                 </a>
-                                <a href="em_breve" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/em_breve" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-calendar-alt w-4 text-xbox-green"></i> Em Breve
                                 </a>
-                                <a href="saindo_em_breve" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/saindo_em_breve" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-hourglass-end w-4 text-xbox-green"></i> Saindo em Breve
                                 </a>
-                                <a href="ea_play" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/ea_play" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-play-circle w-4 text-xbox-green"></i> EA Play
                                 </a>
-                                <a href="gamepass_pc" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/gamepass_pc" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-laptop w-4 text-xbox-green"></i> PC Gamepass
                                 </a>
-                                <a href="jogos_sem_controle" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/jogos_sem_controle" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-hand-pointer w-4 text-xbox-green"></i> Sem Controle
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <a href="conquistas" class="px-4 py-2 rounded-lg hover:bg-white/5 transition-colors">Conquistas</a>
+                    <a href="<?= $baseUrl ?>/conquistas" class="px-4 py-2 rounded-lg hover:bg-white/5 transition-colors">Conquistas</a>
                     
                     <div class="relative group py-4">
                         <button class="px-4 py-2 rounded-lg hover:bg-white/5 transition-colors flex items-center gap-2">
@@ -124,13 +128,13 @@
                         </button>
                         <div class="absolute top-[80%] left-0 w-56 glass rounded-xl overflow-hidden invisible group-hover:visible opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 z-[100] shadow-2xl border border-white/10">
                             <div class="py-2">
-                                <a href="mais_jogados" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/mais_jogados" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-fire w-4 text-xbox-green"></i> Mais Jogados
                                 </a>
-                                <a href="promocao" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/promocao" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-tags w-4 text-xbox-green"></i> Promoções
                                 </a>
-                                <a href="novos_jogos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                <a href="<?= $baseUrl ?>/novos_jogos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-plus-circle w-4 text-xbox-green"></i> Novos Jogos
                                 </a>
                             </div>
@@ -141,7 +145,7 @@
 
             <!-- Profile & Search -->
             <div class="flex items-center gap-4">
-                <form action="search" method="GET" class="hidden md:flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-1.5 focus-within:border-xbox-green transition-all">
+                <form action="<?= $baseUrl ?>/search" method="GET" class="hidden md:flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-1.5 focus-within:border-xbox-green transition-all">
                     <i class="fas fa-search text-gray-500 text-sm"></i>
                     <input type="text" name="gamertag_search" placeholder="Buscar Gamertag" class="bg-transparent border-none outline-none px-3 py-1 text-sm w-40 lg:w-48 placeholder:text-gray-600">
                 </form>
@@ -149,7 +153,7 @@
                 <div class="relative group">
                     <button class="flex items-center gap-3 pl-1 pr-3 py-1 rounded-full hover:bg-white/5 transition-all">
                         <div class="relative">
-                            <img src="<?= $userProfile['gamerpic'] ?? 'img/default_avatar.jpg' ?>" alt="Profile" class="w-10 h-10 rounded-full border-2 border-xbox-green shadow-[0_0_15px_rgba(16,124,16,0.5)]">
+                            <img src="<?= $userProfile['gamerpic'] && str_starts_with($userProfile['gamerpic'], 'http') ? $userProfile['gamerpic'] : $baseUrl . '/' . ($userProfile['gamerpic'] ?? 'img/default_avatar.jpg') ?>" alt="Profile" class="w-10 h-10 rounded-full border-2 border-xbox-green shadow-[0_0_15px_rgba(16,124,16,0.5)]">
                             <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-xbox-dark rounded-full"></div>
                         </div>
                         <div class="hidden sm:block text-left">
@@ -163,15 +167,15 @@
                         <div class="nav-dropdown-item font-black uppercase text-[10px] tracking-widest text-xbox-green/50 px-4 py-2 border-b border-white/5 mb-1">
                             Conta
                         </div>
-                        <a href="perfil" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-white/5 transition-colors">
+                        <a href="<?= $baseUrl ?>/perfil" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-white/5 transition-colors">
                             Meu Perfil
                             <i class="fas fa-id-card text-[10px] text-gray-700 group-hover/link:text-xbox-green transition-colors"></i>
                         </a>
-                        <a href="capturas" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-white/5 transition-colors">
+                        <a href="<?= $baseUrl ?>/capturas" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-white/5 transition-colors">
                             Minhas Capturas
                             <i class="fas fa-camera text-[10px] text-gray-700 group-hover/link:text-xbox-green transition-colors"></i>
                         </a>
-                        <a href="logout" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-red-500/20 text-red-400 transition-colors">
+                        <a href="<?= $baseUrl ?>/logout" class="nav-dropdown-item flex items-center justify-between group/link px-4 py-3 hover:bg-red-500/20 text-red-400 transition-colors">
                             Sair
                             <i class="fas fa-sign-out-alt text-[10px] text-gray-700 group-hover/link:text-red-500 transition-colors"></i>
                         </a>
@@ -193,7 +197,7 @@
 <footer class="mt-auto py-8 border-t border-white/5 bg-xbox-dark/50 backdrop-blur-md">
     <div class="max-w-7xl mx-auto px-4 text-center">
         <div class="flex flex-col items-center gap-4">
-            <img src="img/logo2.png" alt="Xbox" class="w-8 h-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+            <img src="<?= $baseUrl ?>/img/logo2.png" alt="Xbox" class="w-8 h-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
             <p class="text-xs font-bold uppercase tracking-[0.2em] text-gray-600">
                 Xbox Live Dashboard &bull; Portfolio Case
             </p>

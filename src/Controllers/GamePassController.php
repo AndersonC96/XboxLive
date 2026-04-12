@@ -223,7 +223,7 @@ class GamePassController extends BaseController
 
         $profile = $this->api->getAccount();
         $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
-        $xuid = $profile['profileUsers'][0]['xid'] ?? null;
+        $xuid = $profile['profileUsers'][0]['id'] ?? null;
 
         $productId = $idParam;
         $historyTitle = null;

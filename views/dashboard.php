@@ -15,7 +15,11 @@
             <div class="glass-card rounded-[2rem] overflow-hidden p-8 flex flex-col items-center text-center">
                 <!-- Cover Header -->
                 <div class="gamer-card-header w-full absolute top-0 left-0 opacity-40" 
-                     style="background-image: url('<?= $recentTitles[0]['imageUri'] ?? 'img/logo3.png' ?>'); background-size: cover; background-position: center; filter: blur(4px);">
+                     <?php 
+                        $headerImg = $recentTitles[0]['displayImage'] ?? ($recentTitles[0]['imageUri'] ?? 'img/logo3.png');
+                        if (str_starts_with($headerImg, 'http:')) $headerImg = str_replace('http:', 'https:', $headerImg);
+                     ?>
+                     style="background-image: url('<?= $headerImg ?>'); background-size: cover; background-position: center; filter: blur(4px);">
                 </div>
 
                 <div class="relative z-10 mb-6 mt-4">
@@ -94,20 +98,31 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <?php if (!empty($recentTitles)): ?>
                         <?php foreach ($recentTitles as $title): ?>
+                            <?php 
+                                // Robust Data Extraction
+                                $ach = $title['achievement'] ?? $title['achievementInfo'] ?? $title['Achievement'] ?? [];
+                                $curGS = $ach['currentGamerscore'] ?? $ach['CurrentGamerscore'] ?? 0;
+                                $totGS = $ach['totalGamerscore'] ?? $ach['TotalGamerscore'] ?? 1000;
+                                $prog  = $ach['progressPercentage'] ?? $ach['ProgressPercentage'] ?? 0;
+                            ?>
                             <a href="jogo?id=<?= $title['titleId']; ?>" class="glass-card group p-5 rounded-[2rem] flex items-center gap-5">
                                 <div class="w-24 h-24 rounded-2xl overflow-hidden shadow-2xl flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
-                                    <img src="<?= $title['imageUri'] ?? 'img/default_game.jpg'; ?>" class="w-full h-full object-cover" alt="Game">
+                                    <?php 
+                                        $gameImg = $title['displayImage'] ?? ($title['imageUri'] ?? 'img/default_game.jpg');
+                                        if (str_starts_with($gameImg, 'http:')) $gameImg = str_replace('http:', 'https:', $gameImg);
+                                    ?>
+                                    <img src="<?= $gameImg; ?>" class="w-full h-full object-cover" alt="Game">
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <h4 class="text-lg font-black text-white truncate mb-2"><?= htmlspecialchars($title['name']); ?></h4>
                                     <div class="space-y-3">
                                         <div class="flex items-center justify-between mb-1">
                                             <span class="text-[10px] font-black text-secondary uppercase tracking-widest">Progresso</span>
-                                            <span class="text-[10px] font-black text-xbox-green"><?= $title['achievement']['progressPercentage'] ?? 0; ?>%</span>
+                                            <span class="text-[10px] font-black text-xbox-green"><?= $prog; ?>%</span>
                                         </div>
                                         <div class="h-2 bg-white/[0.03] rounded-full overflow-hidden border border-white/5">
                                             <div class="h-full bg-gradient-to-r from-xbox-green to-xbox-green-light rounded-full shadow-[0_0_10px_rgba(16,124,16,0.5)] transition-all duration-1000" 
-                                                 style="width: <?= $title['achievement']['progressPercentage'] ?? 0; ?>%"></div>
+                                                 style="width: <?= $prog; ?>%"></div>
                                         </div>
                                     </div>
                                 </div>

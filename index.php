@@ -33,6 +33,7 @@ $router->get('/bloqueados', [DashboardController::class, 'blocks']);
 // Rotas de Perfil e Atividades
 $router->get('/perfil', [ProfileController::class, 'index']);
 $router->get('/conquistas', [ProfileController::class, 'achievements']);
+$router->get('/conquistas/jogo', [ProfileController::class, 'titleAchievements']);
 $router->get('/capturas', [ProfileController::class, 'captures']);
 $router->get('/search', [ProfileController::class, 'search']);
 

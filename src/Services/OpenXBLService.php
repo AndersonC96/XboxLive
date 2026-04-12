@@ -128,15 +128,36 @@ class OpenXBLService
         return $xuid ? $this->get("achievements/player/$xuid") : $this->get("achievements");
     }
 
-    public function getAchievementsForTitle(string $titleId, string $xuid = null)
+    public function getAchievementsForTitle(string $titleId, ?string $xuid = null)
     {
-        $endpoint = $xuid ? "achievements/player/$xuid/title/$titleId" : "achievements/title/$titleId";
-        return $this->get($endpoint);
+        // Primeiro tentamos com o XUID (Geralmente necessário para Xbox 360)
+        $response = $xuid ? $this->get("achievements/player/$xuid/title/$titleId") : $this->get("achievements/title/$titleId");
+        
+        // Se retornar vazio, tentamos sem o XUID (Muitos títulos modernos no v2 só retornam assim com o contexto do usuário autenticado)
+        if ($xuid && (empty($response['achievements']) || count($response['achievements']) === 0)) {
+            $fallback = $this->get("achievements/title/$titleId");
+            if (!empty($fallback['achievements'])) {
+                return $fallback;
+            }
+        }
+
+        return $response;
     }
 
-    public function getAchievementsV3(string $xuid)
+    public function getAchievementsHistory(?string $xuid = null)
     {
-        return $this->get("achievements/player/$xuid/history");
+        // Retorna o histórico de títulos com resumo de conquistas (V3)
+        return $xuid ? $this->get("achievements/player/$xuid/history") : $this->get("achievements/history");
+    }
+
+    public function getAchievementsV3(?string $xuid)
+    {
+        return $this->getAchievementsHistory($xuid);
+    }
+
+    public function getTitleHistory(?string $xuid = null)
+    {
+        return $xuid ? $this->get("player/titleHistory/$xuid") : $this->get("player/titleHistory");
     }
 
     // --- DVR (Media) ---
