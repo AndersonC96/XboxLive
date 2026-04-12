@@ -93,11 +93,23 @@
                                 <a href="todos_os_jogos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-list w-4 text-xbox-green"></i> Todos os Jogos
                                 </a>
+                                <a href="adicionados_recentemente" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-sparkles w-4 text-xbox-green"></i> Adicionados Recentemente
+                                </a>
+                                <a href="em_breve" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-calendar-alt w-4 text-xbox-green"></i> Em Breve
+                                </a>
+                                <a href="saindo_em_breve" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-hourglass-end w-4 text-xbox-green"></i> Saindo em Breve
+                                </a>
                                 <a href="ea_play" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-play-circle w-4 text-xbox-green"></i> EA Play
                                 </a>
                                 <a href="gamepass_pc" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
                                     <i class="fas fa-laptop w-4 text-xbox-green"></i> PC Gamepass
+                                </a>
+                                <a href="jogos_sem_controle" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-hand-pointer w-4 text-xbox-green"></i> Sem Controle
                                 </a>
                             </div>
                         </div>

@@ -19,30 +19,57 @@ class GamePassController extends BaseController
         $this->api = new OpenXBLService();
     }
 
-    public function allGames(): void
+    private function getPagedGames(string $tableName): array
     {
-        $profile = $this->api->getAccount();
-        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
-
-        // 1. Buscar IDs do banco de dados
         $db = Database::getInstance();
-        $stmt = $db->prepare("SELECT game_id FROM gamepass_games");
+        $stmt = $db->prepare("SELECT game_id FROM $tableName");
         $stmt->execute();
         $allGameIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-        // 2. Paginação
         $page = (int)($_GET['page'] ?? 1);
         $perPage = 12;
         $totalItems = count($allGameIds);
         $totalPages = ceil($totalItems / $perPage);
         $currentPageIds = array_slice($allGameIds, ($page - 1) * $perPage, $perPage);
 
-        // 3. Buscar detalhes dos jogos da página atual
         $games = [];
         if (!empty($currentPageIds)) {
             $details = $this->api->getProductDetails($currentPageIds);
             $games = $details['Products'] ?? [];
         }
+
+        return [$games, $page, $totalPages];
+    }
+
+    private function syncTable(string $tableName, $apiResponse, string $redirectPath)
+    {
+        $db = Database::getInstance();
+        if ($apiResponse && is_array($apiResponse)) {
+            $checkStmt = $db->prepare("SELECT COUNT(*) FROM $tableName WHERE game_id = :game_id");
+            $insertStmt = $db->prepare("INSERT INTO $tableName (game_id) VALUES (:game_id)");
+            
+            $added = 0;
+            foreach ($apiResponse as $game) {
+                if (isset($game['id'])) {
+                    $gameId = $game['id'];
+                    $checkStmt->execute(['game_id' => $gameId]);
+                    if (!$checkStmt->fetchColumn()) {
+                        $insertStmt->execute(['game_id' => $gameId]);
+                        $added++;
+                    }
+                }
+            }
+            $this->redirect($redirectPath . '?synced=' . $added);
+        } else {
+            $this->redirect($redirectPath . '?error=sync_failed');
+        }
+    }
+
+    public function allGames(): void
+    {
+        $profile = $this->api->getAccount();
+        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
+        [$games, $page, $totalPages] = $this->getPagedGames('gamepass_games');
 
         $this->render('todos_os_jogos', [
             'title' => 'Xbox Game Pass - Catálogo',
@@ -56,40 +83,135 @@ class GamePassController extends BaseController
 
     public function sync(): void
     {
-        $db = Database::getInstance();
-        $response = $this->api->getGamePassAll();
-
-        if ($response && is_array($response)) {
-            $checkStmt = $db->prepare("SELECT COUNT(*) FROM gamepass_games WHERE game_id = :game_id");
-            $insertStmt = $db->prepare("INSERT INTO gamepass_games (game_id) VALUES (:game_id)");
-            
-            $added = 0;
-            foreach ($response as $game) {
-                if (isset($game['id'])) {
-                    $gameId = $game['id'];
-                    $checkStmt->execute(['game_id' => $gameId]);
-                    if (!$checkStmt->fetchColumn()) {
-                        $insertStmt->execute(['game_id' => $gameId]);
-                        $added++;
-                    }
-                }
-            }
-            // Redireciona de volta com mensagem de sucesso (opcional)
-            $this->redirect('/todos_os_jogos?synced=' . $added);
-        } else {
-            $this->redirect('/todos_os_jogos?error=sync_failed');
-        }
+        $this->syncTable('gamepass_games', $this->api->getGamePassAll(), '/todos_os_jogos');
     }
 
     public function eaPlay(): void
     {
-        // Mesma lógica poderia ser aplicada filtrando IDs específicos de EA
-        $this->allGames(); 
+        $profile = $this->api->getAccount();
+        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
+        [$games, $page, $totalPages] = $this->getPagedGames('ea_gamepass');
+
+        $this->render('ea_play', [
+            'title' => 'EA Play - Catálogo',
+            'showNavbar' => true,
+            'userProfile' => $userProfile,
+            'games' => $games,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
+        ], 'main');
+    }
+
+    public function syncEAPlay(): void
+    {
+        $this->syncTable('ea_gamepass', $this->api->getEAPlayAll(), '/ea_play');
     }
 
     public function pcGamePass(): void
     {
-        $this->allGames();
+        $profile = $this->api->getAccount();
+        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
+        [$games, $page, $totalPages] = $this->getPagedGames('pc_gamepass');
+
+        $this->render('gamepass_pc', [
+            'title' => 'PC Game Pass - Catálogo',
+            'showNavbar' => true,
+            'userProfile' => $userProfile,
+            'games' => $games,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
+        ], 'main');
+    }
+
+    public function syncPCGamePass(): void
+    {
+        $this->syncTable('pc_gamepass', $this->api->getPCGamePassAll(), '/gamepass_pc');
+    }
+
+    public function noController(): void
+    {
+        $profile = $this->api->getAccount();
+        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
+        [$games, $page, $totalPages] = $this->getPagedGames('jogos_sem_controle');
+
+        $this->render('jogos_sem_controle', [
+            'title' => 'Jogos Sem Controle - Xbox Cloud',
+            'showNavbar' => true,
+            'userProfile' => $userProfile,
+            'games' => $games,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
+        ], 'main');
+    }
+
+    public function syncNoController(): void
+    {
+        $this->syncTable('jogos_sem_controle', $this->api->getNoControllerGames(), '/jogos_sem_controle');
+    }
+
+    // --- Novas Seções ---
+
+    public function addedRecently(): void
+    {
+        $profile = $this->api->getAccount();
+        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
+        [$games, $page, $totalPages] = $this->getPagedGames('gamepass_novos');
+
+        $this->render('gamepass_novos', [
+            'title' => 'Adicionados Recentemente - Game Pass',
+            'showNavbar' => true,
+            'userProfile' => $userProfile,
+            'games' => $games,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
+        ], 'main');
+    }
+
+    public function syncAddedRecently(): void
+    {
+        $this->syncTable('gamepass_novos', $this->api->getNewGamePass(), '/adicionados_recentemente');
+    }
+
+    public function comingSoon(): void
+    {
+        $profile = $this->api->getAccount();
+        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
+        [$games, $page, $totalPages] = $this->getPagedGames('gamepass_em_breve');
+
+        $this->render('gamepass_em_breve', [
+            'title' => 'Em Breve - Game Pass',
+            'showNavbar' => true,
+            'userProfile' => $userProfile,
+            'games' => $games,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
+        ], 'main');
+    }
+
+    public function syncComingSoon(): void
+    {
+        $this->syncTable('gamepass_em_breve', $this->api->getComingSoon(), '/em_breve');
+    }
+
+    public function leavingSoon(): void
+    {
+        $profile = $this->api->getAccount();
+        $userProfile = $this->getUserProfileStats($profile['profileUsers'][0] ?? null);
+        [$games, $page, $totalPages] = $this->getPagedGames('gamepass_saindo');
+
+        $this->render('gamepass_saindo', [
+            'title' => 'Saindo em Breve - Game Pass',
+            'showNavbar' => true,
+            'userProfile' => $userProfile,
+            'games' => $games,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
+        ], 'main');
+    }
+
+    public function syncLeavingSoon(): void
+    {
+        $this->syncTable('gamepass_saindo', $this->api->getLeavingSoon(), '/saindo_em_breve');
     }
 
     public function gameDetails(): void
@@ -106,7 +228,6 @@ class GamePassController extends BaseController
         $productId = $idParam;
         $historyTitle = null;
 
-        // Se o ID for numérico (TitleId), tentamos resolver para ProductId
         if (is_numeric($idParam)) {
             $history = $this->api->get("player/titleHistory");
             $titles = $history['titles'] ?? [];
@@ -121,11 +242,9 @@ class GamePassController extends BaseController
             }
         }
 
-        // Detalhes do Marketplace
         $response = $this->api->getProductDetails($productId);
         $product = $response['Products'][0] ?? null;
 
-        // Estatísticas (opcional conforme suporte da API)
         $statsData = [];
         if ($product && $xuid) {
             $statsResponse = $this->api->get("player/stats/$productId/$xuid");

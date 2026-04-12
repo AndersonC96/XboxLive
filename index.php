@@ -40,7 +40,20 @@ $router->get('/search', [ProfileController::class, 'search']);
 $router->get('/todos_os_jogos', [GamePassController::class, 'allGames']);
 $router->get('/todos_os_jogos/sync', [GamePassController::class, 'sync']);
 $router->get('/ea_play', [GamePassController::class, 'eaPlay']);
+$router->get('/ea_play/sync', [GamePassController::class, 'syncEAPlay']);
 $router->get('/gamepass_pc', [GamePassController::class, 'pcGamePass']);
+$router->get('/gamepass_pc/sync', [GamePassController::class, 'syncPCGamePass']);
+$router->get('/jogos_sem_controle', [GamePassController::class, 'noController']);
+$router->get('/jogos_sem_controle/sync', [GamePassController::class, 'syncNoController']);
+
+// Novas coleções Game Pass
+$router->get('/adicionados_recentemente', [GamePassController::class, 'addedRecently']);
+$router->get('/adicionados_recentemente/sync', [GamePassController::class, 'syncAddedRecently']);
+$router->get('/em_breve', [GamePassController::class, 'comingSoon']);
+$router->get('/em_breve/sync', [GamePassController::class, 'syncComingSoon']);
+$router->get('/saindo_em_breve', [GamePassController::class, 'leavingSoon']);
+$router->get('/saindo_em_breve/sync', [GamePassController::class, 'syncLeavingSoon']);
+
 $router->get('/jogo', [GamePassController::class, 'gameDetails']);
 
 // Rotas da Loja (Marketplace)

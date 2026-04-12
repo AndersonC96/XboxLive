@@ -163,6 +163,36 @@ class OpenXBLService
         return $this->get("gamepass/all");
     }
 
+    public function getEAPlayAll()
+    {
+        return $this->get("gamepass/ea-play");
+    }
+
+    public function getPCGamePassAll()
+    {
+        return $this->get("gamepass/pc");
+    }
+
+    public function getNoControllerGames()
+    {
+        return $this->get("gamepass/no-controller");
+    }
+
+    public function getNewGamePass()
+    {
+        return $this->get("gamepass/new");
+    }
+
+    public function getComingSoon()
+    {
+        return $this->get("gamepass/coming");
+    }
+
+    public function getLeavingSoon()
+    {
+        return $this->get("gamepass/leaving");
+    }
+
     public function searchMarketplace(string $query)
     {
         return $this->get("marketplace/search?q=" . urlencode($query));
