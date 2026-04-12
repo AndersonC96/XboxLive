@@ -57,59 +57,71 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden lg:flex items-center gap-1">
-                    <div class="relative group">
+                    <div class="relative group py-4">
                         <button class="px-4 py-2 rounded-lg hover:bg-white/5 transition-colors flex items-center gap-2">
                             <span>Social</span>
                             <i class="fas fa-chevron-down text-[10px] opacity-50"></i>
                         </button>
-                        <div class="absolute top-full left-0 mt-1 w-48 glass rounded-xl overflow-hidden hidden group-hover:block animate-fade-in">
-                            <a href="amigos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
-                                <i class="fas fa-users w-4"></i> Amigos
-                            </a>
-                            <a href="bloqueados" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
-                                <i class="fas fa-ban w-4"></i> Bloqueados
-                            </a>
-                            <a href="recentes" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
-                                <i class="fas fa-history w-4"></i> Recentes
-                            </a>
+                        <div class="absolute top-[80%] left-0 w-56 glass rounded-xl overflow-hidden invisible group-hover:visible opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 z-[100] shadow-2xl border border-white/10">
+                            <div class="py-2">
+                                <a href="amigos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-users w-4 text-xbox-green"></i> Amigos
+                                </a>
+                                <a href="seguidores" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-user-plus w-4 text-xbox-green"></i> Seguidores
+                                </a>
+                                <a href="feed" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-rss w-4 text-xbox-green"></i> Feed de Atividade
+                                </a>
+                                <a href="recentes" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-history w-4 text-xbox-green"></i> Jogadores Recentes
+                                </a>
+                                <a href="bloqueados" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-ban w-4 text-xbox-green"></i> Bloqueados
+                                </a>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="relative group">
+                    <div class="relative group py-4">
                         <button class="px-4 py-2 rounded-lg hover:bg-white/5 transition-colors flex items-center gap-2">
                             <span>Game Pass</span>
                             <i class="fas fa-chevron-down text-[10px] opacity-50"></i>
                         </button>
-                        <div class="absolute top-full left-0 mt-1 w-56 glass rounded-xl overflow-hidden hidden group-hover:block animate-fade-in">
-                            <a href="todos_os_jogos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
-                                <i class="fas fa-list w-4"></i> Todos os Jogos
-                            </a>
-                            <a href="ea_play" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
-                                <i class="fas fa-play-circle w-4"></i> EA Play
-                            </a>
-                            <a href="gamepass_pc" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
-                                <i class="fas fa-laptop w-4"></i> PC Gamepass
-                            </a>
+                        <div class="absolute top-[80%] left-0 w-56 glass rounded-xl overflow-hidden invisible group-hover:visible opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 z-[100] shadow-2xl border border-white/10">
+                            <div class="py-2">
+                                <a href="todos_os_jogos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-list w-4 text-xbox-green"></i> Todos os Jogos
+                                </a>
+                                <a href="ea_play" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-play-circle w-4 text-xbox-green"></i> EA Play
+                                </a>
+                                <a href="gamepass_pc" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-laptop w-4 text-xbox-green"></i> PC Gamepass
+                                </a>
+                            </div>
                         </div>
                     </div>
 
                     <a href="conquistas" class="px-4 py-2 rounded-lg hover:bg-white/5 transition-colors">Conquistas</a>
                     
-                    <div class="relative group">
+                    <div class="relative group py-4">
                         <button class="px-4 py-2 rounded-lg hover:bg-white/5 transition-colors flex items-center gap-2">
                             <span>Loja</span>
                             <i class="fas fa-chevron-down text-[10px] opacity-50"></i>
                         </button>
-                        <div class="absolute top-full left-0 mt-1 w-56 glass rounded-xl overflow-hidden hidden group-hover:block animate-fade-in">
-                            <a href="mais_jogados" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
-                                <i class="fas fa-fire w-4"></i> Mais Jogados
-                            </a>
-                            <a href="promocao" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
-                                <i class="fas fa-tags w-4"></i> Promoções
-                            </a>
-                            <a href="novos_jogos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
-                                <i class="fas fa-plus-circle w-4"></i> Novos Jogos
-                            </a>
+                        <div class="absolute top-[80%] left-0 w-56 glass rounded-xl overflow-hidden invisible group-hover:visible opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 z-[100] shadow-2xl border border-white/10">
+                            <div class="py-2">
+                                <a href="mais_jogados" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-fire w-4 text-xbox-green"></i> Mais Jogados
+                                </a>
+                                <a href="promocao" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-tags w-4 text-xbox-green"></i> Promoções
+                                </a>
+                                <a href="novos_jogos" class="flex items-center gap-3 px-4 py-3 hover:bg-xbox-green/20 transition-colors">
+                                    <i class="fas fa-plus-circle w-4 text-xbox-green"></i> Novos Jogos
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

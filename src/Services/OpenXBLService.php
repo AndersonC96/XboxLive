@@ -158,6 +158,11 @@ class OpenXBLService
         return $this->get("marketplace/gamepass");
     }
 
+    public function getGamePassAll()
+    {
+        return $this->get("gamepass/all");
+    }
+
     public function searchMarketplace(string $query)
     {
         return $this->get("marketplace/search?q=" . urlencode($query));
@@ -165,8 +170,8 @@ class OpenXBLService
 
     public function getProductDetails($productIds)
     {
-        $ids = is_array($productIds) ? implode(',', $productIds) : $productIds;
-        return $this->post("marketplace/details", ['products' => $ids]);
+        $ids = is_array($productIds) ? $productIds : explode(',', $productIds);
+        return $this->post("marketplace/details", ['products' => implode(',', $ids)]);
     }
 
     // --- Activity Feed ---
@@ -174,6 +179,11 @@ class OpenXBLService
     public function getActivityFeed()
     {
         return $this->get("activity/feed");
+    }
+
+    public function getRecentPlayers()
+    {
+        return $this->get("activity/recent-players");
     }
 
     public function getActivityHistory(string $xuid = null)

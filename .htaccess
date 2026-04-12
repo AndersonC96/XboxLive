@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Impede o acesso direto a pastas sensíveis
+RewriteRule ^(src|views|vendor|_legacy_.*)/ - [F,L]
+
+# Se o arquivo ou diretório solicitado não existir fisicamente...
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# ...redireciona tudo para o index.php
+RewriteRule ^ index.php [L]
